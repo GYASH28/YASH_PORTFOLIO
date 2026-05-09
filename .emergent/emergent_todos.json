@@ -1,0 +1,74 @@
+[
+  {
+    "content": "Phase 1: Skip POC - assets already prepared (frames extracted, WebP converted, 30.5MB→388KB)",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 2: Get design guidelines from design_agent",
+    "status": "in_progress"
+  },
+  {
+    "content": "Phase 2: Install dependencies (framer-motion, gsap, three, @react-three/fiber, @react-three/drei)",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Create boot sequence + 32-frame image sequence player with preload",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Build sticky glassmorphism Navbar with active section + mobile hamburger",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Hero section with staggered text reveal + premium CTAs",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: About section with profile photo + bio",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Skills section with 3D interactive cards",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Featured Projects (3 cards with 3D tilt)",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Lernio AI Live section with iframe + 3D browser frame + case study",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Journey/Timeline animated section",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Contact section with form + social links",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Three.js / R3F 3D objects (laptop, brain, code cube, particles)",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: GSAP/Framer Motion animations + scroll reveals",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Backend /api/contact endpoint + MongoDB",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Mobile responsive optimization with lighter 3D fallbacks",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: All user stories covered in development",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: End to End Testing using Testing Agent",
+    "status": "pending"
+  }
+]
