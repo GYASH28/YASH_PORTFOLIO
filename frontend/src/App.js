@@ -1,52 +1,67 @@
-import { useEffect } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { BootSequence } from "@/components/BootSequence";
+import { Navbar } from "@/components/Navbar";
+import { Hero } from "@/components/Hero";
+import { About } from "@/components/About";
+import { Skills } from "@/components/Skills";
+import { Projects } from "@/components/Projects";
+import { LernioLive } from "@/components/LernioLive";
+import { Journey } from "@/components/Journey";
+import { Contact } from "@/components/Contact";
+import { Footer } from "@/components/Footer";
+import { CursorLight } from "@/components/CursorLight";
+import { Toaster } from "@/components/ui/sonner";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const Scene3D = lazy(() => import("@/components/three/Scene3D").then(m => ({ default: m.Scene3D })));
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+function App() {
+  const [bootDone, setBootDone] = useState(false);
+  const [heroDone, setHeroDone] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    helloWorldApi();
+    // Force dark theme
+    document.documentElement.classList.add("dark");
+    // Detect reduced motion
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e) => setReducedMotion(e.matches);
+    mq.addEventListener?.("change", handler);
+    return () => mq.removeEventListener?.("change", handler);
   }, []);
 
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+    <div className="App relative overflow-x-hidden" data-testid={reducedMotion ? "reduced-motion-mode" : "normal-motion-mode"}>
+      {/* Boot sequence overlay */}
+      <BootSequence onComplete={() => setBootDone(true)} reducedMotion={reducedMotion} />
 
-function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      {/* Cursor following light */}
+      <CursorLight />
+
+      {/* 3D Scene background — lazy loaded after boot completes */}
+      {bootDone && (
+        <Suspense fallback={null}>
+          <Scene3D reducedMotion={reducedMotion} />
+        </Suspense>
+      )}
+
+      {/* Navigation */}
+      <Navbar visible={bootDone} />
+
+      {/* Sections */}
+      <main className="relative z-10">
+        <Hero bootDone={bootDone} onHeroDone={() => setHeroDone(true)} reducedMotion={reducedMotion} />
+        <About visible={heroDone} />
+        <Skills />
+        <Projects />
+        <LernioLive />
+        <Journey />
+        <Contact />
+      </main>
+
+      <Footer />
+      <Toaster position="top-right" theme="dark" richColors />
     </div>
   );
 }
