@@ -3,6 +3,7 @@ import "@/App.css";
 import { BootSequence } from "@/components/BootSequence";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
+import { ScrollFrameSequence } from "@/components/ScrollFrameSequence";
 import { About } from "@/components/About";
 import { Skills } from "@/components/Skills";
 import { Projects } from "@/components/Projects";
@@ -32,14 +33,14 @@ function App() {
   }, []);
 
   return (
-    <div className="App relative overflow-x-hidden" data-testid={reducedMotion ? "reduced-motion-mode" : "normal-motion-mode"}>
+    <div className="App relative" data-testid={reducedMotion ? "reduced-motion-mode" : "normal-motion-mode"}>
       {/* Boot sequence overlay */}
       <BootSequence onComplete={() => setBootDone(true)} reducedMotion={reducedMotion} />
 
       {/* Cursor following light */}
       <CursorLight />
 
-      {/* 3D Scene background — lazy loaded after boot completes */}
+      {/* 3D Scene background - lazy loaded after boot completes */}
       {bootDone && (
         <Suspense fallback={null}>
           <Scene3D reducedMotion={reducedMotion} />
@@ -52,6 +53,7 @@ function App() {
       {/* Sections */}
       <main className="relative z-10">
         <Hero bootDone={bootDone} onHeroDone={() => setHeroDone(true)} reducedMotion={reducedMotion} />
+        <ScrollFrameSequence reducedMotion={reducedMotion} />
         <About visible={heroDone} />
         <Skills />
         <Projects />

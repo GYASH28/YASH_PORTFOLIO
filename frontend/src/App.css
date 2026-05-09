@@ -1,7 +1,8 @@
-/* App.css — minimal, all heavy styles in index.css and Tailwind */
+/* App.css - minimal, all heavy styles in index.css and Tailwind */
 .App {
     min-height: 100vh;
     position: relative;
     background: var(--bg-0);
     color: var(--text-0);
+    overflow-x: clip;
 }

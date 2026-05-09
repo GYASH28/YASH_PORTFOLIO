@@ -1,21 +1,22 @@
 import { useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { Mail, Phone, Github, Send, Loader2, ArrowUpRight, Linkedin } from "lucide-react";
+import { Mail, Phone, Github, Send, Loader2, ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const EMAIL = "yash.k.ganesh@gmail.com";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL?.replace(/\/$/, "");
+const API = BACKEND_URL ? `${BACKEND_URL}/api` : "";
 
 const SOCIALS = [
   {
     label: "Email",
-    value: "yash.k.ganesh@gmail.com",
-    href: "mailto:yash.k.ganesh@gmail.com",
+    value: EMAIL,
+    href: `mailto:${EMAIL}`,
     icon: Mail,
     testid: "contact-social-email",
   },
@@ -33,14 +34,16 @@ const SOCIALS = [
     icon: Github,
     testid: "contact-social-github",
   },
-  {
-    label: "LinkedIn",
-    value: "Connect on LinkedIn",
-    href: "https://www.linkedin.com/",
-    icon: Linkedin,
-    testid: "contact-social-linkedin",
-  },
 ];
+
+const buildMailto = ({ name, email, message }) => {
+  const subject = encodeURIComponent(`Portfolio inquiry from ${name.trim()}`);
+  const body = encodeURIComponent(
+    `Name: ${name.trim()}\nEmail: ${email.trim()}\n\n${message.trim()}`,
+  );
+
+  return `mailto:${EMAIL}?subject=${subject}&body=${body}`;
+};
 
 export const Contact = () => {
   const [name, setName] = useState("");
@@ -51,13 +54,20 @@ export const Contact = () => {
 
   const submit = async (e) => {
     e.preventDefault();
+
     if (!name.trim() || !email.trim() || !message.trim()) {
       toast.error("Please fill in name, email, and message.");
       return;
     }
+
     setLoading(true);
     setStatus("");
+
     try {
+      if (!API) {
+        throw new Error("Contact backend is not configured.");
+      }
+
       await axios.post(`${API}/contact`, { name, email, message });
       setStatus("sent");
       toast.success("Message sent. I'll get back to you soon!");
@@ -65,9 +75,10 @@ export const Contact = () => {
       setEmail("");
       setMessage("");
     } catch (err) {
-      console.error(err);
-      setStatus("error");
-      toast.error("Something went wrong. Try email instead.");
+      console.info("Opening email fallback for contact form.", err);
+      setStatus("fallback");
+      toast.message("Opening your email app so the message still reaches me.");
+      window.location.href = buildMailto({ name, email, message });
     } finally {
       setLoading(false);
     }
@@ -77,23 +88,22 @@ export const Contact = () => {
     <section id="contact" data-testid="contact-section" className="relative section-pad">
       <div className="container-pad">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Left: pitch + socials */}
           <Reveal className="lg:col-span-5">
             <div className="flex items-center gap-2 mb-3">
               <span className="h-px w-10 bg-[#00F5FF] shadow-[0_0_12px_rgba(0,245,255,0.7)]" />
               <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/55">Contact</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white">
               Let&apos;s build something
               <span className="shimmer-text"> ridiculous.</span>
             </h2>
             <p className="mt-4 max-w-md text-white/65">
-              Have an idea, internship, or AI / web project in mind? Drop a message — I read every one and reply
+              Have an idea, internship, or AI / web project in mind? Drop a message - I read every one and reply
               within a couple of days.
             </p>
 
             <div className="mt-8 space-y-2.5" data-testid="contact-social-links">
-              {SOCIALS.map(s => {
+              {SOCIALS.map((s) => {
                 const Icon = s.icon;
                 return (
                   <motion.a
@@ -122,7 +132,6 @@ export const Contact = () => {
             </div>
           </Reveal>
 
-          {/* Right: form */}
           <Reveal className="lg:col-span-7" delay={0.08}>
             <form
               onSubmit={submit}
@@ -170,15 +179,12 @@ export const Contact = () => {
                 />
               </div>
               <div className="mt-6 flex items-center justify-between gap-4 flex-wrap">
-                <span
-                  data-testid="contact-form-status-text"
-                  className="text-xs text-white/55"
-                >
+                <span data-testid="contact-form-status-text" className="text-xs text-white/55">
                   {status === "sent"
-                    ? "Message sent · I'll be in touch."
-                    : status === "error"
-                      ? "Couldn't send right now. Try email."
-                      : "This goes straight to my inbox."}
+                    ? "Message sent - I'll be in touch."
+                    : status === "fallback"
+                      ? "Email fallback opened."
+                      : "If the backend is unavailable, this opens email instead."}
                 </span>
                 <Button
                   type="submit"

@@ -25,7 +25,7 @@ export const MagneticButton = ({ children, strength = 0.3, className = "", ...pr
       className={className}
       {...props}
     >
-      <span ref={innerRef} className="magnetic-target inline-flex items-center gap-2">
+      <span ref={innerRef} className="magnetic-target inline-flex items-center gap-2 whitespace-nowrap">
         {children}
       </span>
     </button>
