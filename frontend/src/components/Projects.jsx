@@ -192,17 +192,12 @@ const ProjectCard = ({ project, onOpen }) => {
                 <div className="absolute top-0 w-full h-6 bg-[#1A1F2C] flex items-center justify-center z-20">
                   <div className="w-16 h-1.5 rounded-full bg-white/20" />
                 </div>
-                {/* Lernio AI live screenshot — wait 6s so boot animation finishes */}
+                {/* Lernio AI screenshot */}
                 <img
-                  src="https://image.thum.io/get/wait/6000/viewportWidth/390/width/390/https://lernioai.vercel.app"
+                  src="/lernio-screenshot.jpg"
                   alt="Lernio AI App"
                   className="absolute inset-0 w-full h-full object-cover object-top"
                   loading="lazy"
-                  onError={(e) => {
-                    // Fallback: microlink with 6s wait
-                    e.target.onerror = null;
-                    e.target.src = "https://api.microlink.io/?url=https%3A%2F%2Flernioai.vercel.app&screenshot=true&meta=false&embed=screenshot.url&waitFor=6000";
-                  }}
                 />
                 {/* Subtle overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#00F5FF]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
