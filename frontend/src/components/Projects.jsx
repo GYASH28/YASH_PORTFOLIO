@@ -188,11 +188,24 @@ const ProjectCard = ({ project, onOpen }) => {
              <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#8B5CFF] blur-[100px] opacity-20 rounded-full" />
              
              <div className="relative z-10 w-full max-w-[280px] aspect-[9/16] rounded-[2rem] border-4 border-[#1A1F2C] bg-[#0A0F1A] shadow-2xl flex items-center justify-center overflow-hidden transform rotate-2 group-hover:rotate-0 transition-transform duration-500">
-                <div className="absolute top-0 w-full h-6 bg-[#1A1F2C] flex items-center justify-center">
-                  <div className="w-16 h-1.5 rounded-full bg-white/10" />
+                {/* Phone top notch bar */}
+                <div className="absolute top-0 w-full h-6 bg-[#1A1F2C] flex items-center justify-center z-20">
+                  <div className="w-16 h-1.5 rounded-full bg-white/20" />
                 </div>
-                <Sparkles size={48} className="text-[#00F5FF] opacity-50" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#00F5FF]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                {/* Lernio AI live screenshot */}
+                <img
+                  src="https://image.thum.io/get/viewportWidth/390/width/390/https://lernioai.vercel.app"
+                  alt="Lernio AI App"
+                  className="absolute inset-0 w-full h-full object-cover object-top"
+                  loading="lazy"
+                  onError={(e) => {
+                    // Fallback to microlink if thum.io fails
+                    e.target.onerror = null;
+                    e.target.src = "https://api.microlink.io/?url=https%3A%2F%2Flernioai.vercel.app&screenshot=true&meta=false&embed=screenshot.url";
+                  }}
+                />
+                {/* Subtle overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#00F5FF]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
              </div>
           </div>
         )}
@@ -247,3 +260,4 @@ const ProjectCard = ({ project, onOpen }) => {
     </motion.article>
   );
 };
+
