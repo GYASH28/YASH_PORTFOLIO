@@ -411,29 +411,54 @@ html[data-cursor="text"] .cursor-dot {
   position: relative;
   display: grid;
   min-height: 100svh;
-  grid-template-columns: minmax(0, 0.56fr) minmax(0, 0.44fr);
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
   overflow: clip;
-  padding: clamp(5.5rem, 8vw, 7rem) clamp(1.2rem, 4vw, 4rem) 4rem;
+  padding: clamp(5.5rem, 8vw, 7rem) clamp(1.2rem, 4vw, 4rem) clamp(2.6rem, 6vh, 4.5rem);
   background: var(--bg-void);
 }
 
 .hero-bg {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background:
-    radial-gradient(ellipse 60% 50% at 70% 50%, rgba(0, 255, 136, 0.045), transparent 70%),
-    radial-gradient(ellipse 40% 60% at 30% 80%, rgba(79, 142, 247, 0.055), transparent 70%);
+    linear-gradient(90deg, rgba(3, 4, 10, 0.98) 0%, rgba(3, 4, 10, 0.9) 34%, rgba(3, 4, 10, 0.5) 57%, rgba(3, 4, 10, 0.12) 100%),
+    linear-gradient(0deg, rgba(3, 4, 10, 0.9) 0%, rgba(3, 4, 10, 0.34) 36%, rgba(3, 4, 10, 0) 72%),
+    radial-gradient(ellipse 50% 45% at 70% 50%, rgba(0, 255, 136, 0.1), transparent 72%),
+    radial-gradient(ellipse 46% 60% at 86% 42%, rgba(79, 142, 247, 0.18), transparent 68%);
+}
+
+.hero-image-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  overflow: hidden;
+  background: #000;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% center;
+  filter: saturate(1.04) contrast(1.03) brightness(0.88);
+  transform: translateX(14%) scale(1.32);
+  user-select: none;
 }
 
 .hero-copy {
   position: relative;
   z-index: 2;
-  max-width: 46rem;
+  max-width: min(39rem, 49vw);
+  align-self: center;
+  margin-top: clamp(2rem, 6vh, 4rem);
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.52);
 }
 
 .hero-label {
-  margin: 0 0 1.5rem;
+  margin: 0 0 1.1rem;
   color: var(--text-3);
   letter-spacing: 0.08em;
 }
@@ -443,6 +468,8 @@ html[data-cursor="text"] .cursor-dot {
   margin: 0;
   overflow: visible;
   color: var(--text-1);
+  font-size: clamp(3.6rem, 6vw, 6.25rem);
+  line-height: 0.9;
 }
 
 .hero-headline > span {
@@ -452,8 +479,8 @@ html[data-cursor="text"] .cursor-dot {
 
 .hero-subcopy {
   max-width: 31rem;
-  margin-top: 1.8rem;
-  color: var(--text-2);
+  margin-top: 1.35rem;
+  color: rgba(238, 242, 255, 0.84);
 }
 
 .hero-subcopy p {
@@ -464,14 +491,14 @@ html[data-cursor="text"] .cursor-dot {
   display: flex;
   flex-wrap: wrap;
   gap: 0.9rem;
-  margin-top: 2rem;
+  margin-top: 1.55rem;
 }
 
 .hero-stats {
   display: flex;
   flex-wrap: wrap;
   gap: clamp(1rem, 3vw, 2.2rem);
-  margin-top: 2.6rem;
+  margin-top: 1.25rem;
 }
 
 .hero-stats div {
@@ -489,29 +516,6 @@ html[data-cursor="text"] .cursor-dot {
   font: 600 0.68rem / 1.2 var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.hero-scene-wrap {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  width: 48vw;
-  min-width: 42rem;
-}
-
-.hero-scene-canvas {
-  width: 100%;
-  height: 100%;
-}
-
-.hero-scene-fallback {
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(circle at 52% 48%, rgba(0, 255, 136, 0.08), transparent 42%),
-    radial-gradient(circle at 66% 58%, rgba(79, 142, 247, 0.08), transparent 48%);
 }
 
 .screen-html {
@@ -1736,10 +1740,12 @@ html[data-cursor="text"] .cursor-dot {
 }
 
 @media (max-width: 1180px) and (min-width: 900px) {
-  .hero-scene-wrap {
-    right: -10rem;
-    width: 56vw;
-    min-width: 32rem;
+  .hero-copy {
+    max-width: min(38rem, 58vw);
+  }
+
+  .hero-image {
+    object-position: 66% center;
   }
 }
 
@@ -1757,17 +1763,29 @@ html[data-cursor="text"] .cursor-dot {
   }
 
   .hero-section {
-    display: block;
-    min-height: auto;
-    padding-top: 6.5rem;
+    display: grid;
+    min-height: 100svh;
+    align-items: end;
+    padding: 6.5rem 1.2rem 2rem;
   }
 
-  .hero-scene-wrap {
-    position: relative;
-    width: 100%;
-    min-width: 0;
-    height: 23rem;
-    margin-top: 1.5rem;
+  .hero-bg {
+    background:
+      linear-gradient(90deg, rgba(3, 4, 10, 0.96) 0%, rgba(3, 4, 10, 0.82) 48%, rgba(3, 4, 10, 0.34) 100%),
+      linear-gradient(0deg, rgba(3, 4, 10, 0.92) 0%, rgba(3, 4, 10, 0.42) 42%, rgba(3, 4, 10, 0.08) 100%),
+      radial-gradient(ellipse 70% 45% at 72% 34%, rgba(79, 142, 247, 0.18), transparent 70%);
+  }
+
+  .hero-image {
+    object-position: 64% center;
+    filter: saturate(1.04) contrast(1.04) brightness(0.66);
+    transform: scale(1.05);
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    align-self: end;
+    margin-top: 0;
   }
 
   .hero-stats {

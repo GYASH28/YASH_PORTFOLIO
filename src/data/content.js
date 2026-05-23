@@ -19,7 +19,7 @@ export const hero = {
   name: "Yash Ganesh",
   label: "// YASH GANESH - BUILD ROOM",
   role: "AI Product Builder | Expert Vibe Coder | Creative Frontend Developer",
-  headline: ["I BUILD", "THINGS", "THAT WORK."],
+  headline: ["I BUILD", "THINGS", "THAT", "WORK."],
   tagline: "Building products that feel alive - Lernio AI, CampusMate, AI workflows, and cinematic frontend systems.",
   productUrl: "https://lernioai.vercel.app/",
   stats: [

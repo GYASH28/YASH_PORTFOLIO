@@ -1,16 +1,21 @@
 import { ArrowDown, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
-import { lazy, Suspense } from "react";
 import { hero } from "../../data/content";
 import { CounterNumber } from "../ui/CounterNumber";
 import { MagneticButton } from "../ui/MagneticButton";
 
-const HeroScene = lazy(() => import("../three/HeroScene").then((module) => ({ default: module.HeroScene })));
-
-export function Hero({ reducedMotion }) {
+export function Hero() {
   return (
     <section id="home" className="hero-section">
       <div className="hero-bg" aria-hidden="true" />
+      <motion.picture
+        className="hero-image-wrap"
+        initial={{ opacity: 0, scale: 1.04 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1.05, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <img className="hero-image" src="/assets/hero-yash-fullscreen.png" alt="" draggable="false" />
+      </motion.picture>
       <div className="hero-copy">
         <motion.p
           className="hero-label text-mono"
@@ -71,16 +76,6 @@ export function Hero({ reducedMotion }) {
           ))}
         </motion.div>
       </div>
-      <motion.div
-        className="hero-scene-wrap"
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.85, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <Suspense fallback={<div className="hero-scene-fallback" />}>
-          <HeroScene reducedMotion={reducedMotion} />
-        </Suspense>
-      </motion.div>
     </section>
   );
 }

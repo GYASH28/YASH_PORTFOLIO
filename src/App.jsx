@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { SmoothScroll } from "./components/layout/SmoothScroll";
 import { CustomCursor } from "./components/layout/CustomCursor";
 import { Navbar } from "./components/layout/Navbar";
@@ -12,16 +11,6 @@ import { Journey } from "./components/sections/05_Journey";
 import { Contact } from "./components/sections/06_Contact";
 
 export default function App() {
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
-
   return (
     <SmoothScroll>
       <Preloader />
@@ -29,7 +18,7 @@ export default function App() {
       <CustomCursor />
       <Navbar />
       <main>
-        <Hero reducedMotion={reducedMotion} />
+        <Hero />
         <About />
         <Skills />
         <Projects />
