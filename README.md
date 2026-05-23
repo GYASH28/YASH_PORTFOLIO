@@ -1,45 +1,27 @@
-# Yash Ganesh | Premium Developer Portfolio
+# Yash Ganesh - Build Room Portfolio
 
-A cinematic, high-performance developer portfolio built with modern web technologies. This project features immersive interactions, scroll-driven video transitions, and a premium design aesthetic.
+A from-scratch Vite + React portfolio for Yash Ganesh. The site is built as a dark cinematic creative lab with a procedural React Three Fiber workstation hero, polished scroll interactions, and static contact flows.
 
-## ✨ Key Features
+## Stack
 
-- **Cinematic Scroll Sequence**: A smooth, video-based intro transition that reacts to user scroll.
-- **Premium Hero Section**: A stunning, portrait-based hero layout integrated seamlessly into a dark void aesthetic.
-- **Dynamic Projects Showcase**: Interactive display of professional work and personal projects.
-- **Responsive Design**: Fully optimized for all device types with a focus on fluid typography and micro-interactions.
-- **Smooth Animations**: Powered by Framer Motion and GSAP.
+- React 18 + Vite
+- Three.js + React Three Fiber + Drei
+- GSAP ScrollTrigger, Framer Motion, Lenis
+- Tailwind CSS v3 with CSS custom properties
+- Lucide React icons
+- Static Vercel deployment
 
-## 🛠️ Tech Stack
+## Scripts
 
-- **Framework**: [React 19](https://reactjs.org/)
-- **Animation**: [Framer Motion](https://www.framer.com/motion/) & [GSAP](https://greensock.com/gsap/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [Shadcn UI](https://ui.shadcn.com/) (Radix UI)
-- **Icons**: Lucide React
+```bash
+npm install
+npm run dev
+npm run build
+npm run preview
+```
 
-## 🚀 Getting Started
+## Notes
 
-### Prerequisites
-- Node.js (v18+)
-
-### Setup Instructions
-1. Clone the repository and install dependencies:
-   ```bash
-   npm install
-   ```
-2. Start the development server:
-   ```bash
-   npm start
-   ```
-
-## 🌐 Vercel Deployment
-
-This project is fully optimized for deployment on [Vercel](https://vercel.com/).
-
-1. Push your code to GitHub.
-2. Import the project into Vercel.
-3. Vercel will automatically detect Create React App and build the site.
-
----
-Developed with ❤️ by [Yash Ganesh](https://github.com/GYASH28)
+- Contact is intentionally static: copy email and `mailto:` only.
+- No backend, database, API route, or public message storage is used.
+- Public contact email: `yash.k.ganesh@gmail.com`.
