@@ -1006,6 +1006,10 @@ html[data-cursor="text"] .cursor-dot {
   overflow: clip;
 }
 
+.projects-scroll-stage {
+  position: relative;
+}
+
 .projects-pin {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

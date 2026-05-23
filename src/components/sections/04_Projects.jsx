@@ -3,6 +3,7 @@ import { ExternalLink } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "../../data/content";
+import { LiveShowcase } from "./LiveShowcase";
 import { BrowserMockup } from "../ui/ProjectMockups";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -10,12 +11,12 @@ gsap.registerPlugin(ScrollTrigger);
 const FloatingBrowser = lazy(() => import("../three/FloatingBrowser").then((module) => ({ default: module.FloatingBrowser })));
 
 export function Projects() {
-  const sectionRef = useRef(null);
+  const scrollStageRef = useRef(null);
   const trackRef = useRef(null);
   const progressRef = useRef(null);
 
   useLayoutEffect(() => {
-    const section = sectionRef.current;
+    const section = scrollStageRef.current;
     const track = trackRef.current;
     const progress = progressRef.current;
     const pin = section?.querySelector(".projects-pin");
@@ -52,19 +53,22 @@ export function Projects() {
   }, []);
 
   return (
-    <section id="projects" className="projects-section" ref={sectionRef}>
-      <div className="projects-pin">
-        <div className="projects-header">
-          <p className="section-label">// 04 - THE OUTPUT</p>
-          <h2 className="text-display">Projects that shipped.</h2>
-          <div className="projects-progress" aria-hidden="true">
-            <span ref={progressRef} />
+    <section id="projects" className="projects-section">
+      <LiveShowcase />
+      <div className="projects-scroll-stage" ref={scrollStageRef}>
+        <div className="projects-pin">
+          <div className="projects-header">
+            <p className="section-label">// 04 - THE OUTPUT</p>
+            <h2 className="text-display">Projects that shipped.</h2>
+            <div className="projects-progress" aria-hidden="true">
+              <span ref={progressRef} />
+            </div>
           </div>
-        </div>
-        <div className="projects-track" ref={trackRef}>
-          {projects.map((project, index) => (
-            <ProjectCard project={project} index={index} key={project.id} />
-          ))}
+          <div className="projects-track" ref={trackRef}>
+            {projects.map((project, index) => (
+              <ProjectCard project={project} index={index} key={project.id} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
