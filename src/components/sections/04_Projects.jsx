@@ -18,20 +18,26 @@ export function Projects() {
     const section = sectionRef.current;
     const track = trackRef.current;
     const progress = progressRef.current;
+    const pin = section?.querySelector(".projects-pin");
     if (!section || !track) return undefined;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.matchMedia({
         "(min-width: 900px)": () => {
+          const maxX = () => Math.max(0, track.scrollWidth - window.innerWidth);
+          const scrollDistance = () => Math.max(maxX(), window.innerHeight * 1.25);
+
           const tween = gsap.to(track, {
-            x: () => -(track.scrollWidth - window.innerWidth + 64),
+            x: () => -maxX(),
             ease: "none",
             scrollTrigger: {
               trigger: section,
               start: "top top",
-              end: "bottom bottom",
+              end: () => `+=${scrollDistance()}`,
               scrub: 1,
-              pin: ".projects-pin",
+              pin,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
               onUpdate: (self) => {
                 if (progress) progress.style.transform = `scaleX(${self.progress})`;
               },
