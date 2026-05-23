@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
 import { Check, Copy, GitBranch, Loader2, Mail, Send } from "lucide-react";
 import { contact } from "../../data/content";
+import { contact } from "../../data/content";
 import { MagneticButton } from "../ui/MagneticButton";
+import { useInView } from "../../hooks/useInView";
 
 export function Contact() {
+  const [ref, inView] = useInView(0.1);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [state, setState] = useState("idle");
   const [copied, setCopied] = useState(false);
@@ -39,7 +42,9 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="section-shell contact-section">
+    <>
+    <div className="section-divider" />
+    <section ref={ref} id="contact" className={`section section-shell contact-section ${inView ? 'contact-section--visible' : ''}`}>
       <span className="section-ghost" aria-hidden="true">
         06
       </span>
@@ -47,9 +52,9 @@ export function Contact() {
         <p className="section-label">// 06 - THE UPLINK</p>
         <h2 className="contact-title">Let's build something real.</h2>
         <p className="contact-subtext">Open to freelance, collabs, and interesting ideas.</p>
-        <button type="button" className="email-hero focus-ring" onClick={copyEmail} data-cursor="copy">
-          {contact.email}
-          {copied ? <Check size={20} aria-hidden="true" /> : <Copy size={20} aria-hidden="true" />}
+        <button type="button" className="email-copy-btn focus-ring" onClick={copyEmail} data-cursor="copy">
+          <span>{contact.email}</span>
+          {copied ? <Check size={20} color="var(--mint)" aria-hidden="true" /> : <Copy size={20} aria-hidden="true" />}
         </button>
         <div className={`copy-toast ${copied ? "visible" : ""}`}>Copied</div>
         <div className="social-row" aria-label="Social links">
@@ -82,10 +87,18 @@ export function Contact() {
           </MagneticButton>
         </form>
       </div>
-      <footer className="footer-strip">
-        <span>YASH GANESH - BUILD ROOM - 2026 - {contact.location}</span>
-        <span>Crafted with Three.js, React, and fast shipping instincts</span>
+      <footer className="footer">
+        <div className="footer-left">
+          <span className="footer-mono">YG · BUILD ROOM · 2026</span>
+          <span className="footer-mono footer-location">📍 {contact.location}</span>
+        </div>
+        <div className="footer-right">
+          <span className="footer-mono footer-credit">
+            Crafted with React · Three.js · GSAP · ❤
+          </span>
+        </div>
       </footer>
     </section>
+    </>
   );
 }

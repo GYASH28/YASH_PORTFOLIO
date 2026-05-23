@@ -1,10 +1,15 @@
 import { about, techLogoIcons } from "../../data/content";
 import { GlassCard } from "../ui/GlassCard";
 import { RevealText } from "../ui/RevealText";
+import { useInView } from "../../hooks/useInView";
 
 export function About() {
+  const [ref, inView] = useInView(0.1);
+
   return (
-    <section id="about" className="section-shell about-section">
+    <>
+    <div className="section-divider" />
+    <section ref={ref} id="about" className={`section section-shell about-section ${inView ? 'section--visible' : ''}`}>
       <div className="section-inner about-grid">
         <div className="portrait-panel gradient-border">
           <img src={about.portrait} alt="Yash Ganesh portrait" />
@@ -47,5 +52,6 @@ export function About() {
         </div>
       </div>
     </section>
+    </>
   );
 }

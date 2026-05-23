@@ -13,6 +13,13 @@ import {
   Flame,
   PenTool,
   Bot,
+  Hammer,
+  Zap,
+  Globe,
+  Film,
+  Box,
+  BrainCircuit,
+  Pen
 } from "lucide-react";
 
 export const hero = {
@@ -51,7 +58,7 @@ export const skillGroups = [
   {
     title: "Frontend Core",
     label: "Interface signal",
-    icon: Code2,
+    icon: Globe,
     accent: "#00FF88",
     className: "lg:col-span-4",
     skills: ["HTML", "CSS", "JavaScript", "React", "Tailwind", "Responsive UI"],
@@ -59,7 +66,7 @@ export const skillGroups = [
   {
     title: "Motion",
     label: "Timeline engine",
-    icon: Sparkles,
+    icon: Film,
     accent: "#4F8EF7",
     className: "lg:col-span-4",
     skills: ["GSAP", "ScrollTrigger", "Framer Motion", "Micro-interactions"],
@@ -67,7 +74,7 @@ export const skillGroups = [
   {
     title: "3D Web",
     label: "Depth layer",
-    icon: MonitorSmartphone,
+    icon: Box,
     accent: "#9B7FFF",
     className: "lg:col-span-4",
     skills: ["Three.js", "React Three Fiber", "Drei", "WebGL Basics", "Spline"],
@@ -75,7 +82,7 @@ export const skillGroups = [
   {
     title: "AI Builder Core",
     label: "Prompt pipeline",
-    icon: Bot,
+    icon: BrainCircuit,
     accent: "#00FF88",
     className: "lg:col-span-3",
     skills: ["ChatGPT", "Gemini AI", "Prompt Engineering", "AI Assistants", "Debugging"],
@@ -91,7 +98,7 @@ export const skillGroups = [
   {
     title: "Creative + Marketing",
     label: "Brand layer",
-    icon: Palette,
+    icon: Pen,
     accent: "#9B7FFF",
     className: "lg:col-span-3",
     skills: ["Canva", "Branding", "Meta Ads", "Google Ads", "Content Strategy"],
@@ -163,30 +170,35 @@ export const journey = [
     chapter: "CURIOSITY",
     title: "Started with web fundamentals",
     detail: "HTML, CSS, and JavaScript became the foundation for building real things.",
+    icon: Lightbulb
   },
   {
     step: "02",
     chapter: "CRAFT",
     title: "Moved into modern frontend",
     detail: "React, Tailwind, and animation turned ideas into real interfaces.",
+    icon: Hammer
   },
   {
     step: "03",
     chapter: "AI TOOLS",
     title: "Built AI-powered workflows",
     detail: "Gemini, n8n, and prompt engineering made ideas into AI workflows.",
+    icon: Brain
   },
   {
     step: "04",
     chapter: "LAUNCH",
     title: "Shipped real products",
     detail: "Lernio AI and CampusMate shipped as real, usable products.",
+    icon: Rocket
   },
   {
     step: "05",
     chapter: "NOW",
     title: "Building cinematic AI interfaces",
     detail: "Premium frontend, native 3D, and AI-powered web experiences.",
+    icon: Zap
   },
 ];
 

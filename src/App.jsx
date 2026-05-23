@@ -1,4 +1,5 @@
 import { SmoothScroll } from "./components/layout/SmoothScroll";
+import { BackToTop } from "./components/ui/BackToTop";
 import { CustomCursor } from "./components/layout/CustomCursor";
 import { Navbar } from "./components/layout/Navbar";
 import { Preloader } from "./components/layout/Preloader";
@@ -25,6 +26,7 @@ export default function App() {
         <Journey />
         <Contact />
       </main>
+      <BackToTop />
     </SmoothScroll>
   );
 }

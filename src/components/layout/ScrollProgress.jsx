@@ -17,5 +17,13 @@ export function ScrollProgress() {
     };
   }, []);
 
-  return <div className="scroll-progress" style={{ width: `${progress}%` }} />;
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, zIndex: 9999,
+      height: '2px', width: `${progress}%`,
+      background: 'linear-gradient(90deg, var(--mint), var(--blue))',
+      transition: 'width 60ms linear',
+      pointerEvents: 'none'
+    }} />
+  );
 }

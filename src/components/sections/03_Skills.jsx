@@ -2,10 +2,15 @@ import { marqueeRows, skillGroups } from "../../data/content";
 import { GlassCard } from "../ui/GlassCard";
 import { MarqueeStrip } from "../ui/MarqueeStrip";
 import { RevealText } from "../ui/RevealText";
+import { useInView } from "../../hooks/useInView";
 
 export function Skills() {
+  const [ref, inView] = useInView(0.1);
+
   return (
-    <section id="skills" className="section-shell skills-section">
+    <>
+    <div className="section-divider" />
+    <section ref={ref} id="skills" className={`section section-shell skills-section ${inView ? 'skills-section--visible' : ''}`}>
       <span className="section-ghost" aria-hidden="true">
         03
       </span>
@@ -43,5 +48,6 @@ export function Skills() {
         })}
       </div>
     </section>
+    </>
   );
 }

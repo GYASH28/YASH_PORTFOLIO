@@ -25,6 +25,17 @@ export function Hero() {
         >
           {hero.label}
         </motion.p>
+        
+        <motion.div 
+          className="availability-badge"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.3, duration: 0.5 }}
+        >
+          <div className="avail-dot" />
+          Available for projects
+        </motion.div>
+
         <h1 className="text-hero hero-headline" aria-label="I build things that work">
           {hero.headline.map((line, index) => (
             <motion.span
