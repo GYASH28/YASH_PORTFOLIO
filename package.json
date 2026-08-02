@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node build-static.cjs"
+    "build": "node build-fixed.cjs"
   }
 }
