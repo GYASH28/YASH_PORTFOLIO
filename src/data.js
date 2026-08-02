@@ -1,3 +1,5 @@
+export const EMAIL = "yash.k.ganesh@gmail.com";
+
 export const projects = [
   {
     number: "01",
@@ -149,4 +151,3 @@ export const faqs = [
   ["Which models and platforms do you use?", "I choose the stack around the job. My project work includes Gemini, Groq, local providers, n8n, Firebase, PostgreSQL, React, Next.js, Electron, and modern deployment platforms."],
   ["How do you approach privacy and control?", "Minimum necessary access, explicit user permissions, visible approval points, source traceability, and a deployment model appropriate to the sensitivity of the work."],
 ];
-
