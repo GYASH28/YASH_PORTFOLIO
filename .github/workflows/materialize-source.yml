@@ -1,0 +1,31 @@
+name: Materialize portfolio source
+
+on:
+  push:
+    branches:
+      - codex/trionn-haoqi-experience-rebuild
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: ${{ !contains(github.event.head_commit.message, '[materialized]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Expand source bundle
+        run: node unpack.cjs
+      - name: Commit readable source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "feat: materialize Trionn/Haoqi experience source [materialized]"
+          git push
