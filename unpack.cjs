@@ -11,6 +11,11 @@ const parts = fs.readdirSync(partsDir)
 const encoded = parts.map((name) => fs.readFileSync(path.join(partsDir, name), 'utf8').trim()).join('');
 const files = JSON.parse(zlib.gunzipSync(Buffer.from(encoded, 'base64')).toString('utf8'));
 
+const aboutPath = 'src/components/AboutFooter.jsx';
+files[aboutPath] = `import HERO_IMAGE from "../assets/hero.js";\n${files[aboutPath]}`
+  .replace('src="/images/portraits/yash-builder.webp"', 'src={HERO_IMAGE}')
+  .replace('src="/images/portraits/yash-editorial.webp"', 'src={HERO_IMAGE}');
+
 for (const target of ['src', 'public/assets']) {
   fs.rmSync(path.join(root, target), { recursive: true, force: true });
 }
@@ -23,6 +28,7 @@ for (const [relative, content] of Object.entries(files)) {
 
 const pkgPath = path.join(root, 'package.json');
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+pkg.scripts.dev = 'vite';
 pkg.scripts.build = 'vite build';
 fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
 
