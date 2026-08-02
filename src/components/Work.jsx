@@ -1,22 +1,112 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
-import { ArrowRight, ArrowUpRight, Check, GithubLogo, X } from "@phosphor-icons/react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, GithubLogo, Pause, Play } from "@phosphor-icons/react";
 import { gsap } from "gsap";
-import { PROJECTS } from "../data.js";
-import { Ext, Magnetic, useReducedMotion } from "./Core.jsx";
+import { projects, labs } from "./data.js";
+import { ExternalLink, SectionLabel } from "./Core.jsx";
 
-function Visual({project}){
-  const Icon=project.icon;
-  return <div className={`project-visual accent-${project.accent}`}><div className="window"><i/><i/><i/><span>{project.name.toLowerCase().replaceAll(" ","-")}.system</span></div>{project.media?<img src={project.media} alt={`${project.name} interface`}/>:<div className="system-art"><div className="core"><Icon weight="duotone"/></div>{project.nodes.map(label=><span key={label}>{label}</span>)}<b>{project.name}</b><svg viewBox="0 0 600 400"><path d="M105 80C250 20 320 140 495 74M92 300C230 355 370 240 520 320M120 190C240 105 385 290 510 190"/></svg></div>}<i className="scan"/></div>;
+export function ProjectStage({ project, direction }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(".project-stage-image", { clipPath: direction > 0 ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)", scale: 1.035 }, { clipPath: "inset(0 0 0 0)", scale: 1, duration: 0.85, ease: "power4.inOut" });
+      gsap.from(".project-stage-copy > *", { y: 20, autoAlpha: 0, stagger: 0.06, duration: 0.5, delay: 0.25 });
+    }, ref);
+    return () => ctx.revert();
+  }, [project, direction]);
+  return (
+    <div className="project-stage" ref={ref} style={{ "--project-color": project.color }}>
+      <div className="project-stage-media">
+        {project.media ? (
+          <img className="project-stage-image" src={project.media} alt={`${project.name} interface`} />
+        ) : (
+          <div className="project-stage-image project-stage-generated" aria-label={`${project.name} system visual`}>
+            <div className="generated-grid" />
+            <div className="generated-orbit orbit-a" /><div className="generated-orbit orbit-b" />
+            <strong>{project.short}</strong>
+            <div className="generated-nodes">{project.proof.map((item, index) => <span style={{ "--node": index }} key={item}>{item}</span>)}</div>
+            <small>{project.kind}</small>
+          </div>
+        )}
+        <div className="project-stage-shine" />
+        <span className="project-stage-index">{project.number} / 06</span>
+        <span className="project-stage-status"><i />{project.status}</span>
+      </div>
+      <div className="project-stage-copy">
+        <p className="eyebrow">{project.kind}</p>
+        <h3>{project.name}</h3>
+        <p className="project-stage-summary">{project.summary}</p>
+        <p className="project-stage-detail">{project.detail}</p>
+        <div className="proof-grid">{project.proof.map((item) => <span key={item}>{item}</span>)}</div>
+        <div className="project-actions">
+          {project.live && <ExternalLink className="button button--project" href={project.live}>Open live <ArrowUpRight /></ExternalLink>}
+          <ExternalLink className="button button--project muted" href={project.repo}>GitHub <GithubLogo weight="fill" /></ExternalLink>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export function Projects({open}){
-  const root=useRef(null),track=useRef(null),reduced=useReducedMotion();
-  useLayoutEffect(()=>{if(reduced)return;const mm=gsap.matchMedia();mm.add("(min-width:900px)",()=>{const distance=()=>Math.max(0,track.current.scrollWidth-innerWidth+innerWidth*.1);const tween=gsap.to(track.current,{x:()=>-distance(),ease:"none",scrollTrigger:{trigger:root.current,start:"top top",end:()=>`+=${distance()*1.05}`,pin:true,scrub:1,invalidateOnRefresh:true}});return()=>tween.kill()});return()=>mm.revert()},[reduced]);
-  return <section className="work" id="work" ref={root}><div className="work-head pad"><div><p className="tag light">02 / SELECTED WORK</p><h2>Systems with<br/><em>something at stake.</em></h2></div><p>Real products, client work and ongoing experiments built around specific problems.</p></div><div className="project-track" ref={track}>{PROJECTS.map(project=><article className={`project-card accent-${project.accent}`} key={project.name}><div className="project-top"><span>{project.n}</span><span>{project.type}</span><span><i/>{project.status}</span></div><Visual project={project}/><div className="project-copy"><div><h3>{project.name}</h3><p>{project.summary}</p></div><div><button onClick={()=>open(project)}>Open case <ArrowRight/></button>{project.live&&<Ext href={project.live} label={`Open ${project.name} live`}><ArrowUpRight/></Ext>}{project.repo&&<Ext href={project.repo} label={`Open ${project.name} repository`}><GithubLogo weight="fill"/></Ext>}</div></div></article>)}<div className="project-end"><p>THE NEXT SYSTEM</p><h3>Could be yours.</h3><span>Bring one painful workflow. We will find the useful starting point.</span><Magnetic href="mailto:yash.k.ganesh@gmail.com?subject=I%20have%20a%20workflow%20to%20improve">LET'S TALK <ArrowUpRight/></Magnetic></div></div></section>;
+export function Work() {
+  const [active, setActive] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [auto, setAuto] = useState(false);
+  const choose = (index) => {
+    setDirection(index >= active ? 1 : -1);
+    setActive(index);
+  };
+  const step = (delta) => {
+    const next = (active + delta + projects.length) % projects.length;
+    setDirection(delta);
+    setActive(next);
+  };
+  useEffect(() => {
+    if (!auto) return undefined;
+    const timer = setInterval(() => step(1), 4200);
+    return () => clearInterval(timer);
+  }, [auto, active]);
+
+  return (
+    <section className="work" id="work">
+      <div className="work-heading">
+        <SectionLabel light>02 / Selected systems</SectionLabel>
+        <h2>Not mockups.<br /><span>Working evidence.</span></h2>
+        <p>Explore six products and experiments. Each one started with a specific workflow, not a generic AI feature list.</p>
+      </div>
+      <ProjectStage project={projects[active]} direction={direction} />
+      <div className="project-controller">
+        <button type="button" onClick={() => step(-1)} data-cursor="PREV" aria-label="Previous project"><ArrowLeft /></button>
+        <div className="project-tabs">{projects.map((project, index) => <button type="button" className={index === active ? "is-active" : ""} onClick={() => choose(index)} key={project.name}><span>{project.number}</span>{project.short}</button>)}</div>
+        <button type="button" onClick={() => step(1)} data-cursor="NEXT" aria-label="Next project"><ArrowRight /></button>
+        <button className="project-auto" type="button" onClick={() => setAuto((value) => !value)}>{auto ? <Pause weight="fill" /> : <Play weight="fill" />}{auto ? "Pause" : "Autoplay"}</button>
+      </div>
+    </section>
+  );
 }
 
-export function ProjectModal({project,close}){
-  useEffect(()=>{if(!project)return;document.body.classList.add("modal-open");const escape=e=>e.key==="Escape"&&close();addEventListener("keydown",escape);return()=>{document.body.classList.remove("modal-open");removeEventListener("keydown",escape)}},[project,close]);
-  if(!project)return null;
-  return <div className="modal" role="dialog" aria-modal="true" aria-label={`${project.name} case study`}><button className="backdrop" onClick={close} aria-label="Close case study"/><div className={`modal-panel accent-${project.accent}`}><div className="modal-head"><span>{project.n} / CASE FILE</span><button onClick={close}><X/></button></div><Visual project={project}/><div className="modal-copy"><p className="tag">{project.type}</p><h2>{project.name}</h2><p>{project.detail}</p><div className="modal-grid"><div><small>PROOF / SCOPE</small>{project.proof.map(item=><span key={item}><Check/>{item}</span>)}</div><div><small>BUILD STACK</small>{project.stack.map(item=><span key={item}>{item}</span>)}</div></div><div className="modal-actions">{project.live&&<Ext className="btn solid" href={project.live}>Visit live <ArrowUpRight/></Ext>}{project.repo&&<Ext className="btn dark" href={project.repo}>Repository <GithubLogo weight="fill"/></Ext>}</div></div></div></div>;
+export function WorkflowLab() {
+  const [active, setActive] = useState(0);
+  const item = labs[active];
+  return (
+    <section className="lab" id="lab">
+      <div className="lab-heading">
+        <SectionLabel>03 / Interactive workflow lab</SectionLabel>
+        <h2>Choose the friction.<br /><span>See the system.</span></h2>
+      </div>
+      <div className="lab-shell" style={{ "--lab-shift": active }}>
+        <div className="lab-nav">{labs.map((lab, index) => <button key={lab.id} type="button" className={index === active ? "is-active" : ""} onClick={() => setActive(index)}><span>0{index + 1}</span>{lab.label}<ArrowRight /></button>)}</div>
+        <div className="lab-output" key={item.id}>
+          <p className="eyebrow">Selected system / {item.label}</p>
+          <h3>{item.title}</h3>
+          <p>{item.copy}</p>
+          <div className="lab-flow">
+            <article><small>INPUT</small><strong>{item.input}</strong></article>
+            <div className="lab-engine"><span /><span /><span /><b>{item.engine}</b></div>
+            <article><small>OUTPUT</small><strong>{item.output}</strong></article>
+          </div>
+          <div className="lab-metrics"><span><b>01</b> Clear owner</span><span><b>02</b> Approval points</span><span><b>03</b> Human fallback</span><span><b>04</b> Measurable result</span></div>
+        </div>
+      </div>
+      <div className="lab-marquee"><div><span>STRATEGY</span><span>INTERFACE</span><span>INTEGRATION</span><span>DEPLOYMENT</span><span>HANDOVER</span><span>STRATEGY</span><span>INTERFACE</span><span>INTEGRATION</span><span>DEPLOYMENT</span><span>HANDOVER</span></div></div>
+    </section>
+  );
 }
