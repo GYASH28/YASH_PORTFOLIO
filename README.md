@@ -1,14 +1,22 @@
 # Yash Ganesh — AI Systems, Made Useful
 
-A first-party static portfolio with the original cinematic opening sequence, scroll-driven motion, an interactive 3D system model, project case studies and responsive accessibility.
+A first-party static portfolio with a cinematic opening sequence, interactive system model, responsive project case studies, and a progressive motion layer.
+
+## Interaction layer
+
+- Scroll-scrubbed 3D system object with drag controls
+- Section-aware depth rail and live system signal
+- Project-card depth parallax and pointer-reactive lighting
+- Heading progress choreography
+- Mobile, coarse-pointer, and reduced-motion fallbacks
+- No external runtime libraries
 
 ## Reliability
 
-- No browser ZIP extraction
-- No runtime project download
-- No external JavaScript framework or package dependency
+- No browser ZIP extraction or remote project download
 - Fail-safe boot guard prevents a permanent loading screen
 - Deterministic `npm run build` output
+- Motion features are additive: core content remains usable if they fail
 
 ## Local verification
 
