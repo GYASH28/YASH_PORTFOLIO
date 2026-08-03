@@ -1,6 +1,18 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "cleanUrls": true,
-  "trailingSlash": false
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "bootstrap.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "portfolio-source.zip",
+      "use": "@vercel/static"
+    }
+  ]
 }
