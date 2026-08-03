@@ -1,32 +1,14 @@
 # Yash Ganesh — Cinematic AI Portfolio
 
-Production-ready portfolio for Yash Ganesh, an independent AI product builder and implementation consultant in Pune.
+This is the production release of Yash Ganesh's motion-led AI implementation portfolio.
 
-## What changed in v3
+## v3 enhancements
 
-- Added a scroll-controlled 3D AI systems lab with five visual states
-- Added a rotating CSS 3D hero object and orbital interaction
-- Added pointer-drag interaction and scroll choreography
-- Added depth tilt and lighting to cards and interactive surfaces
-- Improved intro pacing while preserving the existing content and project stories
-- Kept responsive and reduced-motion behavior
+- Scroll-controlled 3D AI systems lab with five visual states
+- Rotating CSS 3D hero object and orbital nodes
+- Pointer-drag interaction and deeper scroll choreography
+- Depth tilt and lighting across cards and interactive surfaces
+- Faster intro pacing
+- Responsive and reduced-motion behavior retained
 
-## Development
-
-The complete editable source is stored in `portfolio-source.zip`.
-
-```bash
-npm run unpack
-cd source
-python -m http.server 4173
-```
-
-## Production
-
-Vercel runs:
-
-```bash
-npm run build
-```
-
-The build extracts the validated static portfolio into `dist/`, including the full HTML, CSS, JavaScript, project screenshots, portraits, and local fonts.
+The full editable source, project screenshots, portraits, and local fonts are preserved in `portfolio-source.zip`. The tiny zero-dependency bootstrap loads that validated source as a static Vercel deployment, avoiding framework and package-manager build failures.
