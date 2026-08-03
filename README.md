@@ -1,46 +1,32 @@
-# Yash Ganesh — AI Implementation Portfolio
+# Yash Ganesh — Cinematic AI Portfolio
 
-A motion-led portfolio and consultancy site for Yash Ganesh, an independent AI product builder and implementation consultant based in Pune, India.
+Production-ready portfolio for Yash Ganesh, an independent AI product builder and implementation consultant in Pune.
 
-## Direction
+## What changed in v3
 
-The experience combines oversized editorial typography, tactile motion, project-led storytelling and interactive consultancy exploration. It is inspired by the level of craft and pacing in Trionn, Jingjing Han and HeyNesh, while using an original visual system and Yash's real projects.
-
-## Included
-
-- Kinetic hero and custom preloader
-- Scroll-driven horizontal project deck on desktop
-- Responsive vertical project story on touch devices
-- Expandable project case files
-- Interactive AI implementation service selector
-- Animated implementation method
-- Magnetic controls, custom cursor and scroll progress
-- Reduced-motion support
-- Mobile navigation and mobile-specific layout
-- Vercel deployment configuration
-
-## Projects featured
-
-- Lernio AI
-- B.R.A.C.E
-- CampusMate
-- Fakhri Yarns
-- AI Second Brain
-- Cinematic Portfolio
+- Added a scroll-controlled 3D AI systems lab with five visual states
+- Added a rotating CSS 3D hero object and orbital interaction
+- Added pointer-drag interaction and scroll choreography
+- Added depth tilt and lighting to cards and interactive surfaces
+- Improved intro pacing while preserving the existing content and project stories
+- Kept responsive and reduced-motion behavior
 
 ## Development
 
+The complete editable source is stored in `portfolio-source.zip`.
+
 ```bash
-npm install
-npm run dev
+npm run unpack
+cd source
+python -m http.server 4173
 ```
 
-Production build:
+## Production
+
+Vercel runs:
 
 ```bash
 npm run build
 ```
 
-## Stack
-
-React 19, Vite, GSAP, ScrollTrigger, Phosphor Icons and Fontsource.
+The build extracts the validated static portfolio into `dist/`, including the full HTML, CSS, JavaScript, project screenshots, portraits, and local fonts.
