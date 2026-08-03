@@ -1,0 +1,1 @@
+window.__portfolioBootTimer=setTimeout(()=>{if(!window.__portfolioReady){document.body.classList.remove('is-loading');document.querySelector('.intro')?.remove()}},7000);
