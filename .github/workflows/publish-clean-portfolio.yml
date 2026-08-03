@@ -19,23 +19,209 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reconstruct and verify source archive
+      - name: Extract the complete original source
         shell: bash
         run: |
           set -euo pipefail
-          cat .publish/chunk-* > /tmp/portfolio-source.b64
-          base64 --decode /tmp/portfolio-source.b64 > /tmp/portfolio-source.zip
-          echo "0527e437b652ab02923204034c6c108e71feb7000a1885991f1a8e42dd9917c4  /tmp/portfolio-source.zip" | sha256sum --check
+          test -f portfolio-source.zip
           rm -rf /tmp/portfolio-release
           mkdir -p /tmp/portfolio-release
-          unzip -q /tmp/portfolio-source.zip -d /tmp/portfolio-release
+          unzip -q portfolio-source.zip -d /tmp/portfolio-release
+          test -f /tmp/portfolio-release/index.html
+          test -f /tmp/portfolio-release/app.js
+          test -f /tmp/portfolio-release/styles.css
+          test -f /tmp/portfolio-release/assets/portraits/yash-real-hero.webp
+          test -f /tmp/portfolio-release/assets/projects/lernio-ai-home.webp
+
+      - name: Apply audited production fixes
+        shell: bash
+        working-directory: /tmp/portfolio-release
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          index = Path('index.html')
+          html = index.read_text()
+          html = html.replace(
+              '<meta name="description" content="Yash Ganesh — AI implementation, product engineering, intelligent workflows and high-craft digital experiences." />',
+              '''<meta name="description" content="Yash Ganesh — independent AI implementation consultant and product builder creating useful AI systems, intelligent workflows and high-craft digital experiences." />
+            <meta name="robots" content="index,follow,max-image-preview:large" />
+            <meta name="author" content="Yash Ganesh" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="Yash Ganesh — AI Systems, Made Useful" />
+            <meta property="og:description" content="AI implementation, product engineering and intelligent workflows designed and shipped by Yash Ganesh." />
+            <meta property="og:image" content="/assets/projects/yash-portfolio-hero-portrait.webp" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <link rel="icon" href="/favicon.svg" type="image/svg+xml" />'''
+          )
+          html = html.replace(
+              '<link rel="stylesheet" href="styles.css" />',
+              '<link rel="preload" href="/assets/fonts/barlow-800.woff2" as="font" type="font/woff2" crossorigin />\n  <link rel="stylesheet" href="/styles.css" />\n  <script defer src="/boot-guard.js"></script>'
+          )
+          html = html.replace('<script type="module" src="/app.js"></script>', '<script defer src="/app.js"></script>')
+          html = html.replace('<img id="case-image" src="assets/projects/lernio-ai-home.webp" alt="" />', '<img id="case-image" src="assets/projects/lernio-ai-home.webp" alt="Selected project interface" />')
+          html = html.replace('<a id="case-live" class="button button--solid" href="#" target="_blank" rel="noreferrer">', '<a id="case-live" class="button button--solid" href="https://lernioai.vercel.app" target="_blank" rel="noreferrer">')
+          html = html.replace('<a id="case-repo" class="button button--ghost" href="#" target="_blank" rel="noreferrer">', '<a id="case-repo" class="button button--ghost" href="https://github.com/GYASH28/LERNIOAI" target="_blank" rel="noreferrer">')
+          index.write_text(html)
+
+          app = Path('app.js')
+          js = app.read_text()
+          js = js.replace(
+              "(() => {\n  'use strict';",
+              "(() => {\n  'use strict';\n  window.__portfolioAppStarted = true;\n  if (window.__portfolioBootTimer) clearTimeout(window.__portfolioBootTimer);"
+          )
+          app.write_text(js)
+          PY
+
+          cat > boot-guard.js <<'EOF'
+          (() => {
+            'use strict';
+            const unlock = () => {
+              if (window.__portfolioAppStarted) return;
+              document.body?.classList.remove('is-loading');
+              const intro = document.getElementById('intro');
+              if (intro) {
+                intro.classList.add('is-gone');
+                intro.setAttribute('aria-hidden', 'true');
+              }
+              console.error('Portfolio interactions failed to initialize; displaying the static experience.');
+            };
+            window.__portfolioBootTimer = window.setTimeout(unlock, 7000);
+            window.addEventListener('error', (event) => {
+              if (event?.target?.tagName === 'SCRIPT') unlock();
+            }, true);
+          })();
+          EOF
+
+          cat > favicon.svg <<'EOF'
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#07090a"/><path d="M9 12h12l11 18 11-18h12L38 38v14H26V38z" fill="#f4f1ea"/><path d="M31 15l3 34" stroke="#ff7626" stroke-width="3"/></svg>
+          EOF
+
+          cat > robots.txt <<'EOF'
+          User-agent: *
+          Allow: /
+
+          Sitemap: https://bracingyash.vercel.app/sitemap.xml
+          EOF
+
+          cat > sitemap.xml <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url><loc>https://bracingyash.vercel.app/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+          </urlset>
+          EOF
+
+          cat > package.json <<'EOF'
+          {
+            "name": "yash-ganesh-cinematic-portfolio",
+            "version": "3.1.0",
+            "private": true,
+            "type": "module",
+            "scripts": {
+              "dev": "python -m http.server 4173",
+              "build": "node scripts/build.mjs",
+              "preview": "python -m http.server 4173 -d dist",
+              "check": "node --check app.js && node --check boot-guard.js && node --check scripts/build.mjs"
+            },
+            "engines": { "node": ">=18" }
+          }
+          EOF
+
+          cat > scripts/build.mjs <<'EOF'
+          import { cp, mkdir, rm } from "node:fs/promises";
+          import { dirname, resolve } from "node:path";
+          import { fileURLToPath } from "node:url";
+
+          const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+          const out = resolve(root, "dist");
+          const entries = [
+            "index.html", "styles.css", "app.js", "boot-guard.js",
+            "favicon.svg", "robots.txt", "sitemap.xml", "assets"
+          ];
+
+          await rm(out, { recursive: true, force: true });
+          await mkdir(out, { recursive: true });
+          for (const entry of entries) {
+            await cp(resolve(root, entry), resolve(out, entry), { recursive: true });
+          }
+          console.log(`Built ${entries.length} static entries into dist/`);
+          EOF
+
+          cat > vercel.json <<'EOF'
+          {
+            "$schema": "https://openapi.vercel.sh/vercel.json",
+            "buildCommand": "npm run build",
+            "outputDirectory": "dist",
+            "cleanUrls": true,
+            "trailingSlash": false,
+            "headers": [
+              {
+                "source": "/(.*)",
+                "headers": [
+                  { "key": "X-Content-Type-Options", "value": "nosniff" },
+                  { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+                  { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+                  { "key": "X-Frame-Options", "value": "DENY" },
+                  { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" }
+                ]
+              },
+              {
+                "source": "/assets/(.*)",
+                "headers": [
+                  { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+                ]
+              }
+            ]
+          }
+          EOF
+
+          cat > README.md <<'EOF'
+          # Yash Ganesh — Cinematic AI Portfolio
+
+          Production portfolio for Yash Ganesh, an independent AI implementation consultant and product builder in Pune, India.
+
+          ## Experience
+
+          - Original cinematic `OBSERVE → QUESTION → BUILD → IMPROVE` opening sequence
+          - Scroll-driven AI systems scenes and interactive 3D canvases
+          - Six real project stories with local screenshots
+          - Pointer interaction, card depth, parallax and responsive motion
+          - Mobile navigation and reduced-motion support
+          - Zero runtime API, archive, CDN or framework dependency
+
+          ## Local development
+
+          ```bash
+          npm run dev
+          ```
+
+          ## Production
+
+          ```bash
+          npm run check
+          npm run build
+          npm run preview
+          ```
+
+          Vercel serves `dist/`. Every production asset is deployed as a first-party static file.
+          EOF
+
+          cat > .gitignore <<'EOF'
+          node_modules/
+          dist/
+          .vercel/
+          .DS_Store
+          *.log
+          EOF
+
+          rm -f README.txt START_LOCALHOST.bat START_LOCALHOST.ps1
 
       - name: Validate complete project
         shell: bash
         working-directory: /tmp/portfolio-release
         run: |
           set -euo pipefail
-          npm install --ignore-scripts --no-audit --no-fund
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
           npm run check
           npm run build
           test -f dist/index.html
@@ -44,7 +230,26 @@ jobs:
           test -f dist/boot-guard.js
           test -f dist/assets/portraits/yash-real-hero.webp
           test -f dist/assets/projects/lernio-ai-home.webp
+          test "$(wc -c < dist/index.html)" -gt 20000
+          test "$(wc -c < dist/app.js)" -gt 40000
           ! grep -R "portfolio-source.zip\|FAILED TO FETCH\|fetch(" index.html app.js boot-guard.js
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from collections import Counter
+          from pathlib import Path
+          class Audit(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.ids=[]; self.hrefs=[]; self.images=[]
+              def handle_starttag(self, tag, attrs):
+                  data=dict(attrs)
+                  if 'id' in data: self.ids.append(data['id'])
+                  if tag == 'a' and 'href' in data: self.hrefs.append(data['href'])
+                  if tag == 'img': self.images.append(data)
+          audit=Audit(); audit.feed(Path('index.html').read_text())
+          assert not [key for key,value in Counter(audit.ids).items() if value > 1]
+          assert not [href for href in audit.hrefs if href.startswith('#') and href != '#' and href[1:] not in audit.ids]
+          assert not [image.get('src') for image in audit.images if image.get('alt') is None]
+          PY
 
       - name: Replace staging branch with real source
         shell: bash
