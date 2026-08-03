@@ -1,0 +1,42 @@
+(()=>{'use strict';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches,coarse=matchMedia('(pointer:coarse)').matches;
+const cases=[
+{n:'01',t:'LERNIO AI',k:'AI LEARNING OPERATING SYSTEM',d:'Lernio connects structured learning material with an AI tutor, quizzes, revision, analytics and planning in one practical student workflow.',p:['44 subjects','241 structured lessons','AI tutor and quizzes','Live production deployment'],live:'https://lernioai.vercel.app',repo:'https://github.com/GYASH28/LERNIOAI'},
+{n:'02',t:'B.R.A.C.E',k:'PERMISSIONED DESKTOP AI COMPANION',d:'A voice-first desktop assistant with persistent memory, visible tool activity and approval gates around file, terminal and browser actions.',p:['Electron desktop app','Persistent memory','Voice interaction states','Permissioned tools'],live:'',repo:'https://github.com/GYASH28/brace_new'},
+{n:'03',t:'CAMPUSMATE',k:'MULTI-ROLE CAMPUS PLATFORM',d:'Attendance, notices, timetables, assignments, exams, QR workflows and analytics organized around five real campus roles.',p:['Five user roles','QR attendance','Responsive PWA','Live deployment'],live:'https://campuscwit.vercel.app',repo:'https://github.com/GYASH28/CAMPUSMATE'},
+{n:'04',t:'FAKHRI MART',k:'WHOLESALE CATALOGUE EXPERIENCE',d:'A cinematic catalogue and enquiry system for a traditional yarn wholesaler, designed around product discovery and WhatsApp conversion.',p:['Real client project','Product catalogue','WhatsApp enquiry flow','Mobile-first design'],live:'https://fakhriyarns.vercel.app',repo:'https://github.com/GYASH28/sample-website'},
+{n:'05',t:'INTERACTIVE QUIZ',k:'FOCUSED BROWSER LEARNING TOOL',d:'A responsive zero-framework quiz with dynamic questions, immediate scoring and clear feedback.',p:['Plain HTML/CSS/JS','Immediate feedback','Responsive layout','GitHub Pages'],live:'https://gyash28.github.io/WD_practical_no_20/',repo:'https://github.com/GYASH28/WD_practical_no_20'},
+{n:'06',t:'CINEMATIC PORTFOLIO',k:'MOTION-LED PERSONAL EXPERIENCE',d:'A personal experience built around cinematic reveals, scroll choreography, responsive motion and product storytelling.',p:['Scroll-driven scenes','Original visual system','Responsive motion','Static production build'],live:location.origin,repo:'https://github.com/GYASH28/YASH_PORTFOLIO'}];
+const services=[
+['OPERATIONS','Remove repetitive work without breaking the workflow.','Map the current process, locate expensive friction and build an automation layer around the tools your team already uses.',['WORKFLOW AUDIT','APPROVAL POINTS','AUTOMATION MAP']],
+['KNOWLEDGE','Turn scattered information into usable answers.','Design searchable internal knowledge with clear sources, role access and useful context.',['KNOWLEDGE MAP','SEMANTIC SEARCH','SOURCE LINKS']],
+['CUSTOMER','Create faster customer journeys that still feel human.','Build AI-assisted lead and support flows that preserve context and hand off cleanly to a person.',['LEAD FLOW','SUPPORT COPILOT','HUMAN HANDOFF']],
+['PRODUCT','Move an AI idea from slide deck to working pilot.','Combine product thinking, interaction design and rapid engineering to ship a contained pilot for real users.',['PRODUCT SCOPE','PROTOTYPE','DEPLOYMENT']]];
+
+const finish=()=>{$('.intro')?.classList.add('gone');document.body.classList.remove('loading');setTimeout(()=>$('.intro')?.setAttribute('aria-hidden','true'),900)};
+$('.enter')?.addEventListener('click',finish);$('.skip-intro')?.addEventListener('click',finish);
+if(reduce||new URLSearchParams(location.search).has('skip'))finish();else setTimeout(finish,3600);
+setInterval(()=>{const c=$('#clock');if(c)c.textContent=new Date().toLocaleTimeString('en-GB',{hour12:false})},1000);
+
+const menu=$('.menu'),mobile=$('.mobile-nav');
+function setMenu(open){mobile?.classList.toggle('open',open);mobile?.setAttribute('aria-hidden',String(!open));menu?.setAttribute('aria-expanded',String(open));document.body.classList.toggle('menu-open',open)}
+menu?.addEventListener('click',()=>setMenu(menu.getAttribute('aria-expanded')!=='true'));
+$$('.mobile-nav a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+$$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=$(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:reduce?'auto':'smooth'})}}));
+
+if('IntersectionObserver'in window){const o=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');o.unobserve(e.target)}}),{threshold:.1});$$('.reveal').forEach(e=>o.observe(e))}else $$('.reveal').forEach(e=>e.classList.add('visible'));setTimeout(()=>$$('.reveal').forEach(e=>e.classList.add('visible')),1400);
+let last=0;addEventListener('scroll',()=>{const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);$('.progress i').style.transform=`scaleX(${scrollY/max})`;const h=$('header');h.classList.toggle('hidden',scrollY>last&&scrollY>180);last=scrollY;let active='';$$('main section[id]').forEach(s=>{if(s.getBoundingClientRect().top<innerHeight*.45)active=s.id});$$('header nav a').forEach(a=>a.classList.toggle('current',a.hash==='#'+active))},{passive:true});
+
+if(!coarse&&!reduce){const cur=$('.cursor');addEventListener('pointermove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px'});document.addEventListener('pointerover',e=>cur.classList.toggle('active',!!e.target.closest('a,button,.tilt')));const photo=$('.tilt');photo?.addEventListener('pointermove',e=>{const r=photo.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;photo.style.transform=`perspective(1100px) rotateY(${x*5}deg) rotateX(${-y*4}deg)`;photo.style.setProperty('--x',(x+.5)*100+'%');photo.style.setProperty('--y',(y+.5)*100+'%')});photo?.addEventListener('pointerleave',()=>photo.style.transform='')}
+
+const modal=$('.modal');
+function openModal(i){const d=cases[i];$('#case-num').textContent=d.n+' / CASE FILE';$('#case-title').textContent=d.t;$('#case-kind').textContent=d.k;$('#case-detail').textContent=d.d;$('#case-proof').innerHTML=d.p.map(x=>`<span>✓ ${x}</span>`).join('');const live=$('#case-live');live.hidden=!d.live;live.href=d.live||'#';$('#case-repo').href=d.repo;modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');$('.close').focus()}
+function closeModal(){modal?.classList.remove('open');modal?.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open')}
+$$('.project').forEach((p,i)=>p.querySelector('button').addEventListener('click',()=>openModal(i)));$('.close')?.addEventListener('click',closeModal);$('.backdrop')?.addEventListener('click',closeModal);addEventListener('keydown',e=>{if(e.key==='Escape'){setMenu(false);closeModal()}});
+
+$$('.service-tabs button').forEach((b,i)=>b.addEventListener('click',()=>{const d=services[i];$$('.service-tabs button').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-selected','false')});b.classList.add('active');b.setAttribute('aria-selected','true');$('#service-label').textContent=d[0];$('#service-title').textContent=d[1];$('#service-copy').textContent=d[2];$('#service-tags').innerHTML=d[3].map(x=>`<i>${x}</i>`).join('')}));
+
+const canvas=$('#flow'),ctx=canvas?.getContext('2d'),host=$('.service-output');if(canvas&&ctx&&host){let w=0,h=0;const resize=()=>{const r=host.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);w=r.width;h=r.height;canvas.width=w*d;canvas.height=h*d;ctx.setTransform(d,0,0,d,0,0)};const draw=t=>{ctx.clearRect(0,0,w,h);const n=[[w*.12,h*.82],[w*.43,h*.7],[w*.73,h*.5],[w*.9,h*.82]];for(let i=0;i<3;i++){ctx.beginPath();ctx.strokeStyle=i===1?'rgba(255,116,48,.55)':'rgba(85,184,255,.42)';ctx.setLineDash([6,10]);ctx.lineDashOffset=-t*.025;ctx.moveTo(...n[i]);ctx.bezierCurveTo((n[i][0]+n[i+1][0])/2,n[i][1],(n[i][0]+n[i+1][0])/2,n[i+1][1],...n[i+1]);ctx.stroke()}ctx.setLineDash([]);n.forEach((q,i)=>{ctx.beginPath();ctx.fillStyle=i===1?'#ff7430':'#55b8ff';ctx.arc(q[0],q[1],4+Math.sin(t*.003+i)*2,0,Math.PI*2);ctx.fill()});requestAnimationFrame(draw)};addEventListener('resize',resize);resize();requestAnimationFrame(draw)}
+$('.copy')?.addEventListener('click',async e=>{const b=e.currentTarget,old=b.textContent;try{await navigator.clipboard.writeText('yash.k.ganesh@gmail.com');b.textContent='Copied ✓';setTimeout(()=>b.textContent=old,1400)}catch{location.href='mailto:yash.k.ganesh@gmail.com'}});
+})();

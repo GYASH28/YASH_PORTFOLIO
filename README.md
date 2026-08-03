@@ -1,11 +1,3 @@
-# Yash Ganesh Portfolio
+# Yash Ganesh — Fresh Portfolio
 
-A dependency-free portfolio using supplied static photography, real product screenshots, and a four-stage scroll-driven project story.
-
-## Local preview
-
-```bash
-python -m http.server 4173
-```
-
-Then open `http://127.0.0.1:4173`.
+A dependency-free portfolio for practical AI implementation and product engineering. The production source is plain HTML, CSS and JavaScript and was verified with Playwright at desktop, laptop and mobile sizes.

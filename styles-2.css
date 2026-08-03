@@ -1,22 +1,120 @@
-/* Portfolio v4 — static portraits and a four-project scroll story */
+/* Surgical fix only: preserve the original portfolio design, replace the marked
+   synthetic people with Yash's static portraits, and enhance the project sequence. */
 
-/* Remove synthetic 3D-human and floating 3D decorations. */
-.hero-object,.yg-depth-scene,.yg-depth-rail,.yg-section-signal,.cinema-orbit,.process-world,.wire-cube,.orb{display:none!important}
+/* Keep the original hero frame, proportions, type and layout. Replace only its image. */
+.hero-photo{
+  background:#080a0b url('https://raw.githubusercontent.com/GYASH28/YASH_PORTFOLIO/codex/portfolio-kinetic-real-photos/public/images/portraits/yash-hero.webp') 68% center/cover no-repeat!important;
+}
+.hero-photo>img{opacity:0!important}
+.hero-photo::before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(8,10,11,.24),transparent 40%),linear-gradient(180deg,transparent 68%,rgba(8,10,11,.28));
+}
+.hero-photo .scan,.hero-photo .shine,.hero-photo .chip{z-index:2}
 
-/* Rebalance the hero around a real static portrait. */
-.hero{min-height:100svh!important;padding:7.5rem var(--pad) 3rem!important;display:grid!important;grid-template-columns:minmax(0,1.05fr) minmax(380px,.95fr)!important;align-items:center!important;gap:clamp(2rem,5vw,6rem)!important}
-.hero>.grid,.hero-meta,.hero>.scroll{grid-column:1/-1}.hero-meta{position:absolute!important;left:var(--pad)!important;right:var(--pad)!important;top:6rem!important}.hero-copy{position:relative!important;z-index:5!important;margin:0!important;align-self:center!important}.hero-copy .eyebrow{margin-bottom:1.15rem!important}.hero-copy h1{display:block!important;max-width:8ch!important;margin:0!important;font-size:clamp(5rem,9.8vw,10rem)!important;line-height:.75!important;letter-spacing:-.065em!important}.hero-copy h1>span{display:none!important}.hero-copy h1:before{content:"I BUILD\A AI FOR\A REAL WORK.";display:block;white-space:pre; color:var(--white)}.hero-copy h1:after{content:"REAL WORK.";display:none}.hero-copy h1 em{color:var(--orange)!important}.hero-detail{width:min(38rem,100%)!important;margin:2rem 0 0!important}.hero-detail>p{max-width:35rem!important;font-size:.88rem!important;line-height:1.8!important;color:#c0c5c7!important}.hero-detail>p{font-size:0!important}.hero-detail>p:before{content:"I turn useful ideas and messy workflows into practical AI products — designing the experience, engineering the system and shipping the working result.";font-size:.88rem}.hero-photo{position:relative!important;right:auto!important;top:auto!important;width:100%!important;height:min(78vh,760px)!important;align-self:center!important;overflow:hidden!important;clip-path:polygon(9% 0,100% 0,100% 92%,90% 100%,0 100%,0 9%)!important;border:1px solid rgba(255,255,255,.16)!important;background:#050708 url("https://raw.githubusercontent.com/GYASH28/YASH_PORTFOLIO/codex/portfolio-kinetic-real-photos/public/images/portraits/yash-hero.webp") center/cover no-repeat!important;transform:none!important}.hero-photo img{opacity:0!important}.hero-photo .scan,.hero-photo .shine{display:none!important}.hero-photo .chip{z-index:3!important}.proof{display:flex!important;gap:1.5rem!important;margin-top:1.8rem!important}.proof span{display:grid!important;gap:.18rem!important}.proof b{font:700 1.35rem var(--display)!important}.proof small{color:#8b9295!important;font-size:.48rem!important;letter-spacing:.1em!important;text-transform:uppercase!important}
+/* Keep the original about composition. Replace only the old human visual. */
+.about-photo{
+  isolation:isolate;
+  background:#090b0d url('https://raw.githubusercontent.com/GYASH28/YASH_PORTFOLIO/codex/portfolio-kinetic-real-photos/public/images/portraits/yash-editorial.webp') center 12%/cover no-repeat!important;
+}
+.about-photo>img{opacity:0!important}
+.about-photo::before{
+  content:"";position:absolute;z-index:2;right:clamp(.8rem,2.4vw,2rem);bottom:clamp(3rem,6vw,4.6rem);
+  width:min(45%,350px);aspect-ratio:16/9;
+  background:#060708 url('https://raw.githubusercontent.com/GYASH28/YASH_PORTFOLIO/codex/portfolio-kinetic-real-photos/public/images/portraits/yash-builder.webp') center/cover no-repeat;
+  border:1px solid rgba(255,255,255,.32);box-shadow:0 24px 70px rgba(0,0,0,.48);
+  clip-path:polygon(7% 0,100% 0,100% 86%,93% 100%,0 100%,0 14%);
+}
+.about-photo>span{z-index:4}
 
-/* Replace the old generated about illustrations with static photography. */
-.about-photo{background:#090b0d url("https://raw.githubusercontent.com/GYASH28/YASH_PORTFOLIO/codex/portfolio-kinetic-real-photos/public/images/portraits/yash-editorial.webp") center top/cover no-repeat!important;transform:none!important}.about-photo img{opacity:0!important}.about-photo:before,.about-photo:after{display:none!important}
+/* Preserve the original work heading and typography. Show only the four requested projects. */
+.work{--sequence-red:#c8101d;--sequence-red-hot:#ff3142;--sequence-red-deep:#260408;background:#070809}
+.projects{position:relative;display:flex;flex-direction:column;gap:0;margin-top:5rem;border-top:0;counter-reset:project}
+.project:nth-child(5),.project:nth-child(6){display:none!important}
+.project:nth-child(1){order:1;z-index:4}
+.project:nth-child(3){order:2;z-index:3}
+.project:nth-child(2){order:3;z-index:2}
+.project:nth-child(4){order:4;z-index:1}
 
-/* Correct the work copy for four selected products. */
-.work{padding:0!important;background:#06080a!important}.work-head{padding:8rem var(--pad) 5rem!important}.work-head h2{font-size:0!important}.work-head h2:before{content:"FOUR PRODUCTS.\A ONE SCROLL STORY.";display:block;white-space:pre;font-size:clamp(4.7rem,9vw,9rem);line-height:.8;color:var(--white)}.work-head h2:after{content:""}.work-head p{font-size:0!important;max-width:38rem!important;margin-left:auto!important}.work-head p:before{content:"Real product screens from Lernio, CampusMate, B.R.A.C.E. and Fakhri Mart. Each project enters as you scroll, holds the stage, then fades into the next.";font-size:.78rem;line-height:1.75;color:#aeb4b5}
+/* Desktop: each project holds the viewport, then fades/scales as the next card takes over. */
+.project{
+  counter-increment:project;position:sticky;top:70px;min-height:calc(100svh - 70px);
+  grid-template-columns:minmax(0,1.18fr) minmax(300px,.82fr)!important;
+  gap:clamp(2rem,4vw,5rem);padding:clamp(3rem,6vh,5.5rem) clamp(1rem,3vw,3.5rem);
+  margin:0 0 18vh;border:1px solid rgba(255,49,66,.3)!important;
+  background:linear-gradient(108deg,rgba(38,4,8,.92),rgba(8,10,11,.97) 44%,#080a0b 73%),#080a0b;
+  box-shadow:0 -1px 0 rgba(255,49,66,.26),0 36px 110px rgba(0,0,0,.64);
+  overflow:hidden;isolation:isolate;transform-origin:50% 18%;
+  animation:redProjectStory linear both;animation-timeline:view();animation-range:entry 0% exit 100%;
+}
+.project::before{
+  content:"";position:absolute;z-index:-1;inset:-1px;pointer-events:none;
+  background:
+    radial-gradient(circle at 12% 50%,rgba(255,31,49,.25),transparent 31%),
+    linear-gradient(90deg,var(--sequence-red) 0 3px,transparent 3px),
+    repeating-linear-gradient(90deg,transparent 0 84px,rgba(255,49,66,.035) 85px),
+    repeating-linear-gradient(0deg,transparent 0 84px,rgba(255,49,66,.028) 85px);
+}
+.project::after{
+  content:"0" counter(project) " / 04";position:absolute;z-index:8;right:1rem;top:1rem;
+  padding:.55rem .68rem;border:1px solid rgba(255,255,255,.16);background:rgba(7,8,9,.74);
+  color:#ff8b96;font-size:.48rem;letter-spacing:.14em;backdrop-filter:blur(10px);
+}
+.project:nth-child(1){box-shadow:0 -1px 0 var(--sequence-red-hot),0 40px 125px rgba(0,0,0,.68),inset 0 3px var(--sequence-red-hot)}
+.project:nth-child(1) .project-copy::before{
+  content:"MAIN HIGHLIGHT";display:inline-block;margin-bottom:.8rem;padding:.5rem .62rem;
+  background:var(--sequence-red);color:#fff;font-size:.48rem;font-weight:800;letter-spacing:.13em;
+}
 
-/* Four real-project cards only. */
-.projects{display:flex!important;flex-direction:column!important;padding:0!important;gap:0!important}.project:nth-child(5),.project:nth-child(6){display:none!important}.project:nth-child(1){order:1}.project:nth-child(3){order:2}.project:nth-child(2){order:3}.project:nth-child(4){order:4}.project{position:relative!important;min-height:100svh!important;display:grid!important;grid-template-columns:minmax(0,1.45fr) minmax(320px,.55fr)!important;align-items:center!important;gap:clamp(2rem,4vw,5rem)!important;padding:7rem var(--pad) 5rem!important;border:0!important;border-top:1px solid rgba(255,255,255,.1)!important;background:#07090a!important;overflow:hidden!important;opacity:0;transform:translateY(9vh) scale(.975);animation:projectEnter linear both;animation-timeline:view();animation-range:entry 5% exit 95%}.project:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 25% 50%,rgba(57,167,255,.14),transparent 32%),radial-gradient(circle at 82% 72%,rgba(255,116,48,.1),transparent 30%);pointer-events:none}.project:nth-child(1){box-shadow:inset 0 3px var(--orange)}.project:nth-child(1):after{content:"MAIN HIGHLIGHT";position:absolute;z-index:7;left:var(--pad);top:5.6rem;padding:.55rem .7rem;background:var(--orange);color:#08090a;font-size:.5rem;font-weight:800;letter-spacing:.13em}.project-visual{position:relative!important;width:100%!important;height:min(70vh,720px)!important;overflow:hidden!important;border:1px solid rgba(255,255,255,.16)!important;background-color:#0b0d0f!important;background-size:cover!important;background-position:top center!important;background-repeat:no-repeat!important;box-shadow:0 36px 110px rgba(0,0,0,.55)!important;transform:none!important}.project-visual>*{display:none!important}.project-visual:before{content:"";position:absolute;z-index:4;left:0;right:0;top:0;height:36px;background:#0b0d0f;border-bottom:1px solid rgba(255,255,255,.12)}.project-visual:after{content:"";position:absolute;z-index:5;left:14px;top:15px;width:7px;height:7px;border-radius:50%;background:#ff6b5c;box-shadow:13px 0 #ffc34d,26px 0 #49d17d}.project:nth-child(1) .project-visual{background-image:url("https://raw.githubusercontent.com/GYASH28/YASH_PORTFOLIO/codex/portfolio-kinetic-real-photos/public/assets/lernio-screenshot.jpg")!important}.project:nth-child(3) .project-visual{background-image:url("https://image.thum.io/get/width/1800/crop/1000/noanimate/https://campuscwit.vercel.app")!important}.project:nth-child(2) .project-visual{background-image:url("https://image.thum.io/get/width/1800/crop/1000/noanimate/https://github.com/GYASH28/B.R.A.C.E")!important}.project:nth-child(4) .project-visual{background-image:url("https://image.thum.io/get/width/1800/crop/1000/noanimate/https://fakhriyarns.vercel.app")!important}.project-copy{position:relative!important;z-index:6!important;padding:0!important;transform:none!important}.project-copy>span{color:#8ab9d7!important;font-size:.56rem!important;letter-spacing:.14em!important}.project-copy h3{margin:.8rem 0 1.2rem!important;font-size:clamp(4rem,7vw,7.4rem)!important;line-height:.78!important}.project-copy p{font-size:.78rem!important;line-height:1.8!important;color:#b4b9bb!important}.project-copy>div{display:flex!important;flex-wrap:wrap!important;gap:.45rem!important;margin:1.4rem 0!important}.project-copy i{padding:.45rem .55rem!important;border:1px solid rgba(255,255,255,.16)!important;font-size:.5rem!important;font-style:normal!important}.project-copy button{display:none!important}
-@keyframes projectEnter{0%{opacity:0;transform:translateY(9vh) scale(.975)}20%{opacity:1;transform:none}72%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-7vh) scale(.985)}}
+/* Real project captures inside the original visual card shape. */
+.project-visual{
+  min-height:min(67vh,690px)!important;border-color:rgba(255,49,66,.38)!important;
+  background-color:#0c0d0f!important;background-size:cover!important;background-position:top center!important;background-repeat:no-repeat!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.035) inset;
+}
+.project-visual>*{display:none!important}
+.project-visual::before{
+  content:"";position:absolute;z-index:5;left:0;right:0;top:0;height:35px;
+  background:linear-gradient(90deg,#19070a,#0b0d0e);border-bottom:1px solid rgba(255,49,66,.32);
+}
+.project-visual::after{
+  content:"";position:absolute;z-index:6;left:14px;top:14px;width:7px;height:7px;border-radius:50%;
+  background:#ff4050;box-shadow:13px 0 #ff8a33,26px 0 #e7e7e7;
+}
+.project:nth-child(1) .project-visual{background-image:url('/assets/images/lernio.avif')!important}
+.project:nth-child(3) .project-visual{background-image:url('/assets/images/campusmate.avif')!important}
+.project:nth-child(2) .project-visual{background-image:url('/assets/images/brace.avif')!important}
+.project:nth-child(4) .project-visual{background-image:url('/assets/images/fakhri.avif')!important}
+.project-copy{position:relative;z-index:3}
+.project-copy>span{color:#ff6674!important}
+.project-copy h3{font-size:clamp(3.4rem,6.7vw,7rem)!important;text-shadow:0 0 50px rgba(200,16,29,.15)}
+.project-copy>p{color:#b9bdbf!important}
+.project-copy i{border-color:rgba(255,49,66,.34)!important;background:rgba(200,16,29,.06)}
+.project-copy button{border-bottom-color:#ff6674!important;color:#fff}
+.project-copy button:hover{color:#ff6674}
 
-@supports not (animation-timeline:view()){.project{opacity:1!important;transform:none!important;animation:none!important}}
-@media(max-width:900px){.hero{display:block!important;min-height:1100px!important;padding-top:7rem!important}.hero-meta{top:5rem!important}.hero-copy{margin-top:3rem!important}.hero-copy h1{font-size:17vw!important;max-width:none!important}.hero-detail{width:100%!important}.hero-photo{height:53vh!important;margin-top:2.5rem!important;background-position:66% center!important}.project{min-height:auto!important;grid-template-columns:1fr!important;padding:6rem var(--pad)!important;opacity:1!important;transform:none!important;animation:none!important}.project-visual{height:52vw!important;min-height:300px!important}.project:nth-child(1):after{top:4.7rem}}
-@media(max-width:560px){.hero{min-height:980px!important}.hero-copy h1{font-size:18.5vw!important;line-height:.78!important}.hero-photo{height:46vh!important;background-position:68% center!important}.hero-meta span:last-child{display:none!important}.proof{gap:.8rem!important;justify-content:space-between!important}.project{padding:5rem .9rem 4rem!important}.project-visual{height:58vw!important;min-height:250px!important}.project-copy h3{font-size:18vw!important}.work-head{padding:6rem .9rem 3rem!important}.work-head h2:before{font-size:16vw}}
+@keyframes redProjectStory{
+  0%{opacity:0;transform:translateY(11vh) scale(.962);filter:saturate(.68) brightness(.66)}
+  16%{opacity:1;transform:translateY(0) scale(1);filter:none}
+  66%{opacity:1;transform:translateY(0) scale(1);filter:none}
+  100%{opacity:0;transform:translateY(-7vh) scale(.978);filter:saturate(.72) brightness(.67)}
+}
+@supports not (animation-timeline:view()){
+  .project{opacity:1;transform:none;filter:none;animation:none}
+}
+@media(max-width:1050px){
+  .project{grid-template-columns:1fr!important;position:relative;top:auto;min-height:auto;margin-bottom:2rem;animation:none;opacity:1;transform:none;filter:none}
+  .project:nth-child(even) .project-visual{order:0}
+  .project-visual{min-height:52vw!important}
+}
+@media(max-width:760px){
+  .about-photo::before{width:50%;bottom:3.6rem}
+  .projects{margin-top:3rem}
+  .project{padding:1rem 1rem 2.2rem;margin-bottom:1.2rem;border-color:rgba(255,49,66,.26)!important}
+  .project-visual{min-height:62vw!important}
+  .project-copy{padding-top:1.5rem}
+  .project-copy h3{font-size:14vw!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .project{position:relative;top:auto;animation:none!important;opacity:1!important;transform:none!important;filter:none!important}
+}
