@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07090a">
+  <title>Yash Ganesh — Loading Portfolio</title>
+  <style>
+    :root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:#07090a;color:#f4f3ee}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 72% 30%,rgba(40,160,224,.13),transparent 26%),radial-gradient(circle at 28% 74%,rgba(255,107,24,.11),transparent 28%),#07090a}
+    .boot{width:min(560px,86vw);display:grid;gap:18px}.brand{font-weight:900;font-size:clamp(34px,8vw,72px);letter-spacing:-.08em}.brand i{color:#ff6b18;font-style:normal}.eyebrow,.status{font:700 11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:#74cfff}.track{height:2px;background:#263039;overflow:hidden}.track b{display:block;width:34%;height:100%;background:linear-gradient(90deg,#36baf3,#ff6b18);animation:move 1.15s ease-in-out infinite}.message{color:#a8b0b6;max-width:46ch;line-height:1.65}.error{padding:20px;border:1px solid #66392a;background:#160d09;color:#ffd7c3;line-height:1.6}.error a{color:#74cfff}
+    @keyframes move{0%{transform:translateX(-110%)}100%{transform:translateX(310%)}}
+    @media(prefers-reduced-motion:reduce){.track b{animation:none;width:100%}}
+  </style>
+</head>
+<body>
+  <main class="boot" aria-live="polite">
+    <div class="eyebrow">Y/G · Systems studio</div>
+    <div class="brand">BUILDING THE <i>SYSTEM.</i></div>
+    <div class="track" aria-hidden="true"><b></b></div>
+    <div class="status" id="status">Loading cinematic experience</div>
+    <div class="message">Preparing the interactive portfolio, project stories and system model.</div>
+  </main>
+  <script>
+  (()=>{
+    const status=document.getElementById('status');
+    const repository='https://raw.githubusercontent.com/GYASH28/YASH_PORTFOLIO/main/';
+    const assetRoot=repository+'assets/';
+    const parts=['.source/portfolio-source.gz.b64.part1','.source/portfolio-source.gz.b64.part2','.source/portfolio-source.gz.b64.part3'];
+    const decodeBase64=(value)=>{const clean=value.replace(/\s+/g,'');const binary=atob(clean);const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i+=1)bytes[i]=binary.charCodeAt(i);return bytes};
+    async function inflate(bytes){if('DecompressionStream' in window){const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));return new Response(stream).text()}const module=await import('https://cdn.jsdelivr.net/npm/pako@2.1.0/+esm');return new TextDecoder().decode(module.ungzip(bytes))}
+    const escapeScript=(value)=>value.replace(/<\/script/gi,'<\\/script');
+    async function boot(){
+      status.textContent='Fetching production source';
+      const responses=await Promise.all(parts.map(async(path)=>{const response=await fetch(repository+path,{cache:'no-cache'});if(!response.ok)throw new Error(`Source request failed (${response.status})`);return response.text()}));
+      status.textContent='Starting interaction engine';
+      const source=JSON.parse(await inflate(decodeBase64(responses.join(''))));
+      const route=location.pathname.replace(/\/+$/,'')||'/';
+      const file=route==='/'?'index.html':route==='/system'?'system.html':'404.html';
+      const cssFile=file==='index.html'?'styles.css':file==='system.html'?'system.css':null;
+      const jsFile=file==='index.html'?'app.js':file==='system.html'?'system.js':null;
+      let html=source[file];
+      if(!html)throw new Error('Requested page is missing from the production package.');
+      if(cssFile)html=html.replace(/<link\s+rel="stylesheet"\s+href="[^"]+"\s*\/?>/i,`<style>${source[cssFile]}</style>`);
+      if(jsFile)html=html.replace(/<script\s+src="[^"]+"><\/script>/i,`<script>${escapeScript(source[jsFile])}<\/script>`);
+      html=html.replaceAll('assets/',assetRoot).replaceAll('href="system.html"','href="/system"').replaceAll('href="index.html"','href="/"').replaceAll('href="favicon.svg"',`href="${repository}favicon.svg"`).replace(/<link\s+rel="manifest"[^>]*>/i,'').replace(/<link\s+rel="preload"[^>]*>/i,'');
+      document.open();document.write(html);document.close();
+    }
+    boot().catch((error)=>{console.error(error);document.querySelector('.boot').innerHTML=`<div class="eyebrow">Y/G · Recovery mode</div><div class="brand">SYSTEM <i>PAUSED.</i></div><div class="error">The live source could not be loaded. The complete implementation is safely stored in the GitHub repository.<br><br><a href="https://github.com/GYASH28/YASH_PORTFOLIO">Open repository ↗</a><br><small>${String(error.message||error)}</small></div>`});
+  })();
+  </script>
+</body>
+</html>
