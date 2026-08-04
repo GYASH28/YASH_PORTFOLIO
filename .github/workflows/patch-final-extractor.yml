@@ -1,0 +1,36 @@
+name: Patch final extractor format
+
+on:
+  push:
+    branches: [publish-extracted-source-final]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Correct gzip-wrapped ZIP extraction
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/workflows/publish-extracted-final.yml')
+          text = path.read_text(encoding='utf-8')
+          old = '          tar -xzf "$PACKAGE" -C "$SOURCE"'
+          new = '''          INNER="$RUNNER_TEMP/portfolio-release-inner.zip"
+          gzip -dc "$PACKAGE" > "$INNER"
+          unzip -q "$INNER" -d "$SOURCE"'''
+          if old not in text:
+              raise SystemExit('Extractor line was not found or was already patched')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/publish-extracted-final.yml
+          git commit -m "Correct gzip-wrapped ZIP extraction"
+          git push
