@@ -1,8 +1,9 @@
 {
-  "name": "yash-portfolio-v2-restored",
-  "version": "2.0.0",
+  "name": "yash-portfolio-cinematic-system",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
+    "check": "node --check app.js && node --check system.js",
     "build": "node scripts/build.mjs"
   }
 }

@@ -1,80 +1,60 @@
-<div align="center">
+# Yash Ganesh — Cinematic Systems Portfolio
 
-# Yash Ganesh — Developer Portfolio
+A premium, responsive personal portfolio for **Yash Ganesh**, positioned around AI implementation, product building, interaction design, and practical systems thinking.
 
-**A cinematic, interaction-rich portfolio for an AI product builder and Computer Engineering & IoT student.**
+## What is included
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-Project-111827?style=for-the-badge&logo=vercel&logoColor=white)](https://github.com/GYASH28/YASH_PORTFOLIO)
-[![Built with JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=000)](https://developer.mozilla.org/docs/Web/JavaScript)
-[![Responsive](https://img.shields.io/badge/Responsive-Design-0EA5E9?style=for-the-badge)](#experience)
+- The preserved cinematic one-page portfolio experience
+- A new interactive **System Model** route inspired by the supplied reference screen
+- Scroll-driven project storytelling with lightweight generated interface visuals
+- Personal portrait compositions across the hero and About section
+- Canvas-powered pseudo-3D neural sphere, data helix, and decision lattice
+- Keyboard, touch, drag, reduced-motion, and WebGL-free fallbacks
+- Project case-study drawer, copy-email interaction, mobile navigation, and active section highlighting
+- SEO metadata, structured data, Open Graph metadata, sitemap, robots file, manifest, favicon, and custom 404
 
-</div>
+## Routes
 
-## Overview
+- `/` — Main cinematic portfolio
+- `/system` — Interactive system model
+- `/404` — Custom not-found page
 
-This repository contains the second-generation personal portfolio of **Yash Ganesh**. It presents selected AI, education, desktop, and client projects through a custom visual system with motion, layered storytelling, responsive layouts, and interactive project showcases.
+## Local development
 
-The portfolio is designed to communicate more than a list of technologies. It explains the thinking, product goals, and real-world problems behind each project.
-
-## Featured Work
-
-| Project | What it demonstrates |
-|---|---|
-| **Lernio AI** | Full-stack AI education platform, curriculum systems, student analytics, AI tutoring, and product design |
-| **B.R.A.C.E** | Local-first AI assistant, desktop tooling, memory, voice, permissions, and agent workflows |
-| **CampusMate** | Multi-role college platform with attendance, academics, dashboards, and Firebase-backed data |
-| **Fakhri Mart** | Production-style client catalogue experience with responsive UX, SEO, motion, and WhatsApp enquiries |
-
-## Experience
-
-- Cinematic landing experience and project storytelling
-- Scroll-driven motion and interactive transitions
-- Responsive layouts for desktop, tablet, and mobile
-- Custom project sections instead of generic template cards
-- Optimized static output for simple deployment
-- Personal photography and project-specific visuals
-
-## Build
+This project is framework-free and has no runtime dependencies. The deployment branch stores the browser source in one deterministic compressed text bundle, while the downloadable production package contains the readable source files.
 
 ```bash
-npm install
+npm run check
+npm run build
+python -m http.server 4173 -d dist
+```
+
+Then open `http://localhost:4173`.
+
+## Production build
+
+```bash
 npm run build
 ```
 
-The production-ready website is generated in:
+Vercel serves the generated `dist/` directory. Build settings are defined in `vercel.json`.
 
-```text
-dist/
-```
+## Accessibility and performance
 
-You can preview it with any static file server, for example:
+- Semantic landmarks and heading hierarchy
+- Visible focus styles and keyboard-operable navigation
+- ARIA state updates for menus, tabs, and dialogs
+- Reduced-motion behavior
+- Responsive layouts from compact mobile screens to large desktops
+- Lazy-loaded secondary portraits
+- No heavy 3D library or unnecessary framework bundle
 
-```bash
-npx serve dist
-```
+## Repository safety
 
-## Project Structure
+The repository state before this integration is preserved on:
 
-```text
-.
-├── assets/              # Images and visual assets
-├── scripts/
-│   └── build.mjs        # Reconstructs the optimized production bundle
-├── .bundle/             # Compressed source bundle used by the build script
-├── package.json
-└── README.md
-```
+`backup/pre-system-integration-2026-08-04`
 
-## Build System
+Development was completed on:
 
-This project uses a lightweight custom Node.js build script instead of a large framework runtime. The script reconstructs the optimized HTML, CSS, and JavaScript files, copies the visual assets, and produces a deployable static site in `dist/`.
-
-## Profile
-
-- **Focus:** AI products, full-stack applications, interactive web experiences, and desktop assistants
-- **Current work:** Lernio AI, B.R.A.C.E, CampusMate, and client web projects
-- **Based in:** Pune, India
-
-## License
-
-This portfolio and its visual assets are personal work. Please do not reuse the complete design, branding, or personal images as a template without permission.
+`feat/cinematic-system-integration`
