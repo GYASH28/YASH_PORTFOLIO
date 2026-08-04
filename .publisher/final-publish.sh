@@ -3,7 +3,7 @@ set -euo pipefail
 
 RELEASE_COMMIT="e42a62d8f9980ead08ea9ae9880c29e124f19364"
 PACKAGE="$RUNNER_TEMP/portfolio-release.gz"
-INNER="$RUNNER_TEMP/portfolio-release-inner.zip"
+INNER="$RUNNER_TEMP/portfolio-release-inner.bin"
 SOURCE="$RUNNER_TEMP/portfolio-release-source"
 FINAL="$RUNNER_TEMP/yash-portfolio-final"
 
@@ -23,11 +23,32 @@ done | tr -d '\r\n' | base64 --decode > "$PACKAGE"
 
 echo "30885c0151f97ab7ca6aafb438d81ec3690b34fce903f724a18768ec584f159e  $PACKAGE" | sha256sum --check -
 gzip -dc "$PACKAGE" > "$INNER"
-unzip -q "$INNER" -d "$SOURCE"
+
+echo "Detected archive formats:"
+file "$PACKAGE" "$INNER" || true
+xxd -l 32 "$INNER" || true
+
+if unzip -tqq "$INNER" >/dev/null 2>&1; then
+  echo "Extracting inner ZIP archive"
+  unzip -q "$INNER" -d "$SOURCE"
+elif tar -tf "$INNER" >/dev/null 2>&1; then
+  echo "Extracting inner TAR archive"
+  tar -xf "$INNER" -C "$SOURCE"
+elif command -v 7z >/dev/null 2>&1 && 7z t "$INNER" >/dev/null 2>&1; then
+  echo "Extracting inner archive with 7-Zip"
+  7z x -y "-o$SOURCE" "$INNER" >/dev/null
+elif command -v bsdtar >/dev/null 2>&1 && bsdtar -tf "$INNER" >/dev/null 2>&1; then
+  echo "Extracting inner archive with bsdtar"
+  bsdtar -xf "$INNER" -C "$SOURCE"
+else
+  echo "Unable to identify or extract the inner release archive"
+  command -v 7z >/dev/null 2>&1 && 7z l "$INNER" || true
+  exit 1
+fi
 rm -rf "$SOURCE/__MACOSX"
 
 marker="$(find "$SOURCE" -type f -path '*/assets/fonts/barlow-400.woff2' -print -quit)"
-test -n "$marker" || { echo "Could not locate extracted asset root"; exit 1; }
+test -n "$marker" || { echo "Could not locate extracted asset root"; find "$SOURCE" -maxdepth 4 -type f -print | head -100; exit 1; }
 SOURCE_ROOT="${marker%/assets/fonts/barlow-400.woff2}"
 echo "Using source root: $SOURCE_ROOT"
 
