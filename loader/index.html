@@ -26,7 +26,7 @@
     const status=document.getElementById('status');
     const revision='7532201e270386fff54533522f18288962ce6e21';
     const repo='GYASH28/YASH_PORTFOLIO';
-    const parts=['.source/portfolio-source.gz.b64.part1','.source/portfolio-source.gz.b64.part2','.source/portfolio-source.gz.b64.part3'];
+    const parts=['source/part1.txt','source/part2.txt','source/part3.txt'];
     const publicRoots=[
       `https://cdn.jsdelivr.net/gh/${repo}@${revision}/`,
       `https://raw.githack.com/${repo}/${revision}/`,
@@ -35,7 +35,6 @@
     const assetRoot=`https://cdn.jsdelivr.net/gh/${repo}@${revision}/assets/`;
     const oldBase='https://yash-ganesh-portfolio-i8n8xvqp8-gyash28s-projects.vercel.app/';
     const liveBase='https://yash-ganesh-portfolio-gyash28s-projects.vercel.app/';
-
     const timeout=(ms)=>new Promise((_,reject)=>setTimeout(()=>reject(new Error('Request timed out')),ms));
     async function requestText(url){
       const controller=new AbortController();
@@ -48,11 +47,13 @@
     }
     async function fetchPart(path){
       const errors=[];
+      try{return await requestText('/'+path)}catch(error){errors.push(`local: ${error.message}`)}
+      const repositoryPath=path.replace(/^source\//,'.source/portfolio-source.gz.b64.part').replace('.txt','');
       for(const root of publicRoots){
-        try{return await Promise.race([requestText(root+path),timeout(9000)])}catch(error){errors.push(error.message)}
+        try{return await Promise.race([requestText(root+repositoryPath),timeout(9000)])}catch(error){errors.push(error.message)}
       }
       try{
-        const url=`https://api.github.com/repos/${repo}/contents/${path}?ref=${revision}`;
+        const url=`https://api.github.com/repos/${repo}/contents/${repositoryPath}?ref=${revision}`;
         const response=await fetch(url,{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});
         if(!response.ok)throw new Error(`GitHub API HTTP ${response.status}`);
         const payload=await response.json();
@@ -81,7 +82,6 @@
     const escapeScript=(value)=>value.replace(/<\/script/gi,'<\\/script');
     const escapeStyle=(value)=>value.replace(/<\/style/gi,'<\\/style');
     const inlineFavicon=(svg)=>`data:image/svg+xml,${encodeURIComponent(svg)}`;
-
     async function boot(){
       status.textContent='Connecting to source mirrors';
       const responses=[];
