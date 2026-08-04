@@ -8,7 +8,7 @@
   <style>
     :root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:#07090a;color:#f4f3ee}
     *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 72% 30%,rgba(40,160,224,.13),transparent 26%),radial-gradient(circle at 28% 74%,rgba(255,107,24,.11),transparent 28%),#07090a}
-    .boot{width:min(560px,86vw);display:grid;gap:18px}.brand{font-weight:900;font-size:clamp(34px,8vw,72px);letter-spacing:-.08em}.brand i{color:#ff6b18;font-style:normal}.eyebrow,.status{font:700 11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:#74cfff}.track{height:2px;background:#263039;overflow:hidden}.track b{display:block;width:34%;height:100%;background:linear-gradient(90deg,#36baf3,#ff6b18);animation:move 1.15s ease-in-out infinite}.message{color:#a8b0b6;max-width:46ch;line-height:1.65}.error{padding:20px;border:1px solid #66392a;background:#160d09;color:#ffd7c3;line-height:1.6}.error a{color:#74cfff}
+    .boot{width:min(560px,86vw);display:grid;gap:18px}.brand{font-weight:900;font-size:clamp(34px,8vw,72px);letter-spacing:-.08em}.brand i{color:#ff6b18;font-style:normal}.eyebrow,.status{font:700 11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:#74cfff}.track{height:2px;background:#263039;overflow:hidden}.track b{display:block;width:34%;height:100%;background:linear-gradient(90deg,#36baf3,#ff6b18);animation:move 1.15s ease-in-out infinite}.message{color:#a8b0b6;max-width:46ch;line-height:1.65}.error{padding:20px;border:1px solid #66392a;background:#160d09;color:#ffd7c3;line-height:1.6}.error a{color:#74cfff}.retry{display:inline-block;margin-top:1rem;padding:.7rem 1rem;border:1px solid #74cfff;background:transparent;color:#74cfff;font:inherit;cursor:pointer}
     @keyframes move{0%{transform:translateX(-110%)}100%{transform:translateX(310%)}}
     @media(prefers-reduced-motion:reduce){.track b{animation:none;width:100%}}
   </style>
@@ -24,15 +24,71 @@
   <script>
   (()=>{
     const status=document.getElementById('status');
-    const repository='https://raw.githubusercontent.com/GYASH28/YASH_PORTFOLIO/main/';
-    const assetRoot=repository+'assets/';
+    const revision='7532201e270386fff54533522f18288962ce6e21';
+    const repo='GYASH28/YASH_PORTFOLIO';
     const parts=['.source/portfolio-source.gz.b64.part1','.source/portfolio-source.gz.b64.part2','.source/portfolio-source.gz.b64.part3'];
-    const decodeBase64=(value)=>{const clean=value.replace(/\s+/g,'');const binary=atob(clean);const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i+=1)bytes[i]=binary.charCodeAt(i);return bytes};
-    async function inflate(bytes){if('DecompressionStream' in window){const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));return new Response(stream).text()}const module=await import('https://cdn.jsdelivr.net/npm/pako@2.1.0/+esm');return new TextDecoder().decode(module.ungzip(bytes))}
+    const publicRoots=[
+      `https://cdn.jsdelivr.net/gh/${repo}@${revision}/`,
+      `https://raw.githack.com/${repo}/${revision}/`,
+      `https://raw.githubusercontent.com/${repo}/${revision}/`
+    ];
+    const assetRoot=`https://cdn.jsdelivr.net/gh/${repo}@${revision}/assets/`;
+    const oldBase='https://yash-ganesh-portfolio-i8n8xvqp8-gyash28s-projects.vercel.app/';
+    const liveBase='https://yash-ganesh-portfolio-gyash28s-projects.vercel.app/';
+
+    const timeout=(ms)=>new Promise((_,reject)=>setTimeout(()=>reject(new Error('Request timed out')),ms));
+    async function requestText(url){
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),8000);
+      try{
+        const response=await fetch(url,{cache:'no-store',signal:controller.signal});
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        return await response.text();
+      } finally { clearTimeout(timer); }
+    }
+    async function fetchPart(path){
+      const errors=[];
+      for(const root of publicRoots){
+        try{return await Promise.race([requestText(root+path),timeout(9000)])}catch(error){errors.push(error.message)}
+      }
+      try{
+        const url=`https://api.github.com/repos/${repo}/contents/${path}?ref=${revision}`;
+        const response=await fetch(url,{cache:'no-store',headers:{Accept:'application/vnd.github+json'}});
+        if(!response.ok)throw new Error(`GitHub API HTTP ${response.status}`);
+        const payload=await response.json();
+        return atob(String(payload.content||'').replace(/\s+/g,''));
+      }catch(error){errors.push(error.message)}
+      throw new Error(`All source mirrors failed: ${errors.join(' · ')}`);
+    }
+    const decodeBase64=(value)=>{
+      const clean=value.replace(/\s+/g,'');
+      const binary=atob(clean);
+      const bytes=new Uint8Array(binary.length);
+      for(let i=0;i<binary.length;i+=1)bytes[i]=binary.charCodeAt(i);
+      return bytes;
+    };
+    async function inflate(bytes){
+      if('DecompressionStream' in window){
+        const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+        return new Response(stream).text();
+      }
+      const mirrors=['https://cdn.jsdelivr.net/npm/pako@2.1.0/+esm','https://esm.sh/pako@2.1.0'];
+      for(const url of mirrors){
+        try{const module=await import(url);return new TextDecoder().decode(module.ungzip(bytes))}catch(error){}
+      }
+      throw new Error('This browser cannot expand the portfolio package. Please update Chrome or Android System WebView.');
+    }
     const escapeScript=(value)=>value.replace(/<\/script/gi,'<\\/script');
+    const escapeStyle=(value)=>value.replace(/<\/style/gi,'<\\/style');
+    const inlineFavicon=(svg)=>`data:image/svg+xml,${encodeURIComponent(svg)}`;
+
     async function boot(){
-      status.textContent='Fetching production source';
-      const responses=await Promise.all(parts.map(async(path)=>{const response=await fetch(repository+path,{cache:'no-cache'});if(!response.ok)throw new Error(`Source request failed (${response.status})`);return response.text()}));
+      status.textContent='Connecting to source mirrors';
+      const responses=[];
+      for(let i=0;i<parts.length;i+=1){
+        status.textContent=`Loading system package ${i+1} / ${parts.length}`;
+        responses.push(await fetchPart(parts[i]));
+      }
       status.textContent='Starting interaction engine';
       const source=JSON.parse(await inflate(decodeBase64(responses.join(''))));
       const route=location.pathname.replace(/\/+$/,'')||'/';
@@ -41,12 +97,25 @@
       const jsFile=file==='index.html'?'app.js':file==='system.html'?'system.js':null;
       let html=source[file];
       if(!html)throw new Error('Requested page is missing from the production package.');
-      if(cssFile)html=html.replace(/<link\s+rel="stylesheet"\s+href="[^"]+"\s*\/?>/i,`<style>${source[cssFile]}</style>`);
+      if(cssFile)html=html.replace(/<link\s+rel="stylesheet"\s+href="[^"]+"\s*\/?>/i,`<style>${escapeStyle(source[cssFile])}</style>`);
       if(jsFile)html=html.replace(/<script\s+src="[^"]+"><\/script>/i,`<script>${escapeScript(source[jsFile])}<\/script>`);
-      html=html.replaceAll('assets/',assetRoot).replaceAll('href="system.html"','href="/system"').replaceAll('href="index.html"','href="/"').replaceAll('href="favicon.svg"',`href="${repository}favicon.svg"`).replace(/<link\s+rel="manifest"[^>]*>/i,'').replace(/<link\s+rel="preload"[^>]*>/i,'');
+      html=html
+        .replaceAll(oldBase+'assets/',assetRoot)
+        .replace(/(["'(])assets\//g,`$1${assetRoot}`)
+        .replaceAll(oldBase+'system.html',liveBase+'system')
+        .replaceAll(oldBase,liveBase)
+        .replaceAll('href="system.html"','href="/system"')
+        .replaceAll('href="index.html?skip','href="/?skip')
+        .replaceAll('href="index.html"','href="/"')
+        .replace(/<link\s+rel="manifest"[^>]*>/i,'')
+        .replace(/<link\s+rel="preload"[^>]*>/gi,'')
+        .replace(/href="favicon\.svg"/i,`href="${inlineFavicon(source['favicon.svg'])}"`);
       document.open();document.write(html);document.close();
     }
-    boot().catch((error)=>{console.error(error);document.querySelector('.boot').innerHTML=`<div class="eyebrow">Y/G · Recovery mode</div><div class="brand">SYSTEM <i>PAUSED.</i></div><div class="error">The live source could not be loaded. The complete implementation is safely stored in the GitHub repository.<br><br><a href="https://github.com/GYASH28/YASH_PORTFOLIO">Open repository ↗</a><br><small>${String(error.message||error)}</small></div>`});
+    boot().catch((error)=>{
+      console.error(error);
+      document.querySelector('.boot').innerHTML=`<div class="eyebrow">Y/G · Recovery mode</div><div class="brand">CONNECTION <i>RETRY.</i></div><div class="error">The portfolio source could not be reached from this network.<br><br><small>${String(error.message||error)}</small><br><button class="retry" onclick="location.reload()">Retry loading</button><br><a href="https://github.com/${repo}">Open repository ↗</a></div>`;
+    });
   })();
   </script>
 </body>
