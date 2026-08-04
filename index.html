@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07090a" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="author" content="Yash Ganesh" />
+  <meta name="description" content="Yash Ganesh — creative developer, AI product builder and interaction designer crafting cinematic digital products." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Yash Ganesh — Creative Developer & AI Product Builder" />
+  <meta property="og:description" content="Cinematic digital products, applied AI systems and interaction-led frontend engineering by Yash Ganesh." />
+  <meta property="og:image" content="assets/portraits/yash-real-hero.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Yash Ganesh — Creative Developer & AI Product Builder" />
+  <meta name="twitter:description" content="Cinematic digital products, applied AI systems and interaction-led frontend engineering." />
+  <meta name="twitter:image" content="assets/portraits/yash-real-hero.webp" />
+  <title>Yash Ganesh — Creative Developer & AI Product Builder</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="assets/portraits/yash-real-hero.webp" as="image" type="image/webp" fetchpriority="high" />
+  <link rel="stylesheet" href="styles.css" />
+  <noscript><style>.intro{display:none!important}body.is-loading{overflow:auto!important}</style></noscript>
+</head>
+<body class="is-loading">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"><i></i></div>
+
+  <div class="cursor" aria-hidden="true">
+    <span class="cursor-dot"></span>
+    <span class="cursor-ring"><b>VIEW</b></span>
+  </div>
+
+  <section class="intro" id="intro" aria-label="Opening sequence">
+    <canvas id="intro-canvas" aria-hidden="true"></canvas>
+    <div class="intro-grid" aria-hidden="true"></div>
+    <div class="intro-status">
+      <span>YASH GANESH / PORTFOLIO 2026</span>
+      <span id="intro-clock">00:00:00</span>
+    </div>
+    <div class="intro-center">
+      <p class="intro-kicker">CREATIVE DEVELOPMENT · PRODUCT SYSTEMS · MOTION</p>
+      <div class="intro-mark" aria-hidden="true"><span>Y</span><i></i><span>G</span></div>
+      <div class="intro-words" aria-live="polite">
+        <span class="is-active">IMAGINE</span>
+        <span>DESIGN</span>
+        <span>ENGINEER</span>
+        <span>SHIP</span>
+      </div>
+      <div class="intro-line"><i></i></div>
+      <button class="intro-enter magnetic" type="button" data-cursor="ENTER">ENTER PORTFOLIO <span>↗</span></button>
+    </div>
+    <button class="intro-skip" type="button">Skip intro</button>
+    <div class="intro-count"><span id="intro-count">00</span><small>/ 100</small></div>
+  </section>
+
+  <header class="site-header">
+    <a class="brand magnetic" href="#hero" aria-label="Yash Ganesh home" data-cursor="TOP">Y<span>/</span>G</a>
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="#work" data-cursor="WORK">Work</a>
+      <a href="#services" data-cursor="CAPABILITIES">Capabilities</a>
+      <a href="#process" data-cursor="PROCESS">Process</a>
+      <a href="#about" data-cursor="ABOUT">About</a>
+    </nav>
+    <div class="header-right">
+      <span class="availability"><i></i> Available for selected work</span>
+      <a class="header-contact magnetic" href="mailto:yash.k.ganesh@gmail.com?subject=Creative%20development%20project" data-cursor="MAIL">Start a project <span>↗</span></a>
+    </div>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-controls="mobile-menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true" inert>
+    <p>Index / 2026</p>
+    <a href="#work"><span>01</span>Selected work</a>
+    <a href="#services"><span>02</span>Capabilities</a>
+    <a href="#process"><span>03</span>Process</a>
+    <a href="#about"><span>04</span>About</a>
+    <a href="#contact"><span>05</span>Contact</a>
+    <div class="mobile-menu-foot"><span>Pune, India</span><span>Working worldwide</span></div>
+  </aside>
+
+  <main id="main" tabindex="-1">
+    <section class="hero" id="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-orbit orbit-one" aria-hidden="true"></div>
+      <div class="hero-orbit orbit-two" aria-hidden="true"></div>
+      <div class="hero-meta reveal">
+        <span><i></i> Creative developer & AI product builder</span>
+        <span>Pune, India · 18.5204° N / 73.8567° E</span>
+      </div>
+
+      <div class="hero-copy">
+        <p class="hero-eyebrow reveal">DIGITAL PRODUCTS WITH A POINT OF VIEW</p>
+        <h1 aria-label="Yash Ganesh creative developer">
+          <span class="hero-line"><b>YASH</b></span>
+          <span class="hero-line hero-line--offset"><b>GANESH<em>®</em></b></span>
+        </h1>
+        <div class="hero-bottom reveal">
+          <p>I turn ambitious ideas into expressive, useful products—combining product thinking, interface craft, motion and AI engineering in one hands-on build loop.</p>
+          <div class="hero-actions">
+            <a class="button button--solid magnetic" href="#work" data-cursor="EXPLORE">Explore selected work <span>↓</span></a>
+            <a class="button button--ghost magnetic" href="mailto:yash.k.ganesh@gmail.com?subject=Portfolio%20project" data-cursor="HELLO">Say hello <span>↗</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-parallax="0.08">
+        <div class="hero-image-shell" data-cursor="MOVE">
+          <img src="assets/portraits/yash-real-hero.webp" width="1536" height="1024" alt="Yash Ganesh, creative developer and AI product builder" fetchpriority="high" decoding="async" />
+          <div class="hero-image-glass"></div>
+          <div class="hero-image-scan"></div>
+          <span class="portrait-caption">PORTRAIT / 01</span>
+        </div>
+        <div class="hero-chip hero-chip--top"><span>01</span> PRODUCT + INTERACTION</div>
+        <div class="hero-chip hero-chip--bottom"><span>06+</span> SYSTEMS SHIPPED</div>
+      </div>
+
+      <div class="hero-side-index" aria-hidden="true">
+        <span>01</span><i></i><b>WELCOME</b><i></i><span>06</span>
+      </div>
+      <div class="hero-skill-reel" aria-hidden="true"><div>CREATIVE DEVELOPMENT · AI PRODUCTS · PRODUCT DESIGN · MOTION SYSTEMS · CREATIVE DEVELOPMENT · AI PRODUCTS · PRODUCT DESIGN · MOTION SYSTEMS ·</div></div>
+      <div class="hero-scroll reveal"><span>SCROLL TO EXPLORE</span><i></i></div>
+      <div class="hero-coordinate" aria-hidden="true">DESIGNED WITH INTENT<br/>BUILT TO BE USED</div>
+    </section>
+
+    <section class="statement section-light" id="statement">
+      <div class="section-index reveal"><span>01</span><p>POINT OF VIEW</p></div>
+      <h2 class="split-reveal">Not another template.<br/>A portfolio with a <em>pulse.</em></h2>
+      <div class="statement-grid reveal">
+        <div class="statement-copy-stack">
+          <p>I like products that feel unmistakably designed but never forget why they exist. The visual system, interaction and engineering should all strengthen the same idea.</p>
+          <p>That means fewer decorative gimmicks, more memorable transitions, sharper hierarchy and enough restraint to keep the work itself in focus.</p>
+        </div>
+        <div class="statement-facts">
+          <article><b data-count="6">0</b><span>Products & experiments</span></article>
+          <article><b data-count="1">0</b><span>Builder from idea to launch</span></article>
+          <article><b data-count="100">0</b><span>Percent hands-on</span></article>
+        </div>
+      </div>
+      <div class="principles-grid reveal">
+        <article><span>01</span><h3>Clarity before spectacle</h3><p>Every interaction earns its place by helping people understand, navigate or feel the product.</p></article>
+        <article><span>02</span><h3>Motion with direction</h3><p>Animation creates continuity and hierarchy instead of behaving like decoration pasted on top.</p></article>
+        <article><span>03</span><h3>Technology with taste</h3><p>AI, 3D and automation are materials—not the identity. The outcome stays human and specific.</p></article>
+      </div>
+      <div class="kinetic-strip" aria-hidden="true"><div>CREATIVE DEVELOPMENT · PRODUCT ENGINEERING · INTERACTION DESIGN · AI SYSTEMS · CREATIVE DEVELOPMENT · PRODUCT ENGINEERING · INTERACTION DESIGN · AI SYSTEMS ·</div></div>
+    </section>
+
+
+    <section class="cinema" id="cinema">
+      <div class="cinema-sticky">
+        <div class="cinema-grid" aria-hidden="true"></div>
+        <div class="cinema-copy">
+          <span class="cinema-index">02 / CREATIVE OPERATING SYSTEM</span>
+          <h2><span>FOUR LAYERS.</span><span>ONE <em>EXPERIENCE.</em></span></h2>
+          <p>The strongest digital work connects the idea, the interface, the movement and the underlying system. Scroll through the layers that shape every build.</p>
+        </div>
+        <div class="cinema-orbit" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+          <div class="cinema-core"><b>YG</b><span>CREATIVE SYSTEM</span></div>
+        </div>
+        <div class="cinema-scenes">
+          <article data-scene="0"><span>01</span><b>IDEA</b><p>Find the sharpest version of the problem and the story worth telling.</p></article>
+          <article data-scene="1"><span>02</span><b>INTERFACE</b><p>Turn complexity into a visual language people can understand and enjoy.</p></article>
+          <article data-scene="2"><span>03</span><b>MOTION</b><p>Use rhythm, depth and transition to make the experience feel continuous.</p></article>
+          <article data-scene="3"><span>04</span><b>SYSTEM</b><p>Engineer the product so the experience stays fast, reliable and maintainable.</p></article>
+        </div>
+        <div class="cinema-credits" aria-hidden="true"><span>DIRECTION</span><b>YASH GANESH</b><span>DISCIPLINES</span><b>DESIGN / CODE / AI</b></div>
+        <div class="cinema-meter"><span>SCROLL SIGNAL</span><i><b></b></i><strong id="cinema-count">01</strong></div>
+      </div>
+    </section>
+
+    <section class="work" id="work">
+      <div class="work-intro shell">
+        <div class="section-index reveal"><span>02</span><p>SELECTED SYSTEMS</p></div>
+        <h2 class="split-reveal">Real work.<br/><em>Real interfaces.</em></h2>
+        <p class="work-intro-copy reveal">Scroll through the projects. Each scene uses a real product image and an interaction model built around the product’s purpose.</p>
+      </div>
+
+      <div class="project-story" id="project-story">
+        <div class="project-stage">
+          <div class="project-stage-bg" aria-hidden="true"></div>
+          <div class="project-screen-wrap">
+            <div class="project-screen" data-cursor="OPEN CASE" role="button" tabindex="0" aria-label="Open current project case study">
+              <div class="browser-bar"><i></i><i></i><i></i><span id="browser-label">lernio.ai / learning operating system</span></div>
+              <div class="project-image-stack">
+                <img class="project-image is-active" src="https://image.thum.io/get/width/1440/crop/900/noanimate/https://lernioai.vercel.app" data-fallback="https://opengraph.githubassets.com/yash-portfolio-lernio/GYASH28/LERNIOAI" referrerpolicy="no-referrer" width="1440" height="900" alt="Lernio AI platform interface" loading="lazy" decoding="async" />
+                <img class="project-image" src="https://image.thum.io/get/width/1440/crop/900/noanimate/https://github.com/GYASH28/brace_new" data-fallback="https://opengraph.githubassets.com/yash-portfolio-brace/GYASH28/brace_new" referrerpolicy="no-referrer" width="1440" height="900" alt="B.R.A.C.E AI companion interface" loading="lazy" decoding="async" />
+                <img class="project-image" src="https://image.thum.io/get/width/1440/crop/900/noanimate/https://campuscwit.vercel.app" data-fallback="https://opengraph.githubassets.com/yash-portfolio-campus/GYASH28/CAMPUSMATE" referrerpolicy="no-referrer" width="1440" height="900" alt="CampusMate platform interface" loading="lazy" decoding="async" />
+                <img class="project-image" src="https://image.thum.io/get/width/1440/crop/900/noanimate/https://fakhriyarns.vercel.app" data-fallback="https://opengraph.githubassets.com/yash-portfolio-fakhri/GYASH28/sample-website" referrerpolicy="no-referrer" width="1440" height="900" alt="Fakhri Mart catalogue interface" loading="lazy" decoding="async" />
+                <img class="project-image" src="https://image.thum.io/get/width/1440/crop/900/noanimate/https://gyash28.github.io/WD_practical_no_20/" data-fallback="https://opengraph.githubassets.com/yash-portfolio-quiz/GYASH28/WD_practical_no_20" referrerpolicy="no-referrer" width="1440" height="900" alt="Interactive quiz interface" loading="lazy" decoding="async" />
+                <img class="project-image" src="https://image.thum.io/get/width/1440/crop/900/noanimate/https://github.com/GYASH28/YASH_PORTFOLIO" data-fallback="https://opengraph.githubassets.com/yash-portfolio-cinematic/GYASH28/YASH_PORTFOLIO" referrerpolicy="no-referrer" width="1672" height="941" alt="Cinematic portfolio interface" loading="lazy" decoding="async" />
+              </div>
+              <div class="project-glitch" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="project-info">
+            <div class="project-counter"><span id="project-current">01</span><i></i><span>06</span></div>
+            <p id="project-kind">AI LEARNING OPERATING SYSTEM</p>
+            <h3 id="project-title">LERNIO AI</h3>
+            <p id="project-summary">A complete student experience where AI supports lessons, tutoring, quizzes, revision and planning—not merely a chat box.</p>
+            <div class="project-tags" id="project-tags"><span>AI TUTOR</span><span>241 LESSONS</span><span>LIVE PRODUCT</span></div>
+            <button class="case-open magnetic" type="button" data-cursor="OPEN">Open case study <span>↗</span></button>
+          </div>
+
+          <div class="project-nav" role="tablist" aria-label="Project selection">
+            <button class="is-active" data-project="0" type="button" role="tab" aria-selected="true" tabindex="0"><span>01</span><b>Lernio AI</b></button>
+            <button data-project="1" type="button" role="tab" aria-selected="false" tabindex="-1"><span>02</span><b>B.R.A.C.E</b></button>
+            <button data-project="2" type="button" role="tab" aria-selected="false" tabindex="-1"><span>03</span><b>CampusMate</b></button>
+            <button data-project="3" type="button" role="tab" aria-selected="false" tabindex="-1"><span>04</span><b>Fakhri Mart</b></button>
+            <button data-project="4" type="button" role="tab" aria-selected="false" tabindex="-1"><span>05</span><b>Interactive Quiz</b></button>
+            <button data-project="5" type="button" role="tab" aria-selected="false" tabindex="-1"><span>06</span><b>Cinematic Portfolio</b></button>
+          </div>
+          <div class="project-progress"><i></i></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="services section-light" id="services">
+      <div class="shell services-head">
+        <div class="section-index reveal"><span>03</span><p>CAPABILITIES</p></div>
+        <h2 class="split-reveal">One builder.<br/><em>Multiple disciplines.</em></h2>
+        <p class="reveal">Select a capability to see how strategy, design and engineering connect instead of being handed between disconnected teams.</p>
+      </div>
+
+      <div class="service-lab shell">
+        <div class="service-tabs" role="tablist">
+          <button class="service-tab is-active" data-service="0" type="button" role="tab" aria-selected="true" tabindex="0"><span>01</span><b>Product Systems</b><small>Structure ambitious ideas</small><i>↗</i></button>
+          <button class="service-tab" data-service="1" type="button" role="tab" aria-selected="false" tabindex="-1"><span>02</span><b>Creative Frontend</b><small>Build memorable interfaces</small><i>↗</i></button>
+          <button class="service-tab" data-service="2" type="button" role="tab" aria-selected="false" tabindex="-1"><span>03</span><b>Applied AI</b><small>Make intelligence useful</small><i>↗</i></button>
+          <button class="service-tab" data-service="3" type="button" role="tab" aria-selected="false" tabindex="-1"><span>04</span><b>Workflow Design</b><small>Connect people and tools</small><i>↗</i></button>
+        </div>
+        <div class="service-output">
+          <canvas id="workflow-canvas" aria-hidden="true"></canvas>
+          <div class="service-output-copy">
+            <p>SELECTED CAPABILITY / <span id="service-label">PRODUCT SYSTEMS</span></p>
+            <h3 id="service-title">Turn a broad idea into a product people can actually use.</h3>
+            <p id="service-copy">Define the user, core loop, interface architecture and smallest shippable system before the build becomes bloated.</p>
+            <div id="service-tags"><span>PRODUCT SCOPE</span><span>UX ARCHITECTURE</span><span>PROTOTYPE</span><span>LAUNCH PLAN</span></div>
+          </div>
+          <div class="service-node service-node--one">IDEA</div>
+          <div class="service-node service-node--two">DESIGN</div>
+          <div class="service-node service-node--three">BUILD</div>
+          <div class="service-node service-node--four">SHIP</div>
+          <div class="service-stamp" aria-hidden="true">Y/G<br/>SELECTED<br/>CAPABILITY</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="process" id="process">
+      <div class="process-sticky">
+        <div class="process-left">
+          <div class="section-index reveal"><span>04</span><p>THE BUILD LOOP</p></div>
+          <h2 class="split-reveal">From first spark<br/>to living product.</h2>
+          <p class="reveal">A clear process protects the idea from noise. Each phase answers a different question and leaves behind something concrete.</p>
+          <div class="process-note reveal"><span>METHOD</span><b>FAST ENOUGH TO LEARN.<br/>CAREFUL ENOUGH TO LAST.</b></div>
+        </div>
+        <div class="process-world" aria-hidden="true">
+          <div class="process-core"><span id="process-core-label">DISCOVER</span><i></i></div>
+          <div class="process-ring process-ring--a"></div>
+          <div class="process-ring process-ring--b"></div>
+          <div class="process-orbit-dot"></div>
+          <div class="process-axis process-axis--x"></div>
+          <div class="process-axis process-axis--y"></div>
+        </div>
+        <div class="process-steps">
+          <article class="process-step is-active" data-process="DISCOVER"><span>01</span><div><h3>Find the signal</h3><p>Understand the people, context, constraints and opportunity before choosing the technology.</p></div></article>
+          <article class="process-step" data-process="DIRECT"><span>02</span><div><h3>Set the direction</h3><p>Define the concept, visual language, product architecture and success criteria.</p></div></article>
+          <article class="process-step" data-process="BUILD"><span>03</span><div><h3>Make it tangible</h3><p>Prototype the core experience quickly enough to expose weak assumptions.</p></div></article>
+          <article class="process-step" data-process="REFINE"><span>04</span><div><h3>Refine the feeling</h3><p>Tune hierarchy, motion, responsiveness, performance and edge cases.</p></div></article>
+          <article class="process-step" data-process="SHIP"><span>05</span><div><h3>Release with confidence</h3><p>Deploy, document and leave the product ready for real users and future growth.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="about section-light" id="about">
+      <div class="about-collage shell">
+        <div class="about-main-image reveal" data-cursor="YASH">
+          <img src="assets/portraits/yash-real-editorial.webp" width="1122" height="1402" alt="Yash Ganesh" loading="lazy" decoding="async" />
+          <span>PORTRAIT / PUNE / 2026</span>
+          <i aria-hidden="true">YG</i>
+        </div>
+        <div class="about-copy">
+          <div class="section-index reveal"><span>05</span><p>ABOUT THE BUILDER</p></div>
+          <h2 class="split-reveal">Curious by default.<br/><em>Hands-on by choice.</em></h2>
+          <p class="about-lead reveal">I’m Yash Ganesh, a creative developer and AI product builder from Pune, India.</p>
+          <p class="reveal">I work across product strategy, interface design, frontend engineering and applied AI. That range lets me move from “what should this be?” to “how should it feel?” and finally to a working deployment without losing the original idea.</p>
+          <p class="reveal">I’m currently studying Computer Engineering & IoT while building real products, client work and experiments in public.</p>
+          <div class="about-links reveal">
+            <a class="magnetic" href="https://github.com/GYASH28" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub <span>↗</span></a>
+            <a class="magnetic" href="mailto:yash.k.ganesh@gmail.com" data-cursor="MAIL">Email <span>↗</span></a>
+          </div>
+        </div>
+        <div class="about-side-image reveal" data-cursor="PROFILE">
+          <img src="assets/portraits/yash-real-builder.webp" width="1672" height="941" alt="Yash Ganesh working on digital products" loading="lazy" decoding="async" />
+          <div><span>LOCATION</span><b>Pune, India</b><span>STUDYING</span><b>Computer Engineering & IoT</b><span>FOCUS</span><b>Products with personality</b><span>MODE</span><b>Independent / collaborative</b></div>
+        </div>
+      </div>
+      <div class="about-marquee" aria-hidden="true"><div>BUILDING · LEARNING · SHIPPING · REFINING · BUILDING · LEARNING · SHIPPING · REFINING ·</div></div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-grid" aria-hidden="true"></div>
+      <div class="contact-orb" aria-hidden="true"><i></i><span>LET'S<br/>MAKE<br/>IT REAL</span></div>
+      <div class="contact-top reveal"><span>06 / THE NEXT PROJECT</span><span>Available for selected freelance, product and consultancy work.</span></div>
+      <h2 class="contact-title"><span>YOUR IDEA.</span><span>BETTER BUILT.</span></h2>
+      <p class="contact-intro reveal">Have a product, workflow or website that deserves more than the obvious solution? Send the rough idea. We’ll find the sharp version together.</p>
+      <div class="contact-actions reveal">
+        <a class="contact-main magnetic" href="mailto:yash.k.ganesh@gmail.com?subject=Let%27s%20build%20something" data-cursor="LET'S TALK">START A CONVERSATION <span>↗</span></a>
+        <button class="copy-email" type="button" data-cursor="COPY">COPY EMAIL</button>
+      </div>
+      <div class="contact-footer reveal"><div><b>YASH GANESH</b><span>Creative developer / AI product builder</span></div><div><a href="https://github.com/GYASH28" target="_blank" rel="noreferrer">GitHub ↗</a><a href="#hero">Back to top ↑</a></div><span>© 2026 / Pune, India</span></div>
+    </section>
+  </main>
+
+  <div class="case-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="case-title" inert>
+    <button class="case-backdrop" type="button" aria-label="Close case study"></button>
+    <div class="case-panel" tabindex="-1">
+      <div class="case-head"><span id="case-number">01 / CASE FILE</span><button class="case-close" type="button" aria-label="Close case study">×</button></div>
+      <div class="case-visual"><img id="case-image" src="https://image.thum.io/get/width/1440/crop/900/noanimate/https://lernioai.vercel.app" data-fallback="https://opengraph.githubassets.com/yash-portfolio-lernio/GYASH28/LERNIOAI" referrerpolicy="no-referrer" width="1440" height="900" alt="" loading="lazy" decoding="async" /><i></i></div>
+      <div class="case-content">
+        <p id="case-kind">AI LEARNING OPERATING SYSTEM</p>
+        <h2 id="case-title">LERNIO AI</h2>
+        <p id="case-detail">A complete learning environment where lessons, notes, tutoring, quizzes, revision and planning work as one system.</p>
+        <div class="case-proof" id="case-proof"></div>
+        <div class="case-actions"><a id="case-live" class="button button--solid" href="#" target="_blank" rel="noreferrer">Visit live <span>↗</span></a><a id="case-repo" class="button button--ghost" href="#" target="_blank" rel="noreferrer">Repository <span>↗</span></a></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
