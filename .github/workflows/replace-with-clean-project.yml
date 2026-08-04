@@ -1,0 +1,134 @@
+name: Replace repository with clean portfolio source
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: clean-portfolio-replacement
+  cancel-in-progress: false
+
+jobs:
+  replace:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out migration commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reconstruct and audit the verified project
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run check
+
+      - name: Build clean direct-file repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          FINAL="$RUNNER_TEMP/yash-portfolio-final"
+          rm -rf "$FINAL"
+          mkdir -p "$FINAL"
+          cp -a dist/. "$FINAL/"
+
+          cp .migration/files/.gitignore "$FINAL/.gitignore"
+          cp .migration/files/README.md "$FINAL/README.md"
+          cp .migration/files/START_LOCALHOST.bat "$FINAL/START_LOCALHOST.bat"
+          cp .migration/files/START_LOCALHOST.ps1 "$FINAL/START_LOCALHOST.ps1"
+          cp .migration/files/vercel.json "$FINAL/vercel.json"
+          mkdir -p "$FINAL/assets"
+          cp .migration/files/assets/favicon.svg "$FINAL/assets/favicon.svg"
+
+          required=(
+            index.html
+            styles.css
+            app.js
+            assets/fonts/barlow-400.woff2
+            assets/fonts/barlow-600.woff2
+            assets/fonts/barlow-800.woff2
+            assets/fonts/recursive.woff2
+            assets/portraits/yash-real-builder.webp
+            assets/portraits/yash-real-editorial.webp
+            assets/portraits/yash-real-hero.webp
+            assets/projects/brace-interface-home.webp
+            assets/projects/campusmate-home.webp
+            assets/projects/fakhri-mart-home.webp
+            assets/projects/interactive-quiz-home.webp
+            assets/projects/lernio-ai-home.webp
+            assets/projects/yash-portfolio-hero-portrait.webp
+          )
+          for path in "${required[@]}"; do
+            test -f "$FINAL/$path" || { echo "Missing required file: $path"; exit 1; }
+          done
+
+          declare -A expected=(
+            [assets/fonts/barlow-400.woff2]=ebb34ad5e06d85a074c6f2d3718757bdabc9e731
+            [assets/fonts/barlow-600.woff2]=da60c9a90e758f7924dfac415f24961ee74c59c9
+            [assets/fonts/barlow-800.woff2]=33c8a26ee2cd79dc94efb1b5a0364b250693d47e
+            [assets/fonts/recursive.woff2]=0dece81f4e183e9b7dd79f9f0a6f97a06c2f89d3
+            [assets/portraits/yash-real-builder.webp]=61fb9d8d9a47768f14f1e0312859f5b451026360
+            [assets/portraits/yash-real-editorial.webp]=1d205617c0fa7fcc239a6be41902433ec271fa7a
+            [assets/portraits/yash-real-hero.webp]=ef173bfb71ec62c9d7340b4543f6326252601b52
+            [assets/projects/brace-interface-home.webp]=786888308d18addddb81c98680f7b2dc92a4838f
+            [assets/projects/campusmate-home.webp]=f885ff7f06ff6b8e9442483a524140a317a121c1
+            [assets/projects/fakhri-mart-home.webp]=b12f64f372c34d3b811c19eb055e15e4f85b717f
+            [assets/projects/interactive-quiz-home.webp]=1f2e4fb91f5dfbf882fbf62f741a009db72c89f8
+            [assets/projects/lernio-ai-home.webp]=71a0524373dd22cc7538751d9ec279b748d0106c
+            [assets/projects/yash-portfolio-hero-portrait.webp]=5524609293d5b47ceca65a895b657f6a2539175a
+          )
+          for path in "${!expected[@]}"; do
+            actual="$(git hash-object "$FINAL/$path")"
+            test "$actual" = "${expected[$path]}" || {
+              echo "Asset integrity mismatch: $path"
+              echo "Expected ${expected[$path]}, got $actual"
+              exit 1
+            }
+          done
+
+          node --check "$FINAL/app.js"
+          if test -f "$FINAL/system.js"; then node --check "$FINAL/system.js"; fi
+
+          FINAL="$FINAL" python - <<'PY'
+          import os, re
+          from pathlib import Path
+
+          root = Path(os.environ['FINAL'])
+          html = (root / 'index.html').read_text(encoding='utf-8')
+          refs = set(re.findall(r'(?:src|href)=["\']([^"\']+)', html))
+          missing = []
+          for ref in refs:
+              if ref.startswith(('#', 'http:', 'https:', 'mailto:', 'tel:', 'data:')):
+                  continue
+              clean = ref.split('?', 1)[0].split('#', 1)[0]
+              if clean and not (root / clean).is_file():
+                  missing.append(clean)
+          if missing:
+              raise SystemExit('Missing local references: ' + ', '.join(sorted(missing)))
+          oversized = [str(p.relative_to(root)) for p in root.rglob('*') if p.is_file() and p.stat().st_size > 2_000_000]
+          if oversized:
+              raise SystemExit('Unexpected oversized files: ' + ', '.join(oversized))
+          print(f'Validated {len(refs)} HTML references and {sum(1 for p in root.rglob("*") if p.is_file())} files.')
+          PY
+
+          find "$FINAL" -type f -printf '%P %s bytes\n' | sort
+
+      - name: Replace main with the clean project
+        shell: bash
+        run: |
+          set -euo pipefail
+          FINAL="$RUNNER_TEMP/yash-portfolio-final"
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a "$FINAL/." .
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "Replace repository with optimized cinematic portfolio source [skip ci]"
+          git push origin HEAD:main
