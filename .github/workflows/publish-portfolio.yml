@@ -1,28 +1,28 @@
-name: Publish cinematic portfolio
+name: Publish enhanced cinematic portfolio
 
 on:
   push:
-    branches: [main]
+    branches: [deploy-enhanced-exact]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: publish-cinematic-portfolio
+  group: publish-enhanced-portfolio
   cancel-in-progress: false
 
 jobs:
   publish:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check out repository history
+      - name: Check out release branch and repository history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Reconstruct and verify release
+      - name: Reconstruct, restore full-quality assets, and verify release
         shell: bash
         run: |
           set -euo pipefail
@@ -38,11 +38,12 @@ jobs:
 
           mkdir -p "$FINAL/assets/portraits"
           for file in yash-real-hero.webp yash-real-editorial.webp yash-real-builder.webp; do
-            git show origin/backup-before-awwwards-redesign-2026-08-04:"assets/portraits/$file" > "$FINAL/assets/portraits/$file"
+            git show origin/backup-before-awwwards-redesign-2026-08-04-2:"assets/portraits/$file" > "$FINAL/assets/portraits/$file"
           done
 
           node --check "$FINAL/app.js"
           FINAL="$FINAL" python - <<'PY'
+          import hashlib
           import json
           import os
           import re
@@ -65,6 +66,16 @@ jobs:
           missing_required = [path for path in required if not (root / path).is_file()]
           if missing_required:
               raise SystemExit('Missing required files: ' + ', '.join(missing_required))
+
+          expected_portraits = {
+              'assets/portraits/yash-real-builder.webp': '9f063d9ac9f5ae28280fb110ef70991234e5ef0347b093e3c1b6bd8593acf16f',
+              'assets/portraits/yash-real-editorial.webp': '4cbb949c10bb89b83035f22b30220f16d4459ebd43841e27b3f299a5968abda5',
+              'assets/portraits/yash-real-hero.webp': '923ce690abc79166c368dffd63ca711fe9730cfc201034b7c66c0481c599a701',
+          }
+          for path, expected in expected_portraits.items():
+              actual = hashlib.sha256((root / path).read_bytes()).hexdigest()
+              if actual != expected:
+                  raise SystemExit(f'Quality verification failed for {path}: {actual}')
 
           json.loads((root / 'vercel.json').read_text(encoding='utf-8'))
           html = (root / 'index.html').read_text(encoding='utf-8')
@@ -108,12 +119,12 @@ jobs:
               raise SystemExit('Unexpected oversized files: ' + ', '.join(oversized))
 
           print(f'Validated {sum(1 for p in root.rglob("*") if p.is_file())} release files, '
-                f'{len(refs)} asset references, and all six preserved projects.')
+                f'{len(refs)} asset references, all original-quality portraits, and all six preserved projects.')
           PY
 
           find "$FINAL" -type f -printf '%P %s bytes\n' | sort
 
-      - name: Replace main with clean direct project
+      - name: Publish clean project to main
         shell: bash
         run: |
           set -euo pipefail
@@ -126,5 +137,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --check
-          git commit -m "Redesign portfolio with cinematic editorial experience [skip ci]"
+          git commit -m "Deploy enhanced cinematic portfolio [skip ci]"
           git push origin HEAD:main
