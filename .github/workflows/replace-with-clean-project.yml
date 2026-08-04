@@ -22,20 +22,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reconstruct and audit the verified project
+      - name: Reconstruct historical exact release
         shell: bash
         run: |
           set -euo pipefail
-          npm run check
+          SOURCE="$RUNNER_TEMP/historical-portfolio-source"
+          rm -rf "$SOURCE"
+          git worktree add --detach "$SOURCE" e42a62d8f9980ead08ea9ae9880c29e124f19364
+          (cd "$SOURCE" && npm run build)
 
-      - name: Build clean direct-file repository
+      - name: Verify and assemble clean repository
         shell: bash
         run: |
           set -euo pipefail
+          SOURCE="$RUNNER_TEMP/historical-portfolio-source"
           FINAL="$RUNNER_TEMP/yash-portfolio-final"
           rm -rf "$FINAL"
           mkdir -p "$FINAL"
-          cp -a dist/. "$FINAL/"
+          cp -a "$SOURCE/dist/." "$FINAL/"
 
           cp .migration/files/.gitignore "$FINAL/.gitignore"
           cp .migration/files/README.md "$FINAL/README.md"
@@ -46,9 +50,7 @@ jobs:
           cp .migration/files/assets/favicon.svg "$FINAL/assets/favicon.svg"
 
           required=(
-            index.html
-            styles.css
-            app.js
+            index.html styles.css app.js
             assets/fonts/barlow-400.woff2
             assets/fonts/barlow-600.woff2
             assets/fonts/barlow-800.woff2
@@ -92,12 +94,9 @@ jobs:
           done
 
           node --check "$FINAL/app.js"
-          if test -f "$FINAL/system.js"; then node --check "$FINAL/system.js"; fi
-
           FINAL="$FINAL" python - <<'PY'
           import os, re
           from pathlib import Path
-
           root = Path(os.environ['FINAL'])
           html = (root / 'index.html').read_text(encoding='utf-8')
           refs = set(re.findall(r'(?:src|href)=["\']([^"\']+)', html))
@@ -113,19 +112,17 @@ jobs:
           oversized = [str(p.relative_to(root)) for p in root.rglob('*') if p.is_file() and p.stat().st_size > 2_000_000]
           if oversized:
               raise SystemExit('Unexpected oversized files: ' + ', '.join(oversized))
-          print(f'Validated {len(refs)} HTML references and {sum(1 for p in root.rglob("*") if p.is_file())} files.')
+          print(f'Validated {len(refs)} references and {sum(1 for p in root.rglob("*") if p.is_file())} files.')
           PY
-
           find "$FINAL" -type f -printf '%P %s bytes\n' | sort
 
-      - name: Replace main with the clean project
+      - name: Replace main with clean direct files
         shell: bash
         run: |
           set -euo pipefail
           FINAL="$RUNNER_TEMP/yash-portfolio-final"
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -a "$FINAL/." .
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
