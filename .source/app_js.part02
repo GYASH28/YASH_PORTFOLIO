@@ -1,0 +1,190 @@
+    intro.classList.add('is-gone');
+    document.body.classList.remove('is-loading');
+    setTimeout(() => intro.setAttribute('aria-hidden', 'true'), 1100);
+  }
+
+  if (prefersReduced) {
+    completeIntro();
+  } else {
+    const tickIntro = (now) => {
+      if (introDone) return;
+      const elapsed = now - introStart;
+      introProgress = clamp(elapsed / 4400, 0, 1);
+      const count = Math.round(introProgress * 100);
+      introCount.textContent = String(count).padStart(2, '0');
+      introLine.style.transform = `scaleX(${introProgress})`;
+      const wordIndex = Math.min(introWords.length - 1, Math.floor(introProgress * introWords.length));
+      introWords.forEach((word, index) => word.classList.toggle('is-active', index === wordIndex));
+      if (introProgress >= .82) introEnter.classList.add('is-ready');
+      if (introProgress < 1) requestAnimationFrame(tickIntro);
+    };
+    requestAnimationFrame(tickIntro);
+  }
+
+  if (new URLSearchParams(location.search).has('skip')) completeIntro();
+
+  introEnter?.addEventListener('click', completeIntro);
+  introSkip?.addEventListener('click', completeIntro);
+  setInterval(() => {
+    if (!introClock) return;
+    introClock.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
+  }, 1000);
+
+  // Canvas particles for intro
+  function setupIntroCanvas() {
+    const canvas = $('#intro-canvas');
+    if (!canvas || prefersReduced) return;
+    const ctx = canvas.getContext('2d');
+    let width = 0;
+    let height = 0;
+    let particles = [];
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      width = innerWidth;
+      height = innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      particles = Array.from({ length: Math.min(130, Math.floor(width / 10)) }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - .5) * .35,
+        vy: (Math.random() - .5) * .35,
+        r: Math.random() * 1.8 + .3,
+        hue: Math.random() > .78 ? 24 : 205
+      }));
+    };
+    const draw = () => {
+      if (introDone) return;
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${p.hue}, 100%, 68%, .55)`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        for (let j = i + 1; j < Math.min(i + 5, particles.length); j++) {
+          const q = particles[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(100,180,235,${(1 - dist / 130) * .12})`;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.stroke();
+          }
+        }
+      });
+      requestAnimationFrame(draw);
+    };
+    addEventListener('resize', resize);
+    resize();
+    draw();
+  }
+  setupIntroCanvas();
+
+  // Ambient canvas
+  function setupAmbientCanvas() {
+    const canvas = $('#ambient-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = 0;
+    let height = 0;
+    let mouseX = innerWidth * .5;
+    let mouseY = innerHeight * .5;
+    let targetX = mouseX;
+    let targetY = mouseY;
+    let scrollValue = 0;
+    let points = [];
+
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      width = innerWidth;
+      height = innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      points = Array.from({ length: Math.min(72, Math.floor(width / 18)) }, (_, index) => ({
+        angle: (index / 72) * Math.PI * 2,
+        radius: 80 + Math.random() * Math.min(width, height) * .48,
+        speed: (Math.random() * .0007 + .0002) * (Math.random() > .5 ? 1 : -1),
+        size: Math.random() * 1.4 + .2,
+        offset: Math.random() * Math.PI * 2
+      }));
+    };
+
+    addEventListener('pointermove', (event) => {
+      targetX = event.clientX;
+      targetY = event.clientY;
+    }, { passive: true });
+    addEventListener('scroll', () => { scrollValue = scrollY; }, { passive: true });
+    addEventListener('resize', resize);
+    resize();
+
+    const render = (time) => {
+      mouseX = lerp(mouseX, targetX, .035);
+      mouseY = lerp(mouseY, targetY, .035);
+      ctx.clearRect(0, 0, width, height);
+      const centerX = width * .52 + (mouseX - width * .5) * .035;
+      const centerY = height * .5 + (mouseY - height * .5) * .035 - (scrollValue % height) * .02;
+      points.forEach((point, index) => {
+        const angle = point.angle + time * point.speed;
+        const x = centerX + Math.cos(angle) * point.radius;
+        const y = centerY + Math.sin(angle * 1.15 + point.offset) * point.radius * .42;
+        ctx.beginPath();
+        ctx.fillStyle = index % 9 === 0 ? 'rgba(255,122,38,.55)' : 'rgba(80,170,230,.28)';
+        ctx.arc(x, y, point.size, 0, Math.PI * 2);
+        ctx.fill();
+        if (index % 5 === 0) {
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(80,160,220,.045)';
+          ctx.moveTo(centerX, centerY);
+          ctx.lineTo(x, y);
+          ctx.stroke();
+        }
+      });
+      requestAnimationFrame(render);
+    };
+    requestAnimationFrame(render);
+  }
+  setupAmbientCanvas();
+
+  // Cursor and magnetic interactions
+  const cursor = $('.cursor');
+  const cursorDot = $('.cursor-dot');
+  const cursorRing = $('.cursor-ring');
+  const cursorLabel = $('.cursor-ring b');
+  let mouse = { x: innerWidth / 2, y: innerHeight / 2 };
+  let dot = { x: mouse.x, y: mouse.y };
+  let ring = { x: mouse.x, y: mouse.y };
+
+  if (!isCoarse) {
+    addEventListener('pointermove', (event) => {
+      mouse.x = event.clientX;
+      mouse.y = event.clientY;
+      cursor.classList.remove('is-hidden');
+    });
+    addEventListener('pointerdown', () => cursor.classList.add('is-down'));
+    addEventListener('pointerup', () => cursor.classList.remove('is-down'));
+    document.addEventListener('mouseleave', () => cursor.classList.add('is-hidden'));
+
+    $$('[data-cursor], a, button').forEach((element) => {
+      element.addEventListener('mouseenter', () => {
+        const label = element.dataset.cursor || (element.tagName === 'A' ? 'OPEN' : 'SELECT');
+        cursorLabel.textContent = label;
+        cursor.classList.add('is-active');
+      });
+      element.addEventListener('mouseleave', () => cursor.classList.remove('is-active'));
+    });
+
+    $$('.magnetic').forEach((element) => {
+      element.addEventListener('pointermove', (event) => {
+        const rect = element.getBoundingClientRect();
