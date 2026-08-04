@@ -13,14 +13,18 @@ for (const [path, entry] of Object.entries(release.files)) {
   await writeFile(`dist/${path}`, entry.data);
 }
 
-const assets = [
-  'assets/meta/portfolio-og.webp',
+const portraits = [
   'assets/portraits/yash-real-hero.webp',
   'assets/portraits/yash-real-editorial.webp',
   'assets/portraits/yash-real-builder.webp'
 ];
-for (const asset of assets) {
+for (const asset of portraits) {
   await mkdir(dirname(`dist/${asset}`), { recursive: true });
   await cp(asset, `dist/${asset}`);
 }
-console.log(`Built ${Object.keys(release.files).length + assets.length} audited production files into dist/.`);
+
+// Reuse the optimized hero portrait as the social preview so production has no missing binary dependency.
+await mkdir('dist/assets/meta', { recursive: true });
+await cp('assets/portraits/yash-real-hero.webp', 'dist/assets/meta/portfolio-og.webp');
+
+console.log(`Built ${Object.keys(release.files).length + portraits.length + 1} audited production files into dist/.`);
