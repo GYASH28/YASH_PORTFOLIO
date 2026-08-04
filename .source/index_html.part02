@@ -1,0 +1,98 @@
+        <div class="cinema-orbit" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+          <div class="cinema-core"><b>AI</b><span>IMPLEMENTATION</span></div>
+        </div>
+        <div class="cinema-scenes">
+          <article data-scene="0"><span>01</span><b>OBSERVE</b><p>Map the actual workflow before touching the technology.</p></article>
+          <article data-scene="1"><span>02</span><b>CONNECT</b><p>Bring tools, data and people into one visible operating loop.</p></article>
+          <article data-scene="2"><span>03</span><b>AUTOMATE</b><p>Remove repetition while preserving approvals and human control.</p></article>
+          <article data-scene="3"><span>04</span><b>IMPROVE</b><p>Measure the outcome, learn from usage and evolve the system.</p></article>
+        </div>
+        <div class="cinema-meter"><span>SCROLL SIGNAL</span><i><b></b></i><strong id="cinema-count">01</strong></div>
+      </div>
+    </section>
+
+    <section class="work" id="work">
+      <div class="work-intro shell">
+        <div class="section-index reveal"><span>02</span><p>SELECTED SYSTEMS</p></div>
+        <h2 class="split-reveal">Real work.<br/><em>Real interfaces.</em></h2>
+        <p class="work-intro-copy reveal">Scroll through the projects. Each scene uses a real product image and an interaction model built around the product’s purpose.</p>
+      </div>
+
+      <div class="project-story" id="project-story">
+        <div class="project-stage">
+          <div class="project-stage-bg" aria-hidden="true"></div>
+          <div class="project-screen-wrap">
+            <div class="project-screen" data-cursor="OPEN CASE">
+              <div class="browser-bar"><i></i><i></i><i></i><span id="browser-label">lernio.ai / learning operating system</span></div>
+              <div class="project-image-stack">
+                <img loading="lazy" decoding="async" class="project-image is-active" src="assets/projects/lernio-ai-home.webp" alt="Lernio AI platform interface" />
+                <img loading="lazy" decoding="async" class="project-image" src="assets/projects/brace-interface-home.webp" alt="B.R.A.C.E AI companion interface" />
+                <img loading="lazy" decoding="async" class="project-image" src="assets/projects/campusmate-home.webp" alt="CampusMate platform interface" />
+                <img loading="lazy" decoding="async" class="project-image" src="assets/projects/fakhri-mart-home.webp" alt="Fakhri Mart catalogue interface" />
+                <img loading="lazy" decoding="async" class="project-image" src="assets/projects/interactive-quiz-home.webp" alt="Interactive quiz interface" />
+                <img loading="lazy" decoding="async" class="project-image" src="assets/projects/yash-portfolio-hero-portrait.webp" alt="Cinematic portfolio interface" />
+              </div>
+              <div class="project-glitch" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="project-info">
+            <div class="project-counter"><span id="project-current">01</span><i></i><span>06</span></div>
+            <p id="project-kind">AI LEARNING OPERATING SYSTEM</p>
+            <h3 id="project-title">LERNIO AI</h3>
+            <p id="project-summary">A complete student experience where AI supports lessons, tutoring, quizzes, revision and planning—not merely a chat box.</p>
+            <div class="project-tags" id="project-tags"><span>AI TUTOR</span><span>241 LESSONS</span><span>LIVE PRODUCT</span></div>
+            <button class="case-open magnetic" type="button" data-cursor="OPEN">Open case study <span>↗</span></button>
+          </div>
+
+          <div class="project-nav" role="tablist" aria-label="Project selection">
+            <button class="is-active" data-project="0" role="tab"><span>01</span><b>Lernio AI</b></button>
+            <button data-project="1" role="tab"><span>02</span><b>B.R.A.C.E</b></button>
+            <button data-project="2" role="tab"><span>03</span><b>CampusMate</b></button>
+            <button data-project="3" role="tab"><span>04</span><b>Fakhri Mart</b></button>
+            <button data-project="4" role="tab"><span>05</span><b>Interactive Quiz</b></button>
+            <button data-project="5" role="tab"><span>06</span><b>Cinematic Portfolio</b></button>
+          </div>
+          <div class="project-progress"><i></i></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="services section-light" id="services">
+      <div class="shell services-head">
+        <div class="section-index reveal"><span>03</span><p>IMPLEMENTATION LAB</p></div>
+        <h2 class="split-reveal">Choose the friction.<br/><em>Watch the system form.</em></h2>
+        <p class="reveal">Hover or tap a company problem to see the implementation path change in real time.</p>
+      </div>
+
+      <div class="service-lab shell">
+        <div class="service-tabs" role="tablist">
+          <button class="service-tab is-active" data-service="0" role="tab"><span>01</span><b>Operations</b><small>Remove repetitive work</small><i>↗</i></button>
+          <button class="service-tab" data-service="1" role="tab"><span>02</span><b>Knowledge</b><small>Find internal answers</small><i>↗</i></button>
+          <button class="service-tab" data-service="2" role="tab"><span>03</span><b>Customer</b><small>Improve response flows</small><i>↗</i></button>
+          <button class="service-tab" data-service="3" role="tab"><span>04</span><b>Product</b><small>Ship an AI pilot</small><i>↗</i></button>
+        </div>
+        <div class="service-output">
+          <canvas id="workflow-canvas" aria-hidden="true"></canvas>
+          <div class="service-output-copy">
+            <p>SELECTED WORKFLOW / <span id="service-label">OPERATIONS</span></p>
+            <h3 id="service-title">Remove repetitive work without breaking the workflow.</h3>
+            <p id="service-copy">Map the current process, locate expensive friction and build an automation layer around the tools your team already uses.</p>
+            <div id="service-tags"><span>WORKFLOW AUDIT</span><span>AUTOMATION MAP</span><span>APPROVAL POINTS</span><span>INTERNAL DASHBOARD</span></div>
+          </div>
+          <div class="service-node service-node--one">INPUT</div>
+          <div class="service-node service-node--two">AI LAYER</div>
+          <div class="service-node service-node--three">HUMAN CHECK</div>
+          <div class="service-node service-node--four">OUTPUT</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="process" id="process">
+      <div class="process-sticky">
+        <div class="process-left">
+          <div class="section-index reveal"><span>04</span><p>THE BUILD LOOP</p></div>
+          <h2 class="split-reveal">From painful workflow<br/>to owned system.</h2>
+          <p class="reveal">The process stays visible: what we are changing, why it matters, where AI acts, and where a person stays in control.</p>
+        </div>
