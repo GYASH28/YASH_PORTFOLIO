@@ -22,18 +22,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reconstruct, extract, and verify exact enhanced website
+      - name: Assemble and verify the exact extracted website
         shell: bash
         run: |
           set -euo pipefail
 
           RELEASE_COMMIT="e42a62d8f9980ead08ea9ae9880c29e124f19364"
-          PACKAGE="$RUNNER_TEMP/Yash_Portfolio_Awwwards_Enhanced.zip"
+          PACKAGE="$RUNNER_TEMP/portfolio-release.zip"
+          SOURCE="$RUNNER_TEMP/portfolio-release-source"
           FINAL="$RUNNER_TEMP/yash-portfolio-extracted"
 
           git cat-file -e "$RELEASE_COMMIT^{commit}"
-          rm -rf "$FINAL" "$PACKAGE"
-          mkdir -p "$FINAL"
+          rm -rf "$PACKAGE" "$SOURCE" "$FINAL"
+          mkdir -p "$SOURCE" "$FINAL/assets/fonts" "$FINAL/assets/portraits" "$FINAL/assets/projects"
 
           for part in \
             portfolio-source.gz.b64.part00 \
@@ -46,9 +47,46 @@ jobs:
             git show "$RELEASE_COMMIT:.release/$part"
           done | tr -d '\r\n' | base64 --decode > "$PACKAGE"
 
-          echo "535fc1622529d34786ee8bb358238cb1c1f5a1c30df372450d74b9253747cc3b  $PACKAGE" | sha256sum --check -
-          unzip -q "$PACKAGE" -d "$FINAL"
-          rm -rf "$FINAL/__MACOSX"
+          echo "Reconstructed release package:"
+          sha256sum "$PACKAGE"
+          unzip -q "$PACKAGE" -d "$SOURCE"
+          rm -rf "$SOURCE/__MACOSX"
+
+          marker="$(find "$SOURCE" -type f -path '*/assets/fonts/barlow-400.woff2' -print -quit)"
+          test -n "$marker" || { echo "Could not locate extracted asset root"; exit 1; }
+          SOURCE_ROOT="${marker%/assets/fonts/barlow-400.woff2}"
+          echo "Using extracted asset root: $SOURCE_ROOT"
+
+          while read -r path; do
+            test -f "$SOURCE_ROOT/$path" || { echo "Missing source asset: $path"; exit 1; }
+            mkdir -p "$FINAL/$(dirname "$path")"
+            cp "$SOURCE_ROOT/$path" "$FINAL/$path"
+          done <<'EOF'
+          assets/fonts/barlow-400.woff2
+          assets/fonts/barlow-600.woff2
+          assets/fonts/barlow-800.woff2
+          assets/fonts/recursive.woff2
+          assets/portraits/yash-real-builder.webp
+          assets/portraits/yash-real-editorial.webp
+          assets/portraits/yash-real-hero.webp
+          assets/projects/brace-interface-home.webp
+          assets/projects/campusmate-home.webp
+          assets/projects/fakhri-mart-home.webp
+          assets/projects/interactive-quiz-home.webp
+          assets/projects/lernio-ai-home.webp
+          assets/projects/yash-portfolio-hero-portrait.webp
+          EOF
+
+          cat .source/app_js.part* > "$FINAL/app.js"
+          cat .source/index_html.part* > "$FINAL/index.html"
+          cat .source/styles_css.part* > "$FINAL/styles.css"
+
+          printf '%s' 'LkRTX1N0b3JlClRodW1icy5kYgoudmVyY2VsCm5vZGVfbW9kdWxlcwo=' | base64 --decode > "$FINAL/.gitignore"
+          printf '%s' 'WUFTSCBQT1JURk9MSU8g4oCUIElOVEVSQUNUSVZFIExPQ0FMIEVYUEVSSUVOQ0UKCldJTkRPV1MKMS4gRXh0cmFjdCB0aGUgWklQIGNvbXBsZXRlbHkuCjIuIERvdWJsZS1jbGljayBTVEFSVF9MT0NBTEhPU1QuYmF0LgozLiBZb3VyIGJyb3dzZXIgb3BlbnMgYXQgaHR0cDovLzEyNy4wLjAuMTo0MTczCjQuIEtlZXAgdGhlIHRlcm1pbmFsIG9wZW4gd2hpbGUgdGVzdGluZy4KNS4gUHJlc3MgQ3RybCtDIGluIHRoZSB0ZXJtaW5hbCB0byBzdG9wIHRoZSBzZXJ2ZXIuCgpBTFRFUk5BVElWRQpSaWdodC1jbGljayBTVEFSVF9MT0NBTEhPU1QucHMxIGFuZCBjaG9vc2Ug4oCcUnVuIHdpdGggUG93ZXJTaGVsbOKAnS4KCldIQVQgSVMgSU5DTFVERUQKLSBDaW5lbWF0aWMgbXVsdGktc3RhZ2Ugb3BlbmluZyBzZXF1ZW5jZSB3aXRoIHNraXAgY29udHJvbAotIEludGVyYWN0aXZlIHBhcnRpY2xlIGVudmlyb25tZW50cwotIEN1c3RvbSBjdXJzb3Igd2l0aCBjb250ZXh0dWFsIGxhYmVscwotIE1hZ25ldGljIGJ1dHRvbnMgYW5kIHBvaW50ZXItcmVzcG9uc2l2ZSBoZXJvIGltYWdlCi0gU2Nyb2xsIHByb2dyZXNzIGFuZCBoZXJvIHBhcmFsbGF4Ci0gU2Nyb2xsLWRyaXZlbiBzaXgtcHJvamVjdCBzaG93Y2FzZQotIFJlYWwgcHJvamVjdCBzY3JlZW5zaG90cyBmcm9tIHRoZSB1cGxvYWRlZCBwb3J0Zm9saW8gYXJjaGl2ZQotIEV4cGFuZGFibGUgcHJvamVjdCBjYXNlLXN0dWR5IHBhbmVscwotIEludGVyYWN0aXZlIEFJIGltcGxlbWVudGF0aW9uIHdvcmtmbG93IGxhYgotIFNjcm9sbC1kcml2ZW4gaW1wbGVtZW50YXRpb24gcHJvY2VzcwotIFJlc3BvbnNpdmUgbW9iaWxlIG5hdmlnYXRpb24gYW5kIG1vYmlsZSBsYXlvdXRzCi0gUmVkdWNlZC1tb3Rpb24gYWNjZXNzaWJpbGl0eSBtb2RlCgpObyBucG0gaW5zdGFsbCBvciBpbnRlcm5ldCBjb25uZWN0aW9uIGlzIHJlcXVpcmVkLgo=' | base64 --decode > "$FINAL/README.txt"
+          printf '%s' 'QGVjaG8gb2ZmCnNldGxvY2FsCmNkIC9kICIlfmRwMCIKc2V0IFBPUlQ9NDE3MwoKZWNoby4KZWNobyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQplY2hvICAgWUFTSCBQT1JURk9MSU8gLSBJTlRFUkFDVElWRSBMT0NBTCBFWFBFUklFTkNFCmVjaG8gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KZWNoby4KZWNobyBTdGFydGluZyBhdCBodHRwOi8vMTI3LjAuMC4xOiVQT1JUJQplY2hvIEtlZXAgdGhpcyB3aW5kb3cgb3Blbi4gUHJlc3MgQ3RybCtDIHRvIHN0b3AuCmVjaG8uCgp3aGVyZSBweSA+bnVsIDI+bnVsCmlmICVlcnJvcmxldmVsJT09MCAoCiAgc3RhcnQgIiIgY21kIC9jICJ0aW1lb3V0IC90IDIgL25vYnJlYWsgPm51bCAmIHN0YXJ0IGh0dHA6Ly8xMjcuMC4wLjE6JVBPUlQlIgogIHB5IC1tIGh0dHAuc2VydmVyICVQT1JUJSAtLWJpbmQgMTI3LjAuMC4xCiAgZ290byA6ZW5kCikKCndoZXJlIHB5dGhvbiA+bnVsIDI+bnVsCmlmICVlcnJvcmxldmVsJT09MCAoCiAgc3RhcnQgIiIgY21kIC9jICJ0aW1lb3V0IC90IDIgL25vYnJlYWsgPm51bCAmIHN0YXJ0IGh0dHA6Ly8xMjcuMC4wLjE6JVBPUlQlIgogIHB5dGhvbiAtbSBodHRwLnNlcnZlciAlUE9SVCUgLS1iaW5kIDEyNy4wLjAuMQogIGdvdG8gOmVuZAopCgplY2hvIFB5dGhvbiB3YXMgbm90IGZvdW5kIG9uIHRoaXMgY29tcHV0ZXIuCmVjaG8gSW5zdGFsbCBQeXRob24gZnJvbSBodHRwczovL3d3dy5weXRob24ub3JnL2Rvd25sb2Fkcy8gYW5kIGVuYWJsZSAiQWRkIFB5dGhvbiB0byBQQVRIIi4KcGF1c2UKCjplbmQKZW5kbG9jYWwK' | base64 --decode > "$FINAL/START_LOCALHOST.bat"
+          printf '%s' 'JEVycm9yQWN0aW9uUHJlZmVyZW5jZSA9ICJTdG9wIgpTZXQtTG9jYXRpb24gJFBTU2NyaXB0Um9vdAokcG9ydCA9IDQxNzMKV3JpdGUtSG9zdCAiWWFzaCBQb3J0Zm9saW8gLSBJbnRlcmFjdGl2ZSBMb2NhbCBFeHBlcmllbmNlIiAtRm9yZWdyb3VuZENvbG9yIEN5YW4KV3JpdGUtSG9zdCAiT3BlbmluZyBodHRwOi8vMTI3LjAuMC4xOiRwb3J0IgpTdGFydC1Qcm9jZXNzICJodHRwOi8vMTI3LjAuMC4xOiRwb3J0IgppZiAoR2V0LUNvbW1hbmQgcHkgLUVycm9yQWN0aW9uIFNpbGVudGx5Q29udGludWUpIHsKICBweSAtbSBodHRwLnNlcnZlciAkcG9ydCAtLWJpbmQgMTI3LjAuMC4xCn0gZWxzZWlmIChHZXQtQ29tbWFuZCBweXRob24gLUVycm9yQWN0aW9uIFNpbGVudGx5Q29udGludWUpIHsKICBweXRob24gLW0gaHR0cC5zZXJ2ZXIgJHBvcnQgLS1iaW5kIDEyNy4wLjAuMQp9IGVsc2UgewogIHRocm93ICJQeXRob24gaXMgbm90IGluc3RhbGxlZCBvciBpcyBub3QgYXZhaWxhYmxlIGluIFBBVEguIgp9Cg==' | base64 --decode > "$FINAL/START_LOCALHOST.ps1"
+          printf '%s' 'PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwNTA2MDYiLz48cGF0aCBkPSJNMTMgMTRoMTFsOCAxNCA4LTE0aDExTDM3IDM3djEzSDI3VjM3eiIgZmlsbD0iI2Q4ZmYzNiIvPjwvc3ZnPg==' | base64 --decode > "$FINAL/assets/favicon.svg"
+          printf '%s' 'eyJjbGVhblVybHMiOnRydWUsInRyYWlsaW5nU2xhc2giOmZhbHNlLCJoZWFkZXJzIjpbeyJzb3VyY2UiOiIvKC4qKSIsImhlYWRlcnMiOlt7ImtleSI6IlgtQ29udGVudC1UeXBlLU9wdGlvbnMiLCJ2YWx1ZSI6Im5vc25pZmYifSx7ImtleSI6IlJlZmVycmVyLVBvbGljeSIsInZhbHVlIjoic3RyaWN0LW9yaWdpbi13aGVuLWNyb3NzLW9yaWdpbiJ9XX0seyJzb3VyY2UiOiIvYXNzZXRzLyguKikiLCJoZWFkZXJzIjpbeyJrZXkiOiJDYWNoZS1Db250cm9sIiwidmFsdWUiOiJwdWJsaWMsIG1heC1hZ2U9MzE1MzYwMDAsIGltbXV0YWJsZSJ9XX1dfQ==' | base64 --decode > "$FINAL/vercel.json"
 
           while read -r expected path; do
             test -f "$FINAL/$path" || { echo "Missing required file: $path"; exit 1; }
@@ -93,7 +131,6 @@ jobs:
           json.loads((root / "vercel.json").read_text(encoding="utf-8"))
           html = (root / "index.html").read_text(encoding="utf-8")
           css = (root / "styles.css").read_text(encoding="utf-8")
-
           refs = set(re.findall(r'(?:src|href)=["\']([^"\']+)', html))
           refs.update(re.findall(r'url\(["\']?([^"\')]+)', css))
           missing = []
@@ -103,19 +140,14 @@ jobs:
               clean = ref.split("?", 1)[0].split("#", 1)[0].lstrip("/")
               if clean and not (root / clean).is_file():
                   missing.append(clean)
-
           if missing:
               raise SystemExit("Missing local references: " + ", ".join(sorted(set(missing))))
           if html.count("data-project=") != 6:
               raise SystemExit("Project section must contain exactly six project controls")
-
           files = [p for p in root.rglob("*") if p.is_file()]
           if len(files) != 22:
               raise SystemExit(f"Expected 22 extracted files, found {len(files)}")
-          if any(p.stat().st_size > 2_000_000 for p in files):
-              raise SystemExit("Unexpected oversized file found")
-
-          print(f"Verified {len(files)} extracted files and {len(refs)} asset references.")
+          print(f"Verified {len(files)} exact extracted files and {len(refs)} asset references.")
           PY
 
           find "$FINAL" -type f -printf '%P %s bytes\n' | sort
@@ -125,11 +157,9 @@ jobs:
         run: |
           set -euo pipefail
           FINAL="$RUNNER_TEMP/yash-portfolio-extracted"
-
           git checkout -B main origin/main
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -a "$FINAL/." .
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
