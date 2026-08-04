@@ -30,39 +30,39 @@ jobs:
           FINAL="$RUNNER_TEMP/portfolio-final"
 
           cat > "$RUNNER_TEMP/payload-manifest.txt" <<'EOF'
-8d996938e154fcedb96a02a4fb0c4d2856f04b20  .payload/part-00
-4e8252cba614ca1829a8cb28e023cdc7a8541ee8  .payload/part-01
-c03c69647f034a9f4b74d6ab786efaa8df2c9297  .payload/part-02
-216fda66dc5a310cae416a451f4e45fc19b576c0  .payload/part-03
-8323a1d1ca967fffe399690515d110bc763a2537  .payload/part-04
-ce2072b835219b9bf4df8f53564c8058003286ac  .payload/part-05
-3d7b465a9eac9962aca04426501dfc382e6eb063  .payload/part-06
-78fa77e98fd8d37fd5bf12d936b167174eaf78ef  .payload/part-07
-860a7dc38715929df3f8961ecbc3fe2bd2435cdf  .payload/part-08
-2c54571906d5ed3b9968ca9f792a43a2c30cb521  .payload/part-09
-b259bd514ab51fa266c717db791711853399086c  .payload/part-10
-dbd78b31a42fa6d8bb85d75f314c2b058d4aca3c  .payload/part-11
-b6af1355e68115ce65337d438c23737ab1a5fb7a  .payload/part-12
-a9ac968c6110dba90abd583dd109fc4cf3536afa  .payload/part-13
-74ffd4a5bc624eebbdc5423516db92729d16caec  .payload/part-14
-04bc2842d144bbe1ce16fc953e29fa389ea79354  .payload/part-15
-bfde302d663f881f06711690dd99e546db858df6  .payload/part-16
-03ce69aba9c3fd847413c4a78aabf65bbeb02a3d  .payload/part-17
-ec20e6b77f8e588dbcf26442f59cefa0f011dcc3  .payload/part-18
-61fad08eeead275354740498889d4c84866a23b3  .payload/part-19
-b44cab69f4b707a75c057e496f5f8b0b238e8535  .payload/part-20
-86caad389d094a28731f40cd0d2e6d35ea948ad0  .payload/part-21
-bec302414a0a49200163a0271188fc13f59593c7  .payload/part-22
-f21e35d14242908c180e8286e54a9b6a95a4f61b  .payload/part-23
-1f2174bf5f0ba73f33bb895661824fb3c7eb33b4  .payload/part-24
-948d66c6d9e3847aa8a73fa8605ed198aac189df  .payload/part-25
-4c051f8424b27d3bd28ef2170de2f77bf373a6cb  .payload/part-26
-23bced9b72909f55c5b4fc79206b85d060073c09  .payload/part-27
-35041fe549f90abdff1a73db73765befdfb1c48c  .payload/part-28
-5626c2f3a1a17d8d7665cac85f3d2040c69d7e84  .payload/part-29
-8096f1799e4317cefa6fa8d806713106a1c636c6  .payload/part-30
-8c0ea7e9799a683b65b95ac8b4dde2cb4ef16cc1  .payload/part-31
-EOF
+          8d996938e154fcedb96a02a4fb0c4d2856f04b20  .payload/part-00
+          4e8252cba614ca1829a8cb28e023cdc7a8541ee8  .payload/part-01
+          c03c69647f034a9f4b74d6ab786efaa8df2c9297  .payload/part-02
+          216fda66dc5a310cae416a451f4e45fc19b576c0  .payload/part-03
+          8323a1d1ca967fffe399690515d110bc763a2537  .payload/part-04
+          ce2072b835219b9bf4df8f53564c8058003286ac  .payload/part-05
+          3d7b465a9eac9962aca04426501dfc382e6eb063  .payload/part-06
+          78fa77e98fd8d37fd5bf12d936b167174eaf78ef  .payload/part-07
+          860a7dc38715929df3f8961ecbc3fe2bd2435cdf  .payload/part-08
+          2c54571906d5ed3b9968ca9f792a43a2c30cb521  .payload/part-09
+          b259bd514ab51fa266c717db791711853399086c  .payload/part-10
+          dbd78b31a42fa6d8bb85d75f314c2b058d4aca3c  .payload/part-11
+          b6af1355e68115ce65337d438c23737ab1a5fb7a  .payload/part-12
+          a9ac968c6110dba90abd583dd109fc4cf3536afa  .payload/part-13
+          74ffd4a5bc624eebbdc5423516db92729d16caec  .payload/part-14
+          04bc2842d144bbe1ce16fc953e29fa389ea79354  .payload/part-15
+          bfde302d663f881f06711690dd99e546db858df6  .payload/part-16
+          03ce69aba9c3fd847413c4a78aabf65bbeb02a3d  .payload/part-17
+          ec20e6b77f8e588dbcf26442f59cefa0f011dcc3  .payload/part-18
+          61fad08eeead275354740498889d4c84866a23b3  .payload/part-19
+          b44cab69f4b707a75c057e496f5f8b0b238e8535  .payload/part-20
+          86caad389d094a28731f40cd0d2e6d35ea948ad0  .payload/part-21
+          bec302414a0a49200163a0271188fc13f59593c7  .payload/part-22
+          f21e35d14242908c180e8286e54a9b6a95a4f61b  .payload/part-23
+          1f2174bf5f0ba73f33bb895661824fb3c7eb33b4  .payload/part-24
+          948d66c6d9e3847aa8a73fa8605ed198aac189df  .payload/part-25
+          4c051f8424b27d3bd28ef2170de2f77bf373a6cb  .payload/part-26
+          23bced9b72909f55c5b4fc79206b85d060073c09  .payload/part-27
+          35041fe549f90abdff1a73db73765befdfb1c48c  .payload/part-28
+          5626c2f3a1a17d8d7665cac85f3d2040c69d7e84  .payload/part-29
+          8096f1799e4317cefa6fa8d806713106a1c636c6  .payload/part-30
+          8c0ea7e9799a683b65b95ac8b4dde2cb4ef16cc1  .payload/part-31
+          EOF
           while read -r expected path; do
             actual="$(git hash-object "$path")"
             test "$actual" = "$expected" || {
