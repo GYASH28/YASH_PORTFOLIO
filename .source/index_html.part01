@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07090a" />
+  <meta name="description" content="Yash Ganesh — AI implementation, product engineering, intelligent workflows and high-craft digital experiences." />
+  <title>Yash Ganesh — Creative Developer & AI Systems Builder</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="assets/fonts/barlow-800.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/portraits/yash-real-hero.webp" as="image" fetchpriority="high" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="is-loading">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"><i></i></div>
+
+  <div class="cursor" aria-hidden="true">
+    <span class="cursor-dot"></span>
+    <span class="cursor-ring"><b>VIEW</b></span>
+  </div>
+
+  <section class="intro" id="intro" aria-label="Opening sequence">
+    <canvas id="intro-canvas" aria-hidden="true"></canvas>
+    <div class="intro-grid" aria-hidden="true"></div>
+    <div class="intro-status">
+      <span>Y/G — SYSTEMS STUDIO</span>
+      <span id="intro-clock">00:00:00</span>
+    </div>
+    <div class="intro-center">
+      <p class="intro-kicker">A HUMAN SIGNAL INSIDE THE MACHINE</p>
+      <div class="intro-mark" aria-hidden="true"><span>Y</span><i></i><span>G</span></div>
+      <div class="intro-words" aria-live="polite">
+        <span class="is-active">OBSERVE</span>
+        <span>QUESTION</span>
+        <span>BUILD</span>
+        <span>IMPROVE</span>
+      </div>
+      <div class="intro-line"><i></i></div>
+      <button class="intro-enter magnetic" type="button" data-cursor="ENTER">ENTER EXPERIENCE <span>↗</span></button>
+    </div>
+    <button class="intro-skip" type="button">Skip intro</button>
+    <div class="intro-count"><span id="intro-count">00</span><small>/ 100</small></div>
+  </section>
+
+  <header class="site-header">
+    <a class="brand magnetic" href="#hero" aria-label="Yash Ganesh home" data-cursor="TOP">Y<span>/</span>G</a>
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="#work" data-cursor="WORK">Work</a>
+      <a href="#services" data-cursor="SERVICES">Services</a>
+      <a href="#process" data-cursor="PROCESS">Process</a>
+      <a href="#about" data-cursor="ABOUT">About</a>
+    </nav>
+    <a class="header-contact magnetic" href="mailto:yash.k.ganesh@gmail.com?subject=AI%20implementation%20project" data-cursor="MAIL">
+      Start a project <span>↗</span>
+    </a>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false"><span></span><span></span></button>
+  </header>
+
+  <aside class="mobile-menu" aria-hidden="true">
+    <p>Navigate</p>
+    <a href="#work"><span>01</span>Work</a>
+    <a href="#services"><span>02</span>Services</a>
+    <a href="#process"><span>03</span>Process</a>
+    <a href="#about"><span>04</span>About</a>
+    <a href="#contact"><span>05</span>Contact</a>
+  </aside>
+
+  <main id="main">
+    <section class="hero" id="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="hero-sideword" aria-hidden="true">YASH / GANESH / 2026</div>
+      <div class="hero-orbit orbit-one" aria-hidden="true"></div>
+      <div class="hero-orbit orbit-two" aria-hidden="true"></div>
+      <div class="hero-meta reveal">
+        <span><i></i> Creative developer · AI systems builder</span>
+        <span>Pune, India · Working worldwide</span>
+      </div>
+
+      <div class="hero-copy">
+        <p class="hero-eyebrow reveal">DESIGN ENGINEERING · AI PRODUCTS · INTERACTION</p>
+        <h1 aria-label="AI systems made useful">
+          <span class="hero-line"><b>DIGITAL WORK</b></span>
+          <span class="hero-line hero-line--offset"><b>THAT FEELS <em>ALIVE.</em></b></span>
+        </h1>
+        <div class="hero-bottom reveal">
+          <p>I design and build ambitious digital products where intelligent systems, expressive interfaces and real-world usefulness meet.</p>
+          <div class="hero-actions">
+            <a class="button button--solid magnetic" href="#work" data-cursor="EXPLORE">Explore the work <span>↓</span></a>
+            <a class="button button--ghost magnetic" href="#services" data-cursor="DISCOVER">See how I work <span>↗</span></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-parallax="0.08">
+        <div class="hero-image-shell" data-cursor="DRAG">
+          <img src="assets/portraits/yash-real-hero.webp" alt="Yash Ganesh in a cinematic AI systems environment" />
+          <div class="hero-image-glass"></div>
+          <div class="hero-image-scan"></div>
+        </div>
+        <div class="hero-chip hero-chip--top"><span>01</span> HUMAN-CENTRED SYSTEMS</div>
+        <div class="hero-chip hero-chip--bottom"><span>06+</span> PRODUCTS IN MOTION</div>
+      </div>
+
+      <div class="hero-scroll reveal"><span>SCROLL TO ENTER THE SYSTEM</span><i></i></div>
+      <div class="hero-coordinate" aria-hidden="true">18.5204° N<br/>73.8567° E</div>
+    </section>
+
+    <section class="statement section-light" id="statement">
+      <div class="section-index reveal"><span>01</span><p>POSITIONING</p></div>
+      <h2 class="split-reveal">Not another template.<br/>A portfolio with a <em>pulse.</em></h2>
+      <div class="statement-grid reveal">
+        <p>I work across strategy, interface and engineering as one continuous craft. The result is clearer thinking, faster iteration and a product that still feels intentional after it ships.</p>
+        <div class="statement-facts">
+          <article><b data-count="6">0</b><span>Products built & evolving</span></article>
+          <article><b data-count="1">0</b><span>Builder from idea to launch</span></article>
+          <article><b data-count="100">0</b><span>Percent hands-on craft</span></article>
+        </div>
+      </div>
+      <div class="kinetic-strip" aria-hidden="true"><div>AI IMPLEMENTATION · PRODUCT ENGINEERING · INTERACTION DESIGN · AUTOMATION · AI IMPLEMENTATION · PRODUCT ENGINEERING · INTERACTION DESIGN · AUTOMATION ·</div></div>
+    </section>
+
+
+    <section class="cinema" id="cinema">
+      <div class="cinema-sticky">
+        <div class="cinema-grid" aria-hidden="true"></div>
+        <div class="cinema-copy">
+          <span class="cinema-index">02 / CAPABILITY SIGNAL</span>
+          <h2><span>FROM FRICTION</span><span>TO <em>FLOW.</em></span></h2>
+          <p>Every scroll step reveals a different layer of the system: people, information, automation and measurable outcomes.</p>
+        </div>
