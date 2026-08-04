@@ -1,0 +1,69 @@
+        <div class="process-world" aria-hidden="true">
+          <div class="process-core"><span id="process-core-label">DISCOVER</span><i></i></div>
+          <div class="process-ring process-ring--a"></div>
+          <div class="process-ring process-ring--b"></div>
+          <div class="process-orbit-dot"></div>
+        </div>
+        <div class="process-steps">
+          <article class="process-step is-active" data-process="DISCOVER"><span>01</span><div><h3>Find the leverage</h3><p>Study the workflow, users, tools, constraints and outcome worth changing.</p></div></article>
+          <article class="process-step" data-process="DESIGN"><span>02</span><div><h3>Design the system</h3><p>Define the interface, model roles, permissions, data and human handoffs.</p></div></article>
+          <article class="process-step" data-process="BUILD"><span>03</span><div><h3>Ship the useful core</h3><p>Prototype the smallest version that can survive real work.</p></div></article>
+          <article class="process-step" data-process="TEST"><span>04</span><div><h3>Stress the weak points</h3><p>Use real scenarios to improve reliability, clarity and control.</p></div></article>
+          <article class="process-step" data-process="DEPLOY"><span>05</span><div><h3>Deploy and transfer</h3><p>Launch with ownership, documentation and a path for improvement.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="about section-light" id="about">
+      <div class="about-collage shell">
+        <div class="about-main-image reveal" data-cursor="YASH">
+          <img loading="lazy" decoding="async" src="assets/portraits/yash-real-editorial.webp" alt="Yash Ganesh" />
+          <span>BUILDER / CONSULTANT / VIBE CODER</span>
+        </div>
+        <div class="about-copy">
+          <div class="section-index reveal"><span>05</span><p>THE PERSON BEHIND IT</p></div>
+          <h2 class="split-reveal">I build where AI meets <em>real work.</em></h2>
+          <p class="about-lead reveal">I’m Yash Ganesh, an independent AI product builder and implementation consultant from Pune.</p>
+          <p class="reveal">My background crosses product building, school operations, digital marketing and client work. I care about the people using a system, the information moving through it, and the small points where a workflow usually breaks.</p>
+          <div class="about-links reveal">
+            <a class="magnetic" href="https://github.com/GYASH28" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub <span>↗</span></a>
+            <a class="magnetic" href="mailto:yash.k.ganesh@gmail.com" data-cursor="MAIL">Email <span>↗</span></a>
+          </div>
+        </div>
+        <div class="about-side-image reveal" data-cursor="PROFILE">
+          <img loading="lazy" decoding="async" src="assets/portraits/yash-real-builder.webp" alt="Yash Ganesh working on digital products" />
+          <div><span>LOCATION</span><b>Pune, India</b><span>MODE</span><b>Independent / collaborative</b><span>FOCUS</span><b>Useful AI systems</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-grid" aria-hidden="true"></div>
+      <div class="contact-top reveal"><span>06 / START SOMETHING USEFUL</span><span>Available for selected consultancy and product work.</span></div>
+      <h2 class="contact-title"><span>HAVE A WORKFLOW</span><span>WORTH FIXING?</span></h2>
+      <div class="contact-actions reveal">
+        <a class="contact-main magnetic" href="mailto:yash.k.ganesh@gmail.com?subject=AI%20implementation%20project" data-cursor="LET'S TALK">LET’S BUILD IT <span>↗</span></a>
+        <button class="copy-email" type="button" data-cursor="COPY">COPY EMAIL</button>
+      </div>
+      <div class="contact-footer reveal"><div><b>YASH GANESH</b><span>AI implementation consultant / product builder</span></div><div><a href="https://github.com/GYASH28" target="_blank" rel="noreferrer">GitHub ↗</a><a href="#hero">Back to top ↑</a></div><span>© 2026 / Pune, India</span></div>
+    </section>
+  </main>
+
+  <div class="case-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Project case study">
+    <button class="case-backdrop" type="button" aria-label="Close case study"></button>
+    <div class="case-panel">
+      <div class="case-head"><span id="case-number">01 / CASE FILE</span><button class="case-close" type="button" aria-label="Close case study">×</button></div>
+      <div class="case-visual"><img id="case-image" src="assets/projects/lernio-ai-home.webp" alt="" /><i></i></div>
+      <div class="case-content">
+        <p id="case-kind">AI LEARNING OPERATING SYSTEM</p>
+        <h2 id="case-title">LERNIO AI</h2>
+        <p id="case-detail">A complete learning environment where lessons, notes, tutoring, quizzes, revision and planning work as one system.</p>
+        <div class="case-proof" id="case-proof"></div>
+        <div class="case-actions"><a id="case-live" class="button button--solid" href="#" target="_blank" rel="noreferrer">Visit live <span>↗</span></a><a id="case-repo" class="button button--ghost" href="#" target="_blank" rel="noreferrer">Repository <span>↗</span></a></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
