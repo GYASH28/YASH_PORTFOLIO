@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "private": true,
   "scripts": {
-    "check": "node --check app.js && node --check system.js",
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "check": "npm run build && node --check dist/app.js && node --check dist/system.js"
   }
 }
