@@ -29,6 +29,8 @@ jobs:
           SOURCE="$RUNNER_TEMP/historical-portfolio-source"
           rm -rf "$SOURCE"
           git worktree add --detach "$SOURCE" e42a62d8f9980ead08ea9ae9880c29e124f19364
+          mkdir -p "$SOURCE/assets/meta"
+          cp "$SOURCE/assets/portraits/yash-real-hero.webp" "$SOURCE/assets/meta/portfolio-og.webp"
           (cd "$SOURCE" && npm run build)
 
       - name: Verify and assemble clean repository
