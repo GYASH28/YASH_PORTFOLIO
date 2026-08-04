@@ -1,0 +1,79 @@
+    cinemaMeter.style.transform=`scaleX(${p})`;
+    cinemaCount.textContent=String(scene+1).padStart(2,'0');
+    cinemaOrbit.style.transform=`translate(-50%,-50%) rotate(${p*160}deg) scale(${.86+Math.sin(p*Math.PI)*.16})`;
+    cinemaCore.style.transform=`rotate(${45-p*110}deg) scale(${.88+Math.sin(p*Math.PI*2)*.08})`;
+    const y=50+Math.sin(p*Math.PI*2)*18;
+    cinemaSticky.style.setProperty('--cy',`${y}%`);
+    $('.cinema-copy').style.transform=`translate3d(0,${p* -55}px,0)`;
+  }
+  addEventListener('scroll',updateCinema,{passive:true});
+  updateCinema();
+
+  // High-craft pointer lighting + image tilt
+  const heroShellV2=$('.hero-image-shell');
+  heroShellV2?.addEventListener('pointermove',(event)=>{
+    const r=heroShellV2.getBoundingClientRect();
+    const x=(event.clientX-r.left)/r.width;
+    const y=(event.clientY-r.top)/r.height;
+    heroShellV2.style.setProperty('--spot-x',`${x*100}%`);
+    heroShellV2.style.setProperty('--spot-y',`${y*100}%`);
+    heroShellV2.style.transform=`rotateY(${(x-.5)*9}deg) rotateX(${(y-.5)*-7}deg) translateZ(0)`;
+  });
+  heroShell?.addEventListener('pointerleave',()=>heroShellV2.style.transform='');
+
+  // Project screen follows the cursor for a physical, cinematic feel
+  const projectScreen=$('.project-screen');
+  projectScreen?.addEventListener('pointermove',(event)=>{
+    if(isCoarse) return;
+    const r=projectScreen.getBoundingClientRect();
+    const x=(event.clientX-r.left)/r.width-.5;
+    const y=(event.clientY-r.top)/r.height-.5;
+    projectScreen.style.transform=`rotateY(${x*8}deg) rotateX(${y*-6}deg) translateZ(12px)`;
+  });
+  projectScreen?.addEventListener('pointerleave',()=>updateProjectScroll());
+
+  // Scroll velocity adds subtle cinematic distortion to large type and strips
+  let previousY=scrollY, velocity=0;
+  function velocityFrame(){
+    const next=scrollY;
+    velocity=lerp(velocity,next-previousY,.18);
+    previousY=next;
+    const skew=clamp(velocity*-.045,-4,4);
+    $$('.split-reveal,.contact-title').forEach(el=>el.style.transform=`skewY(${skew}deg)`);
+    const strip=$('.kinetic-strip div');
+    if(strip) strip.style.transform=`translateX(${-(scrollY*.08)%45}px) skewX(${clamp(velocity*.03,-3,3)}deg)`;
+    requestAnimationFrame(velocityFrame);
+  }
+  requestAnimationFrame(velocityFrame);
+
+})();
+
+
+// 2026 interaction layer: active navigation, depth and motion budgeting.
+(() => {
+  const navLinks = [...document.querySelectorAll('.desktop-nav a')];
+  const sections = navLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    const navObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === `#${entry.target.id}`));
+      });
+    }, { rootMargin: '-40% 0px -52% 0px', threshold: 0 });
+    sections.forEach(section => navObserver.observe(section));
+  }
+
+  const shell = document.querySelector('.hero-image-shell');
+  if (shell && matchMedia('(pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    shell.addEventListener('pointermove', e => {
+      const r = shell.getBoundingClientRect();
+      const x = (e.clientX-r.left)/r.width-.5;
+      const y = (e.clientY-r.top)/r.height-.5;
+      shell.style.transform = `perspective(1000px) rotateY(${x*7}deg) rotateX(${-y*6}deg) rotateZ(2.4deg)`;
+    });
+    shell.addEventListener('pointerleave', () => shell.style.transform = 'perspective(1000px) rotateY(0) rotateX(0) rotateZ(2.4deg)');
+  }
+
+  // Pause decorative canvases when the tab is hidden to protect battery/CPU.
+  document.addEventListener('visibilitychange', () => document.body.classList.toggle('page-hidden', document.hidden));
+})();
