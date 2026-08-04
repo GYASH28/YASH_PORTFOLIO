@@ -1,159 +1,138 @@
-name: Publish extracted enhanced portfolio
+name: Publish exact extracted enhanced portfolio
 
 on:
   push:
     branches: [publish-extracted-source-final]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: publish-extracted-enhanced-portfolio
-  cancel-in-progress: true
+  group: publish-exact-extracted-portfolio
+  cancel-in-progress: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 10
     steps:
-      - name: Check out staged extracted source
+      - name: Check out publisher branch and full history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Assemble exact extracted website
+      - name: Reconstruct, extract, and verify exact enhanced website
         shell: bash
         run: |
           set -euo pipefail
-          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --force
 
-          FINAL="$RUNNER_TEMP/yash-portfolio-final"
-          LEGACY="$RUNNER_TEMP/historical-source"
-          PAYLOAD="$RUNNER_TEMP/historical-source.gz"
-          DECODED="$RUNNER_TEMP/historical-source.decoded"
-          rm -rf "$FINAL" "$LEGACY"
-          mkdir -p "$FINAL/assets/fonts" "$FINAL/assets/portraits" "$FINAL/assets/projects" "$LEGACY"
+          RELEASE_COMMIT="e42a62d8f9980ead08ea9ae9880c29e124f19364"
+          PACKAGE="$RUNNER_TEMP/Yash_Portfolio_Awwwards_Enhanced.zip"
+          FINAL="$RUNNER_TEMP/yash-portfolio-extracted"
 
-          # Rebuild the enhanced text source exactly from lossless UTF-8 chunks.
-          cat .source/app_js.part* > "$FINAL/app.js"
-          cat .source/index_html.part* > "$FINAL/index.html"
-          cat .source/styles_css.part* > "$FINAL/styles.css"
+          git cat-file -e "$RELEASE_COMMIT^{commit}"
+          rm -rf "$FINAL" "$PACKAGE"
+          mkdir -p "$FINAL"
 
-          # Recover full-quality binary assets from the repository's verified historical
-          # source package. Nothing is recompressed: only exact Git-hash matches are copied.
-          {
-            git show e42a62d8f9980ead08ea9ae9880c29e124f19364:.release/portfolio-source.gz.b64.part01a
-            git show e42a62d8f9980ead08ea9ae9880c29e124f19364:.release/portfolio-source.gz.b64.part01b
-            git show e42a62d8f9980ead08ea9ae9880c29e124f19364:.release/portfolio-source.gz.b64.part01c
-          } | tr -d '\r\n' | base64 --decode > "$PAYLOAD"
+          for part in \
+            portfolio-source.gz.b64.part00 \
+            portfolio-source.gz.b64.part01a \
+            portfolio-source.gz.b64.part01b \
+            portfolio-source.gz.b64.part01c \
+            portfolio-source.gz.b64.part02 \
+            portfolio-source.gz.b64.part03
+          do
+            git show "$RELEASE_COMMIT:.release/$part"
+          done | tr -d '\r\n' | base64 --decode > "$PACKAGE"
 
-          if tar -tzf "$PAYLOAD" >/dev/null 2>&1; then
-            tar -xzf "$PAYLOAD" -C "$LEGACY"
-          else
-            gzip -dc "$PAYLOAD" > "$DECODED"
-            if tar -tf "$DECODED" >/dev/null 2>&1; then
-              tar -xf "$DECODED" -C "$LEGACY"
-            elif unzip -tq "$DECODED" >/dev/null 2>&1; then
-              unzip -q "$DECODED" -d "$LEGACY"
-            else
-              echo 'Historical source package format is unsupported.'
-              file "$PAYLOAD" "$DECODED" || true
+          echo "535fc1622529d34786ee8bb358238cb1c1f5a1c30df372450d74b9253747cc3b  $PACKAGE" | sha256sum --check -
+          unzip -q "$PACKAGE" -d "$FINAL"
+          rm -rf "$FINAL/__MACOSX"
+
+          while read -r expected path; do
+            test -f "$FINAL/$path" || { echo "Missing required file: $path"; exit 1; }
+            actual="$(git hash-object "$FINAL/$path")"
+            test "$actual" = "$expected" || {
+              echo "Integrity mismatch for $path: expected $expected, got $actual"
               exit 1
-            fi
-          fi
-
-          while read -r destination expected; do
-            mkdir -p "$FINAL/$(dirname "$destination")"
-            match=""
-            while IFS= read -r -d '' candidate; do
-              if [ "$(git hash-object "$candidate")" = "$expected" ]; then
-                match="$candidate"
-                break
-              fi
-            done < <(find "$LEGACY" -type f -print0)
-            if [ -z "$match" ]; then
-              echo "Exact historical asset not found: $destination ($expected)"
-              exit 1
-            fi
-            cp "$match" "$FINAL/$destination"
-            echo "RESTORED $destination from ${match#$LEGACY/}"
+            }
           done <<'EOF'
-          assets/fonts/barlow-400.woff2 ebb34ad5e06d85a074c6f2d3718757bdabc9e731
-          assets/fonts/barlow-600.woff2 da60c9a90e758f7924dfac415f24961ee74c59c9
-          assets/fonts/barlow-800.woff2 33c8a26ee2cd79dc94efb1b5a0364b250693d47e
-          assets/fonts/recursive.woff2 0dece81f4e183e9b7dd79f9f0a6f97a06c2f89d3
-          assets/portraits/yash-real-builder.webp 61fb9d8d9a47768f14f1e0312859f5b451026360
-          assets/portraits/yash-real-editorial.webp 1d205617c0fa7fcc239a6be41902433ec271fa7a
-          assets/portraits/yash-real-hero.webp ef173bfb71ec62c9d7340b4543f6326252601b52
-          assets/projects/brace-interface-home.webp 786888308d18addddb81c98680f7b2dc92a4838f
-          assets/projects/campusmate-home.webp f885ff7f06ff6b8e9442483a524140a317a121c1
-          assets/projects/fakhri-mart-home.webp b12f64f372c34d3b811c19eb055e15e4f85b717f
-          assets/projects/interactive-quiz-home.webp 1f2e4fb91f5dfbf882fbf62f741a009db72c89f8
-          assets/projects/lernio-ai-home.webp 71a0524373dd22cc7538751d9ec279b748d0106c
-          assets/projects/yash-portfolio-hero-portrait.webp 5524609293d5b47ceca65a895b657f6a2539175a
+          aa3125d016ae0e7af72bda44835fe78e1ad49473 .gitignore
+          d9ed0678567d44da637a520fddd3e2fed7d2ebc9 README.txt
+          49671a2284407dca502f264fd2b85dea7ce44a07 START_LOCALHOST.bat
+          5e5b1d2e76e5f3b0b5ff7ebc7c3937d462ef7447 START_LOCALHOST.ps1
+          f9c2b1d2ec9c84969050fbf8a2b9760e19de5f40 app.js
+          9b802f4c9bbb7cd88f09704da015ee974164b395 assets/favicon.svg
+          ebb34ad5e06d85a074c6f2d3718757bdabc9e731 assets/fonts/barlow-400.woff2
+          da60c9a90e758f7924dfac415f24961ee74c59c9 assets/fonts/barlow-600.woff2
+          33c8a26ee2cd79dc94efb1b5a0364b250693d47e assets/fonts/barlow-800.woff2
+          0dece81f4e183e9b7dd79f9f0a6f97a06c2f89d3 assets/fonts/recursive.woff2
+          61fb9d8d9a47768f14f1e0312859f5b451026360 assets/portraits/yash-real-builder.webp
+          1d205617c0fa7fcc239a6be41902433ec271fa7a assets/portraits/yash-real-editorial.webp
+          ef173bfb71ec62c9d7340b4543f6326252601b52 assets/portraits/yash-real-hero.webp
+          786888308d18addddb81c98680f7b2dc92a4838f assets/projects/brace-interface-home.webp
+          f885ff7f06ff6b8e9442483a524140a317a121c1 assets/projects/campusmate-home.webp
+          b12f64f372c34d3b811c19eb055e15e4f85b717f assets/projects/fakhri-mart-home.webp
+          1f2e4fb91f5dfbf882fbf62f741a009db72c89f8 assets/projects/interactive-quiz-home.webp
+          71a0524373dd22cc7538751d9ec279b748d0106c assets/projects/lernio-ai-home.webp
+          5524609293d5b47ceca65a895b657f6a2539175a assets/projects/yash-portfolio-hero-portrait.webp
+          95986daf54f36d833a5c1900d68ac1021832da53 index.html
+          48dd626984cf942ae1e6ed1f8945443bbed6bc99 styles.css
+          3e843e0fc136bc39dc8c3e4fb673170385dab219 vercel.json
           EOF
-
-          git cat-file blob 49671a2284407dca502f264fd2b85dea7ce44a07 > "$FINAL/START_LOCALHOST.bat"
-          git cat-file blob 5e5b1d2e76e5f3b0b5ff7ebc7c3937d462ef7447 > "$FINAL/START_LOCALHOST.ps1"
-
-          cat > "$FINAL/.gitignore" <<'EOF'
-          .DS_Store
-          Thumbs.db
-          .vercel
-          node_modules
-          EOF
-
-          cat > "$FINAL/README.txt" <<'EOF'
-          YASH PORTFOLIO — INTERACTIVE LOCAL EXPERIENCE
-
-          Open START_LOCALHOST.bat on Windows, or serve this folder with any static web server.
-          The production version is deployed from the clean extracted files in this repository.
-          EOF
-
-          printf '%s' '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#050606"/><path d="M13 14h11l8 14 8-14h11L37 37v13H27V37z" fill="#d8ff36"/></svg>' > "$FINAL/assets/favicon.svg"
-          printf '%s' '{"cleanUrls":true,"trailingSlash":false,"headers":[{"source":"/(.*)","headers":[{"key":"X-Content-Type-Options","value":"nosniff"},{"key":"Referrer-Policy","value":"strict-origin-when-cross-origin"}]},{"source":"/assets/(.*)","headers":[{"key":"Cache-Control","value":"public, max-age=31536000, immutable"}]}]}' > "$FINAL/vercel.json"
 
           node --check "$FINAL/app.js"
           FINAL="$FINAL" python - <<'PY'
-          import json, os, re, subprocess
+          import json
+          import os
+          import re
           from pathlib import Path
-          root = Path(os.environ['FINAL'])
-          expected = {
-            'app.js':'f9c2b1d2ec9c84969050fbf8a2b9760e19de5f40',
-            'index.html':'95986daf54f36d833a5c1900d68ac1021832da53',
-            'styles.css':'48dd626984cf942ae1e6ed1f8945443bbed6bc99',
-          }
-          for path, wanted in expected.items():
-              got = subprocess.check_output(['git','hash-object',str(root/path)], text=True).strip()
-              if got != wanted:
-                  raise SystemExit(f'Exact source mismatch for {path}: {got}')
-          json.loads((root/'vercel.json').read_text())
-          html=(root/'index.html').read_text(); css=(root/'styles.css').read_text()
-          refs=set(re.findall(r'(?:src|href)=["\']([^"\']+)',html))
-          refs.update(re.findall(r'url\(["\']?([^"\')]+)',css))
-          missing=[]
+
+          root = Path(os.environ["FINAL"])
+          json.loads((root / "vercel.json").read_text(encoding="utf-8"))
+          html = (root / "index.html").read_text(encoding="utf-8")
+          css = (root / "styles.css").read_text(encoding="utf-8")
+
+          refs = set(re.findall(r'(?:src|href)=["\']([^"\']+)', html))
+          refs.update(re.findall(r'url\(["\']?([^"\')]+)', css))
+          missing = []
           for ref in refs:
-              if ref.startswith(('#','http:','https:','mailto:','tel:','data:','javascript:')): continue
-              clean=ref.split('?',1)[0].split('#',1)[0].lstrip('/')
-              if clean and not (root/clean).is_file(): missing.append(clean)
-          if missing: raise SystemExit('Missing references: '+', '.join(sorted(set(missing))))
-          if html.count('data-project=') != 6: raise SystemExit('Project section verification failed')
-          files=[p for p in root.rglob('*') if p.is_file()]
-          if len(files) != 22: raise SystemExit(f'Expected 22 clean files, found {len(files)}')
-          print(f'Validated {len(files)} extracted files, {len(refs)} references and six preserved projects.')
+              if ref.startswith(("#", "http:", "https:", "mailto:", "tel:", "data:", "javascript:")):
+                  continue
+              clean = ref.split("?", 1)[0].split("#", 1)[0].lstrip("/")
+              if clean and not (root / clean).is_file():
+                  missing.append(clean)
+
+          if missing:
+              raise SystemExit("Missing local references: " + ", ".join(sorted(set(missing))))
+          if html.count("data-project=") != 6:
+              raise SystemExit("Project section must contain exactly six project controls")
+
+          files = [p for p in root.rglob("*") if p.is_file()]
+          if len(files) != 22:
+              raise SystemExit(f"Expected 22 extracted files, found {len(files)}")
+          if any(p.stat().st_size > 2_000_000 for p in files):
+              raise SystemExit("Unexpected oversized file found")
+
+          print(f"Verified {len(files)} extracted files and {len(refs)} asset references.")
           PY
 
-      - name: Replace main with clean extracted site
+          find "$FINAL" -type f -printf '%P %s bytes\n' | sort
+
+      - name: Replace main with clean extracted website files
         shell: bash
         run: |
           set -euo pipefail
-          FINAL="$RUNNER_TEMP/yash-portfolio-final"
+          FINAL="$RUNNER_TEMP/yash-portfolio-extracted"
+
           git checkout -B main origin/main
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -a "$FINAL/." .
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git diff --cached --check
-          git commit -m "Publish extracted Awwwards-enhanced portfolio [skip ci]"
+          git commit -m "Publish extracted Awwwards-enhanced portfolio"
           git push origin HEAD:main
