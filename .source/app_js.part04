@@ -1,0 +1,166 @@
+    $('.project-screen').style.transform = `rotateY(${4 - tilt * 2}deg) rotateX(${1 + Math.sin(progress * Math.PI) * 1.5}deg)`;
+  }
+  addEventListener('scroll', updateProjectScroll, { passive: true });
+  addEventListener('resize', updateProjectScroll);
+
+  // Case modal
+  const caseModal = $('.case-modal');
+  const casePanel = $('.case-panel');
+  function openCase() {
+    const project = projects[activeProject];
+    $('#case-number').textContent = `${project.number} / CASE FILE`;
+    $('#case-kind').textContent = project.kind;
+    $('#case-title').textContent = project.name;
+    $('#case-detail').textContent = project.detail;
+    $('#case-image').src = project.image;
+    $('#case-image').alt = `${project.name} interface`;
+    $('#case-proof').innerHTML = project.proof.map((item) => `<span>✓ ${item}</span>`).join('');
+    const live = $('#case-live');
+    live.hidden = !project.live;
+    live.href = project.live || '#';
+    $('#case-repo').href = project.repo;
+    caseModal.classList.add('is-open');
+    caseModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    casePanel.scrollTop = 0;
+  }
+  function closeCase() {
+    caseModal.classList.remove('is-open');
+    caseModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+  $('.case-open').addEventListener('click', openCase);
+  $('.project-screen').addEventListener('click', openCase);
+  $('.case-close').addEventListener('click', closeCase);
+  $('.case-backdrop').addEventListener('click', closeCase);
+  addEventListener('keydown', (event) => { if (event.key === 'Escape') closeCase(); });
+
+  // Service lab and workflow canvas
+  const serviceTabs = $$('.service-tab');
+  let activeService = 0;
+  function setService(index) {
+    activeService = index;
+    const service = services[index];
+    serviceTabs.forEach((tab, i) => tab.classList.toggle('is-active', i === index));
+    const elements = [$('#service-label'), $('#service-title'), $('#service-copy'), $('#service-tags')];
+    elements.forEach((el) => { el.style.opacity = '0'; el.style.transform = 'translateY(10px)'; });
+    setTimeout(() => {
+      $('#service-label').textContent = service.label;
+      $('#service-title').textContent = service.title;
+      $('#service-copy').textContent = service.copy;
+      $('#service-tags').innerHTML = service.tags.map((tag) => `<span>${tag}</span>`).join('');
+      elements.forEach((el, i) => {
+        el.style.transition = `opacity .4s ${i * .04}s, transform .5s ${i * .04}s`;
+        el.style.opacity = '1'; el.style.transform = '';
+      });
+    }, 150);
+  }
+  serviceTabs.forEach((tab) => {
+    const index = Number(tab.dataset.service);
+    tab.addEventListener('mouseenter', () => { if (!isCoarse) setService(index); });
+    tab.addEventListener('click', () => setService(index));
+  });
+
+  function setupWorkflowCanvas() {
+    const canvas = $('#workflow-canvas');
+    const ctx = canvas.getContext('2d');
+    const output = $('.service-output');
+    let w = 0, h = 0, dpr = 1;
+    const resize = () => {
+      const rect = output.getBoundingClientRect();
+      w = rect.width; h = rect.height; dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      canvas.style.width = `${w}px`; canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    const draw = (time) => {
+      ctx.clearRect(0, 0, w, h);
+      const nodes = [
+        { x: w * .18, y: h * .82 },
+        { x: w * .48, y: h * .72 },
+        { x: w * .76, y: h * .56 },
+        { x: w * .90, y: h * .84 }
+      ];
+      ctx.lineWidth = 1;
+      for (let i = 0; i < nodes.length - 1; i++) {
+        const a = nodes[i], b = nodes[i + 1];
+        ctx.beginPath();
+        ctx.strokeStyle = i === 1 ? 'rgba(255,122,38,.55)' : 'rgba(57,167,255,.42)';
+        ctx.setLineDash([6, 10]);
+        ctx.lineDashOffset = -(time * .03 + activeService * 12);
+        ctx.moveTo(a.x, a.y);
+        const midX = (a.x + b.x) / 2;
+        ctx.bezierCurveTo(midX, a.y, midX, b.y, b.x, b.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      nodes.forEach((node, i) => {
+        const pulse = 4 + Math.sin(time * .002 + i) * 2;
+        ctx.beginPath();
+        ctx.fillStyle = i === 1 ? 'rgba(255,122,38,.55)' : 'rgba(57,167,255,.4)';
+        ctx.arc(node.x, node.y, pulse, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    };
+    addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(draw);
+  }
+  setupWorkflowCanvas();
+
+  // Process scroll
+  const processSection = $('#process');
+  const processSteps = $$('.process-step');
+  const processCoreLabel = $('#process-core-label');
+  function updateProcess() {
+    if (innerWidth < 900) return;
+    const rect = processSection.getBoundingClientRect();
+    const travel = processSection.offsetHeight - innerHeight;
+    const progress = clamp(-rect.top / travel, 0, 1);
+    const index = Math.min(processSteps.length - 1, Math.floor(progress * processSteps.length));
+    processSteps.forEach((step, i) => step.classList.toggle('is-active', i === index));
+    processCoreLabel.textContent = processSteps[index].dataset.process;
+    $('.process-world').style.transform = `translate(-50%,-50%) rotate(${progress * 42}deg) scale(${.92 + Math.sin(progress * Math.PI) * .12})`;
+  }
+  addEventListener('scroll', updateProcess, { passive: true });
+
+  // Copy email
+  $('.copy-email').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    try {
+      await navigator.clipboard.writeText('yash.k.ganesh@gmail.com');
+      const previous = button.textContent;
+      button.textContent = 'EMAIL COPIED ✓';
+      setTimeout(() => button.textContent = previous, 1800);
+    } catch {
+      location.href = 'mailto:yash.k.ganesh@gmail.com';
+    }
+  });
+
+  // Smooth anchor navigation while respecting reduced motion
+  $$('a[href^="#"]').forEach((link) => link.addEventListener('click', (event) => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' });
+  }));
+
+  updateProjectScroll();
+  updateProcess();
+
+  // Cinematic capability sequence
+  const cinema = $('#cinema');
+  const cinemaSticky = $('.cinema-sticky');
+  const cinemaOrbit = $('.cinema-orbit');
+  const cinemaCore = $('.cinema-core');
+  const cinemaScenes = $$('.cinema-scenes article');
+  const cinemaMeter = $('.cinema-meter i b');
+  const cinemaCount = $('#cinema-count');
+  function updateCinema(){
+    if(!cinema) return;
+    const rect=cinema.getBoundingClientRect();
+    const travel=Math.max(1,cinema.offsetHeight-innerHeight);
+    const p=clamp(-rect.top/travel,0,1);
+    const scene=Math.min(cinemaScenes.length-1,Math.floor(p*cinemaScenes.length));
+    cinemaScenes.forEach((el,i)=>el.classList.toggle('is-active',i===scene));
