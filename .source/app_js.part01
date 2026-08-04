@@ -1,0 +1,133 @@
+(() => {
+  'use strict';
+
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCoarse = matchMedia('(pointer: coarse)').matches;
+
+  const projects = [
+    {
+      number: '01',
+      name: 'LERNIO AI',
+      kind: 'AI LEARNING OPERATING SYSTEM',
+      summary: 'A complete student experience where AI supports lessons, tutoring, quizzes, revision and planning—not merely a chat box.',
+      detail: 'Lernio brings structured learning material, an AI tutor, practice systems, flashcards, analytics and planning into one practical learning workflow for diploma engineering students.',
+      tags: ['AI TUTOR', '241 LESSONS', 'LIVE PRODUCT'],
+      proof: ['44 subjects', '241 structured lessons', 'AI tutor and quizzes', 'Live production deployment'],
+      image: 'assets/projects/lernio-ai-home.webp',
+      browser: 'lernio.ai / learning operating system',
+      live: 'https://lernioai.vercel.app',
+      repo: 'https://github.com/GYASH28/LERNIOAI'
+    },
+    {
+      number: '02',
+      name: 'B.R.A.C.E',
+      kind: 'PERMISSIONED DESKTOP AI COMPANION',
+      summary: 'A Jarvis-inspired desktop assistant built around voice, memory, visible tools and explicit user approval.',
+      detail: 'B.R.A.C.E combines a desktop interface, fast and reasoning model routing, persistent context, voice states and permission gates around file, terminal and browser actions.',
+      tags: ['LOCAL-FIRST', 'VOICE STATES', 'TOOL APPROVALS'],
+      proof: ['Electron desktop app', 'Persistent memory', 'Voice interaction states', 'Permissioned tool execution'],
+      image: 'assets/projects/brace-interface-home.webp',
+      browser: 'brace.local / permissioned agent',
+      live: '',
+      repo: 'https://github.com/GYASH28/brace_new'
+    },
+    {
+      number: '03',
+      name: 'CAMPUSMATE',
+      kind: 'MULTI-ROLE CAMPUS PLATFORM',
+      summary: 'A role-aware operations layer for students, teachers, coordinators, HODs and administrators.',
+      detail: 'CampusMate organizes attendance, notices, timetables, assignments, notes, exams, QR workflows and analytics around the real responsibilities of each campus role.',
+      tags: ['5 USER ROLES', 'QR ATTENDANCE', 'PWA'],
+      proof: ['Five distinct user roles', 'QR attendance workflows', 'Responsive PWA behavior', 'Live deployment'],
+      image: 'assets/projects/campusmate-home.webp',
+      browser: 'campusmate / connected campus operations',
+      live: 'https://campuscwit.vercel.app',
+      repo: 'https://github.com/GYASH28/CAMPUSMATE'
+    },
+    {
+      number: '04',
+      name: 'FAKHRI MART',
+      kind: 'WHOLESALE CATALOGUE EXPERIENCE',
+      summary: 'A premium digital storefront helping a traditional wholesale business present products and turn interest into enquiries.',
+      detail: 'The experience combines cinematic brand storytelling, product discovery, catalogue navigation, mobile-first interactions and direct WhatsApp enquiry flows.',
+      tags: ['CLIENT BUILD', 'CATALOGUE', 'WHATSAPP FLOW'],
+      proof: ['Real client project', 'Product discovery system', 'WhatsApp enquiry flow', 'Responsive interaction design'],
+      image: 'assets/projects/fakhri-mart-home.webp',
+      browser: 'fakhri mart / yarn catalogue experience',
+      live: 'https://fakhriyarns.vercel.app',
+      repo: 'https://github.com/GYASH28/sample-website'
+    },
+    {
+      number: '05',
+      name: 'INTERACTIVE QUIZ',
+      kind: 'FOCUSED BROWSER EXPERIENCE',
+      summary: 'A compact learning tool built with the simplest stack the problem required.',
+      detail: 'A responsive browser quiz with dynamic questions, immediate scoring and clear feedback—built without framework overhead.',
+      tags: ['ZERO FRAMEWORK', 'INSTANT SCORING', 'RESPONSIVE'],
+      proof: ['Plain HTML, CSS and JS', 'Immediate feedback', 'Responsive layout', 'GitHub Pages deployment'],
+      image: 'assets/projects/interactive-quiz-home.webp',
+      browser: 'interactive quiz / focused learning utility',
+      live: 'https://gyash28.github.io/WD_practical_no_20/',
+      repo: 'https://github.com/GYASH28/WD_practical_no_20'
+    },
+    {
+      number: '06',
+      name: 'CINEMATIC PORTFOLIO',
+      kind: 'MOTION-LED PERSONAL EXPERIENCE',
+      summary: 'An expressive portfolio where interaction, storytelling and frontend engineering share the frame.',
+      detail: 'A personal experience designed around cinematic reveals, scroll choreography, responsive motion, product storytelling and tactile interface details.',
+      tags: ['SCROLL NARRATIVE', 'MOTION SYSTEM', 'INTERACTIVE'],
+      proof: ['Scroll-driven scenes', 'Custom interaction language', 'Responsive motion', 'Original visual system'],
+      image: 'assets/projects/yash-portfolio-hero-portrait.webp',
+      browser: 'yash ganesh / interactive portfolio',
+      live: '',
+      repo: 'https://github.com/GYASH28/YASH_PORTFOLIO'
+    }
+  ];
+
+  const services = [
+    {
+      label: 'OPERATIONS',
+      title: 'Remove repetitive work without breaking the workflow.',
+      copy: 'Map the current process, locate expensive friction and build an automation layer around the tools your team already uses.',
+      tags: ['WORKFLOW AUDIT', 'AUTOMATION MAP', 'APPROVAL POINTS', 'INTERNAL DASHBOARD']
+    },
+    {
+      label: 'KNOWLEDGE',
+      title: 'Turn scattered company information into usable answers.',
+      copy: 'Design a searchable knowledge system that helps people find, understand and act on internal information with visible sources.',
+      tags: ['KNOWLEDGE ARCHITECTURE', 'SEMANTIC SEARCH', 'SOURCE CITATIONS', 'ROLE ACCESS']
+    },
+    {
+      label: 'CUSTOMER',
+      title: 'Create faster customer journeys that still feel human.',
+      copy: 'Build AI-assisted lead and support flows that respond quickly, preserve context and hand off cleanly to a person.',
+      tags: ['LEAD FLOW', 'SUPPORT COPILOT', 'WHATSAPP', 'HUMAN HANDOFF']
+    },
+    {
+      label: 'PRODUCT',
+      title: 'Move an AI idea from slide deck to working pilot.',
+      copy: 'Combine product thinking, interaction design and rapid engineering to ship a contained pilot your team can test with real users.',
+      tags: ['PRODUCT SCOPE', 'INTERACTIVE PROTOTYPE', 'AI INTEGRATION', 'DEPLOYMENT']
+    }
+  ];
+
+  // Opening sequence
+  const intro = $('#intro');
+  const introLine = $('.intro-line i');
+  const introEnter = $('.intro-enter');
+  const introSkip = $('.intro-skip');
+  const introWords = $$('.intro-words span');
+  const introCount = $('#intro-count');
+  const introClock = $('#intro-clock');
+  let introDone = false;
+  let introProgress = 0;
+  let introStart = performance.now();
+
+  function completeIntro() {
+    if (introDone) return;
+    introDone = true;
