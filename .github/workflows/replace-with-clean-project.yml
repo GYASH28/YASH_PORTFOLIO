@@ -1,64 +1,8 @@
-name: Locate exact optimized portfolio objects
-
+name: Disabled migration placeholder
 on:
-  push:
-    branches: [main]
-
-permissions:
-  contents: read
-
+  workflow_dispatch:
 jobs:
-  locate:
-    if: github.actor != 'github-actions[bot]'
+  noop:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - name: Check out all repository history
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check every optimized ZIP object
-        shell: bash
-        run: |
-          set -uo pipefail
-          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --force
-          cat > "$RUNNER_TEMP/objects.txt" <<'EOF'
-          .gitignore a62d321671475d38e1a622780f058679a4602842
-          README.md 570f8921bbd095933a542319c826490e0389ac50
-          START_LOCALHOST.bat 49671a2284407dca502f264fd2b85dea7ce44a07
-          START_LOCALHOST.ps1 5e5b1d2e76e5f3b0b5ff7ebc7c3937d462ef7447
-          app.js 0f239b47e9ce26c2c27cb100a5ea9e8bf544f804
-          assets/favicon.svg 181858b76bbc450ffde462fa12c836d96d3c60f2
-          assets/fonts/barlow-400.woff2 ebb34ad5e06d85a074c6f2d3718757bdabc9e731
-          assets/fonts/barlow-600.woff2 da60c9a90e758f7924dfac415f24961ee74c59c9
-          assets/fonts/barlow-800.woff2 33c8a26ee2cd79dc94efb1b5a0364b250693d47e
-          assets/fonts/recursive.woff2 0dece81f4e183e9b7dd79f9f0a6f97a06c2f89d3
-          assets/portraits/yash-real-builder.webp 61fb9d8d9a47768f14f1e0312859f5b451026360
-          assets/portraits/yash-real-editorial.webp 1d205617c0fa7fcc239a6be41902433ec271fa7a
-          assets/portraits/yash-real-hero.webp ef173bfb71ec62c9d7340b4543f6326252601b52
-          assets/projects/brace-interface-home.webp 786888308d18addddb81c98680f7b2dc92a4838f
-          assets/projects/campusmate-home.webp f885ff7f06ff6b8e9442483a524140a317a121c1
-          assets/projects/fakhri-mart-home.webp b12f64f372c34d3b811c19eb055e15e4f85b717f
-          assets/projects/interactive-quiz-home.webp 1f2e4fb91f5dfbf882fbf62f741a009db72c89f8
-          assets/projects/lernio-ai-home.webp 71a0524373dd22cc7538751d9ec279b748d0106c
-          assets/projects/yash-portfolio-hero-portrait.webp 5524609293d5b47ceca65a895b657f6a2539175a
-          index.html 5d2ba4ae7f0829a0b5e4af1307878012fde2d63b
-          styles.css 273b967edf3f23cad99bc6b93b58d8de4d1b3f64
-          vercel.json a22c643c09b722281634ad6012423bfe427032d9
-          EOF
-
-          present=0
-          missing=0
-          while read -r path sha; do
-            if git cat-file -e "$sha^{blob}" 2>/dev/null; then
-              size="$(git cat-file -s "$sha")"
-              echo "PRESENT $path $sha $size"
-              present=$((present+1))
-            else
-              echo "MISSING $path $sha"
-              missing=$((missing+1))
-            fi
-          done < "$RUNNER_TEMP/objects.txt"
-          echo "SUMMARY present=$present missing=$missing total=$((present+missing))"
-          test "$missing" -eq 0
+      - run: echo "Migration disabled"
