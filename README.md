@@ -17,27 +17,25 @@ A premium, responsive personal portfolio for **Yash Ganesh**, positioned around 
 
 - `/` — Main cinematic portfolio
 - `/system` — Interactive system model
-- `/404` — Custom not-found page
+- Any unknown route — Custom not-found experience
 
-## Local development
-
-This project is framework-free and has no runtime dependencies. The deployment branch stores the browser source in one deterministic compressed text bundle, while the downloadable production package contains the readable source files.
+## Local production verification
 
 ```bash
 npm run check
-npm run build
-python -m http.server 4173 -d dist
 ```
 
-Then open `http://localhost:4173`.
+The deployment build creates a compact loader in `dist/`. It retrieves the versioned production source package from this public repository, expands it in the browser, inlines the route-specific CSS and JavaScript, and serves repository-hosted optimized assets. This avoids fragile build-time binary reconstruction on Vercel while keeping the complete implementation versioned in Git.
 
-## Production build
+## Source package
 
-```bash
-npm run build
-```
+The deterministic source package is stored in:
 
-Vercel serves the generated `dist/` directory. Build settings are defined in `vercel.json`.
+- `.source/portfolio-source.gz.b64.part1`
+- `.source/portfolio-source.gz.b64.part2`
+- `.source/portfolio-source.gz.b64.part3`
+
+The downloadable release contains the normal readable HTML, CSS, JavaScript, and asset files for local development.
 
 ## Accessibility and performance
 
@@ -55,6 +53,7 @@ The repository state before this integration is preserved on:
 
 `backup/pre-system-integration-2026-08-04`
 
-Development was completed on:
+Development branches:
 
-`feat/cinematic-system-integration`
+- `feat/cinematic-system-integration`
+- `fix/vercel-loader-deployment`
