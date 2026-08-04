@@ -1,9 +1,10 @@
 {
   "name": "yash-portfolio-cinematic-system",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "build": "node scripts/build.mjs",
-    "check": "npm run build && node scripts/check.mjs"
+    "audit": "node scripts/audit.mjs",
+    "check": "npm run build && node --check dist/app.js && node --check dist/system.js && npm run audit"
   }
 }
