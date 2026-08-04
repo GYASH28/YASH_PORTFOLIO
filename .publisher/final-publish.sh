@@ -3,7 +3,7 @@ set -euo pipefail
 
 RELEASE_COMMIT="e42a62d8f9980ead08ea9ae9880c29e124f19364"
 PACKAGE="$RUNNER_TEMP/portfolio-release.gz"
-INNER="$RUNNER_TEMP/portfolio-release-inner.bin"
+INNER="$RUNNER_TEMP/portfolio-release-manifest.json"
 SOURCE="$RUNNER_TEMP/portfolio-release-source"
 FINAL="$RUNNER_TEMP/yash-portfolio-final"
 
@@ -23,32 +23,110 @@ done | tr -d '\r\n' | base64 --decode > "$PACKAGE"
 
 echo "30885c0151f97ab7ca6aafb438d81ec3690b34fce903f724a18768ec584f159e  $PACKAGE" | sha256sum --check -
 gzip -dc "$PACKAGE" > "$INNER"
-
-echo "Detected archive formats:"
 file "$PACKAGE" "$INNER" || true
-xxd -l 32 "$INNER" || true
 
-if unzip -tqq "$INNER" >/dev/null 2>&1; then
-  echo "Extracting inner ZIP archive"
-  unzip -q "$INNER" -d "$SOURCE"
-elif tar -tf "$INNER" >/dev/null 2>&1; then
-  echo "Extracting inner TAR archive"
-  tar -xf "$INNER" -C "$SOURCE"
-elif command -v 7z >/dev/null 2>&1 && 7z t "$INNER" >/dev/null 2>&1; then
-  echo "Extracting inner archive with 7-Zip"
-  7z x -y "-o$SOURCE" "$INNER" >/dev/null
-elif command -v bsdtar >/dev/null 2>&1 && bsdtar -tf "$INNER" >/dev/null 2>&1; then
-  echo "Extracting inner archive with bsdtar"
-  bsdtar -xf "$INNER" -C "$SOURCE"
-else
-  echo "Unable to identify or extract the inner release archive"
-  command -v 7z >/dev/null 2>&1 && 7z l "$INNER" || true
-  exit 1
-fi
+python - "$INNER" "$SOURCE" <<'PY'
+import base64
+import gzip
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+manifest_path = Path(sys.argv[1])
+out_root = Path(sys.argv[2]).resolve()
+data = json.loads(manifest_path.read_text(encoding='utf-8'))
+files = data.get('files')
+if not isinstance(files, dict):
+    raise SystemExit(f"Manifest has no files map. Top-level keys: {sorted(data)}")
+
+print(f"Manifest version={data.get('version')!r}; entries={len(files)}")
+
+def git_blob(sha: str) -> bytes:
+    result = subprocess.run(
+        ['git', 'cat-file', 'blob', sha],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return result.stdout
+
+def decode_value(path: str, value) -> bytes:
+    if isinstance(value, str):
+        if re.fullmatch(r'[0-9a-fA-F]{40}', value):
+            return git_blob(value.lower())
+        if value.startswith('base64:'):
+            return base64.b64decode(value[7:], validate=True)
+        if value.startswith('utf8:'):
+            return value[5:].encode('utf-8')
+        return value.encode('utf-8')
+
+    if isinstance(value, list):
+        return b''.join(decode_value(path, part) for part in value)
+
+    if not isinstance(value, dict):
+        raise TypeError(f"Unsupported manifest entry for {path}: {type(value).__name__}")
+
+    sha = value.get('sha') or value.get('blob') or value.get('blob_sha') or value.get('oid')
+    if isinstance(sha, str) and re.fullmatch(r'[0-9a-fA-F]{40}', sha):
+        return git_blob(sha.lower())
+
+    content = value.get('content')
+    if content is None:
+        content = value.get('data')
+    if content is None:
+        content = value.get('value')
+    if content is None:
+        content = value.get('chunks')
+    if content is None:
+        raise KeyError(f"Unsupported manifest object for {path}; keys={sorted(value)}")
+
+    encoding = str(value.get('encoding', 'utf-8')).lower().replace('_', '-').strip()
+    if isinstance(content, list):
+        raw = b''.join(decode_value(path, part) for part in content)
+    elif not isinstance(content, str):
+        raise TypeError(f"Unsupported content type for {path}: {type(content).__name__}")
+    elif encoding in {'base64', 'b64'}:
+        raw = base64.b64decode(content, validate=True)
+    elif encoding in {'gzip-base64', 'base64-gzip', 'gz+b64', 'b64+gz'}:
+        raw = gzip.decompress(base64.b64decode(content, validate=True))
+    elif encoding in {'hex', 'base16'}:
+        raw = bytes.fromhex(content)
+    elif encoding in {'utf8', 'utf-8', 'text', 'plain'}:
+        raw = content.encode('utf-8')
+    else:
+        raise ValueError(f"Unsupported encoding for {path}: {encoding}")
+
+    compression = str(value.get('compression', '')).lower().strip()
+    if compression in {'gzip', 'gz'}:
+        raw = gzip.decompress(raw)
+    return raw
+
+written = 0
+for rel_path, entry in files.items():
+    if not isinstance(rel_path, str) or not rel_path or rel_path.startswith('/'):
+        raise ValueError(f"Unsafe manifest path: {rel_path!r}")
+    target = (out_root / rel_path).resolve()
+    try:
+        target.relative_to(out_root)
+    except ValueError as exc:
+        raise ValueError(f"Unsafe manifest path: {rel_path!r}") from exc
+    target.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        payload = decode_value(rel_path, entry)
+    except Exception as exc:
+        detail = sorted(entry) if isinstance(entry, dict) else type(entry).__name__
+        raise RuntimeError(f"Could not reconstruct {rel_path}; entry={detail}") from exc
+    target.write_bytes(payload)
+    written += 1
+
+print(f"Reconstructed {written} manifest files into {out_root}")
+PY
+
 rm -rf "$SOURCE/__MACOSX"
-
 marker="$(find "$SOURCE" -type f -path '*/assets/fonts/barlow-400.woff2' -print -quit)"
-test -n "$marker" || { echo "Could not locate extracted asset root"; find "$SOURCE" -maxdepth 4 -type f -print | head -100; exit 1; }
+test -n "$marker" || { echo "Could not locate extracted asset root"; find "$SOURCE" -maxdepth 5 -type f -printf '%P %s bytes\n' | sort | head -150; exit 1; }
 SOURCE_ROOT="${marker%/assets/fonts/barlow-400.woff2}"
 echo "Using source root: $SOURCE_ROOT"
 
