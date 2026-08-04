@@ -80,7 +80,9 @@ jobs:
               if ref.startswith(('#', 'http:', 'https:', 'mailto:', 'tel:', 'data:', 'javascript:')):
                   continue
               clean = ref.split('?', 1)[0].split('#', 1)[0].lstrip('/')
-              if clean and not (root / clean).is_file():
+              if not clean or not re.fullmatch(r'[A-Za-z0-9_./-]+', clean):
+                  continue
+              if not (root / clean).is_file():
                   missing_refs.append(clean)
           if missing_refs:
               raise SystemExit('Missing local references: ' + ', '.join(sorted(set(missing_refs))))
