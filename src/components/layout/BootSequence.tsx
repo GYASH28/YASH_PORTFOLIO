@@ -131,7 +131,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
               strokeLinecap="round"
               fill="none"
               className="yg-line-draw"
-              style={{ pathLength: 1 }}
+              pathLength={1}
             />
             <path
               d="M64 58v44"
