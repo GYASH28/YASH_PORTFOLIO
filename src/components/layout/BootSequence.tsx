@@ -9,14 +9,19 @@ interface BootSequenceProps {
   onComplete: () => void;
 }
 
-const BOOT_STEPS = [
+type BootStep = {
+  readonly label: string;
+  readonly delay: number;
+};
+
+const BOOT_STEPS: readonly BootStep[] = [
   { label: "SIGNAL_BOOT.log", delay: 200 },
   { label: "HUMAN_INPUT DETECTED", delay: 350 },
   { label: "STRUCTURE MAP ONLINE", delay: 300 },
   { label: "BUILD CORE READY", delay: 350 },
   { label: "OBSERVE → QUESTION → BUILD → IMPROVE", delay: 400 },
   { label: "Y/G SYSTEM ACTIVE", delay: 300 },
-] as const;
+];
 
 const FINAL_STATUS = "SYSTEM READY";
 
@@ -44,9 +49,10 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
   const completed = useRef(false);
 
   // If repeat visit OR reduced motion — short version.
-  const steps = played || reduced ? BOOT_STEPS.slice(0, 3) : BOOT_STEPS;
+  const steps: readonly BootStep[] =
+    played || reduced ? BOOT_STEPS.slice(0, 3) : BOOT_STEPS;
   const totalDuration =
-    steps.reduce<number>((acc, currentStep) => acc + currentStep.delay, 0) +
+    steps.reduce((acc, currentStep) => acc + currentStep.delay, 0) +
     (reduced ? 200 : 500);
 
   useEffect(() => {
