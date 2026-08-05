@@ -81,9 +81,10 @@ function YFrame({ reducedMotion }: { reducedMotion: boolean }) {
           <bufferGeometry>
             <bufferAttribute
               attach="attributes-position"
-              count={line.length}
-              array={new Float32Array(line.flatMap((v) => [v.x, v.y, v.z]))}
-              itemSize={3}
+              args={[
+                new Float32Array(line.flatMap((v) => [v.x, v.y, v.z])),
+                3,
+              ]}
             />
           </bufferGeometry>
           <lineBasicMaterial color="#6b5bff" transparent opacity={0.7} />
@@ -260,16 +261,9 @@ function ParticleField({ reducedMotion }: { reducedMotion: boolean }) {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={positions.length / 3}
-          array={positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
-        <bufferAttribute
-          attach="attributes-size"
-          count={sizes.length}
-          array={sizes}
-          itemSize={1}
-        />
+        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
       </bufferGeometry>
       <pointsMaterial
         size={0.035}
@@ -325,9 +319,12 @@ function SignalTraces({ reducedMotion }: { reducedMotion: boolean }) {
           <bufferGeometry>
             <bufferAttribute
               attach="attributes-position"
-              count={trace.pts.length}
-              array={new Float32Array(trace.pts.flatMap((v) => [v.x, v.y, v.z]))}
-              itemSize={3}
+              args={[
+                new Float32Array(
+                  trace.pts.flatMap((v) => [v.x, v.y, v.z])
+                ),
+                3,
+              ]}
             />
           </bufferGeometry>
           <lineBasicMaterial
@@ -343,7 +340,6 @@ function SignalTraces({ reducedMotion }: { reducedMotion: boolean }) {
 
 function SignalCoreScene({ pointer, reducedMotion, isMobile }: SignalCoreProps) {
   const group = useRef<THREE.Group>(null);
-  const { viewport } = useThree();
 
   useFrame((state) => {
     if (!group.current) return;
@@ -353,7 +349,6 @@ function SignalCoreScene({ pointer, reducedMotion, isMobile }: SignalCoreProps) 
     // Pointer parallax — gentle, never scroll-jacking.
     if (!reducedMotion) {
       const targetX = pointer.current.y * 0.15;
-      const targetY = pointer.current.x * 0.25;
       group.current.rotation.x += (targetX - group.current.rotation.x) * 0.05;
       group.current.position.x += (pointer.current.x * 0.3 - group.current.position.x) * 0.04;
       group.current.position.y += (pointer.current.y * 0.2 - group.current.position.y) * 0.04;
