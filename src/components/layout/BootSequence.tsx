@@ -45,21 +45,19 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
 
   // If repeat visit OR reduced motion — short version.
   const steps = played || reduced ? BOOT_STEPS.slice(0, 3) : BOOT_STEPS;
-  const totalDuration = steps.reduce((acc, s) => acc + s.delay, 0) + (reduced ? 200 : 500);
+  const totalDuration =
+    steps.reduce<number>((acc, currentStep) => acc + currentStep.delay, 0) +
+    (reduced ? 200 : 500);
 
   useEffect(() => {
     if (completed.current) return;
     let acc = 0;
     const timers: number[] = [];
-    steps.forEach((s, i) => {
-      acc += s.delay;
-      timers.push(
-        window.setTimeout(() => setStep(i + 1), acc)
-      );
+    steps.forEach((currentStep, index) => {
+      acc += currentStep.delay;
+      timers.push(window.setTimeout(() => setStep(index + 1), acc));
     });
-    timers.push(
-      window.setTimeout(() => setClosing(true), totalDuration)
-    );
+    timers.push(window.setTimeout(() => setClosing(true), totalDuration));
     timers.push(
       window.setTimeout(() => {
         completed.current = true;
@@ -81,9 +79,9 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
 
   // Esc / Space / Enter also skips.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === " " || e.key === "Enter") {
-        e.preventDefault();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" || event.key === " " || event.key === "Enter") {
+        event.preventDefault();
         skip();
       }
     };
@@ -172,17 +170,17 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
 
         {/* Log lines */}
         <div className="min-h-[8rem] flex flex-col items-center gap-2 font-mono text-small text-[var(--text-muted)]">
-          {steps.slice(0, step).map((s, i) => (
+          {steps.slice(0, step).map((currentStep, index) => (
             <div
-              key={i}
+              key={`${currentStep.label}-${index}`}
               className="flex items-center gap-2 opacity-0"
               style={{
                 animation: `yg-fade-up 400ms var(--ease-enter) forwards`,
-                animationDelay: `${i * 30}ms`,
+                animationDelay: `${index * 30}ms`,
               }}
             >
               <span className="text-[var(--signal-primary)]">▸</span>
-              <span>{s.label}</span>
+              <span>{currentStep.label}</span>
             </div>
           ))}
           {step >= steps.length && (
