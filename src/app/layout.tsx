@@ -1,13 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Inter, JetBrains_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-const fontDisplay = Space_Grotesk({
+// Display: use Inter with display weight as a reliable, expressive grotesk.
+// Bricolage Grotesque fails in restricted network environments.
+const fontDisplay = Inter({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700", "800"],
   display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const fontBody = Inter({
@@ -17,27 +20,35 @@ const fontBody = Inter({
   display: "swap",
 });
 
+// Editorial serif accent — used sparingly for personal / reflective moments.
+const fontSerif = Newsreader({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
 const fontMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ykg.vercel.app"),
   title: {
-    default: "Y/G Systems Studio — A Human Signal Inside the Machine",
-    template: "%s — Y/G Systems Studio",
+    default: "Yash Ganesh — Creative Product Engineer & AI Systems Builder",
+    template: "%s — Yash Ganesh",
   },
   description:
-    "Yash Ganesh — Product Engineer & AI Systems Builder based in Pune, India. Designing and shipping real working products: Lernio AI, B.R.A.C.E., CampusMate, and Fakhri Mart. Not another AI wrapper. A working product.",
+    "Yash Ganesh designs digital worlds and engineers them into real products. AI learning systems, desktop companions, campus platforms, and client experiences — from idea to deployment. Based in Pune, India.",
   keywords: [
     "Yash Ganesh",
-    "Y/G Systems Studio",
-    "Product Engineer",
-    "AI Systems",
-    "Full-stack development",
+    "Creative Product Engineer",
+    "AI Systems Builder",
+    "Portfolio",
     "Pune",
     "Lernio AI",
     "B.R.A.C.E.",
@@ -45,38 +56,34 @@ export const metadata: Metadata = {
     "Fakhri Mart",
     "Interaction design",
     "WebGL",
+    "Product engineering",
   ],
   authors: [{ name: "Yash Ganesh" }],
   creator: "Yash Ganesh",
   openGraph: {
-    title: "Y/G Systems Studio — A Human Signal Inside the Machine",
+    title: "Yash Ganesh — Creative Product Engineer & AI Systems Builder",
     description:
-      "Product engineering, AI systems, and interaction design by Yash Ganesh. Observe → Structure → Engineer → Evolve.",
+      "I design digital worlds — and engineer them into real products. AI, education, desktop, campus, and client platforms from idea to deployment.",
     url: "https://ykg.vercel.app",
-    siteName: "Y/G Systems Studio",
+    siteName: "Yash Ganesh Portfolio",
     type: "website",
     locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Y/G Systems Studio — Yash Ganesh",
+    title: "Yash Ganesh — Creative Product Engineer",
     description:
-      "Product engineering, AI systems, and interaction design. A human signal inside the machine.",
+      "I design digital worlds — and engineer them into real products. Portfolio of Lernio AI, B.R.A.C.E., CampusMate, and Fakhri Mart.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  icons: {
-    icon: "/logo.svg",
-  },
+  robots: { index: true, follow: true },
+  icons: { icon: "/logo.svg" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#0a0a0f",
+  themeColor: "#100e0b",
   colorScheme: "dark",
 };
 
@@ -88,7 +95,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fontDisplay.variable} ${fontBody.variable} ${fontMono.variable} antialiased`}
+        className={`${fontDisplay.variable} ${fontBody.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
       >
         {children}
         <Toaster />

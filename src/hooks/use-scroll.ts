@@ -2,28 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-export interface SectionInfo {
-  id: string;
-  label: string;
-  code: string;
-}
-
-export const SECTIONS: SectionInfo[] = [
-  { id: "boot", label: "Boot", code: "BOOT" },
-  { id: "hero", label: "Hero", code: "SIGNAL_CORE" },
-  { id: "position", label: "Position", code: "POSITION" },
-  { id: "anatomy", label: "System Anatomy", code: "ANATOMY" },
-  { id: "systems", label: "Selected Systems", code: "SYSTEMS" },
-  { id: "capabilities", label: "Capabilities", code: "CAPABILITIES" },
-  { id: "about", label: "Human Layer", code: "HUMAN" },
-  { id: "contact", label: "Final Signal", code: "CONTACT" },
-];
-
 /**
- * Tracks which section is currently most in-view.
+ * Tracks which section is most in-view on the homepage.
+ * Returns the section id (or "hero" as default).
  */
-export function useActiveSection(): string {
-  const [active, setActive] = useState<string>("hero");
+export function useActiveSection(sectionIds: string[]): string {
+  const [active, setActive] = useState<string>(sectionIds[0] ?? "hero");
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -35,25 +19,22 @@ export function useActiveSection(): string {
           setActive(visible[0].target.id);
         }
       },
-      {
-        rootMargin: "-30% 0px -50% 0px",
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-      }
+      { rootMargin: "-30% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
     );
 
-    SECTIONS.forEach(({ id }) => {
+    sectionIds.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [sectionIds]);
 
   return active;
 }
 
 /**
- * Returns the global scroll progress (0..1) of the document.
+ * Returns scroll progress 0..1 across the document.
  */
 export function useScrollProgress(): number {
   const [progress, setProgress] = useState(0);
@@ -65,8 +46,7 @@ export function useScrollProgress(): number {
       raf = requestAnimationFrame(() => {
         const doc = document.documentElement;
         const max = doc.scrollHeight - doc.clientHeight;
-        const p = max > 0 ? doc.scrollTop / max : 0;
-        setProgress(Math.max(0, Math.min(1, p)));
+        setProgress(max > 0 ? Math.max(0, Math.min(1, doc.scrollTop / max)) : 0);
       });
     };
     onScroll();

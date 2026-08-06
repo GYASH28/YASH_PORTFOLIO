@@ -3,12 +3,12 @@ import { PROJECTS } from "@/data/projects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://ykg.vercel.app";
-  const routes = [
-    { url: `${base}/`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 1 },
-    { url: `${base}/systems`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.8 },
+  const routes: MetadataRoute.Sitemap = [
+    { url: `${base}/`, lastModified: new Date(), changeFrequency: "monthly", priority: 1 },
+    { url: `${base}/work`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
   ];
   const caseStudies = PROJECTS.map((p) => ({
-    url: `${base}/systems/${p.slug}`,
+    url: `${base}/work/${p.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.7,

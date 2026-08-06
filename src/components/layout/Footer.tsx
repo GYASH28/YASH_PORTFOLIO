@@ -1,88 +1,83 @@
 "use client";
 
-import { IDENTITY } from "@/data/projects";
+import Link from "next/link";
+import { PROFILE } from "@/data/projects";
 import { YGMark } from "@/components/ui-yg/icons";
 
-/**
- * Footer reveal — appears beneath the final signal as a quiet system close.
- */
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="relative w-full border-t border-[var(--border-soft)] py-12 md:py-16 overflow-hidden">
-      <div className="absolute inset-0 yg-grid-bg opacity-10" />
-      <div className="relative max-w-[1400px] mx-auto px-5 md:px-8">
+      <div className="absolute inset-0 yg-grid-subtle opacity-20" />
+      <div className="relative max-w-[1500px] mx-auto px-5 md:px-10">
         <div className="grid grid-cols-2 md:grid-cols-12 gap-8">
-          {/* Mark + tagline */}
+          {/* Brand */}
           <div className="col-span-2 md:col-span-5">
-            <div className="flex items-center gap-3">
-              <YGMark size={32} />
-              <div className="flex flex-col leading-none">
-                <span className="font-display text-h3 font-semibold">
-                  Y/G Systems Studio
-                </span>
-                <span className="font-mono text-meta text-[var(--text-muted)] mt-1">
-                  {IDENTITY.tagline.toUpperCase()}
-                </span>
-              </div>
-            </div>
-            <p className="mt-6 max-w-[36ch] text-small text-[var(--text-secondary)]">
-              {IDENTITY.name} — {IDENTITY.role}. {IDENTITY.location}.
-              Building useful futures, one working system at a time.
+            <Link href="/" className="inline-flex items-center gap-3 group">
+              <span className="font-display text-h2 text-[var(--ink-bone)] group-hover:text-[var(--accent-warm)] transition-colors">
+                Yash<span className="text-[var(--accent-warm)]">.</span>
+              </span>
+            </Link>
+            <p className="mt-6 max-w-[40ch] text-small text-[var(--ink-soft)]">
+              {PROFILE.positioning} {PROFILE.location}. Building useful futures, one working system at a time.
+            </p>
+            <p className="font-serif italic text-small text-[var(--ink-quiet)] mt-4">
+              “{PROFILE.secondaryLine}”
             </p>
           </div>
 
           {/* Nav */}
           <div className="md:col-span-3">
-            <p className="font-mono text-meta text-[var(--text-muted)] mb-4">MAP</p>
+            <p className="font-mono text-meta text-[var(--ink-quiet)] mb-4">MAP</p>
             <ul className="space-y-2">
               {[
-                { label: "Selected Systems", href: "#systems" },
-                { label: "Method", href: "#anatomy" },
-                { label: "Capabilities", href: "#capabilities" },
-                { label: "About", href: "#about" },
-                { label: "Contact", href: "#contact" },
+                { label: "Work", href: "/#work" },
+                { label: "Process", href: "/#process" },
+                { label: "Capabilities", href: "/#capabilities" },
+                { label: "About", href: "/#about" },
+                { label: "Contact", href: "/#contact" },
+                { label: "All Work", href: "/work" },
               ].map((l) => (
                 <li key={l.href}>
-                  <a
+                  <Link
                     href={l.href}
-                    className="text-small text-[var(--text-secondary)] hover:text-[var(--signal-primary)] transition-colors"
+                    className="text-small text-[var(--ink-soft)] hover:text-[var(--accent-warm)] transition-colors"
                   >
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Direct */}
           <div className="md:col-span-2">
-            <p className="font-mono text-meta text-[var(--text-muted)] mb-4">DIRECT</p>
+            <p className="font-mono text-meta text-[var(--ink-quiet)] mb-4">DIRECT</p>
             <ul className="space-y-2">
               <li>
                 <a
-                  href={`mailto:${IDENTITY.email}`}
-                  className="text-small text-[var(--text-secondary)] hover:text-[var(--signal-primary)] transition-colors"
+                  href={`mailto:${PROFILE.email}`}
+                  className="text-small text-[var(--ink-soft)] hover:text-[var(--accent-warm)] transition-colors"
                 >
                   Email
                 </a>
               </li>
               <li>
                 <a
-                  href={IDENTITY.github}
+                  href={PROFILE.github}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-small text-[var(--text-secondary)] hover:text-[var(--signal-primary)] transition-colors"
+                  className="text-small text-[var(--ink-soft)] hover:text-[var(--accent-warm)] transition-colors"
                 >
                   GitHub
                 </a>
               </li>
               <li>
                 <a
-                  href={IDENTITY.linkedin}
+                  href={PROFILE.linkedin}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="text-small text-[var(--text-secondary)] hover:text-[var(--signal-primary)] transition-colors"
+                  className="text-small text-[var(--ink-soft)] hover:text-[var(--accent-warm)] transition-colors"
                 >
                   LinkedIn
                 </a>
@@ -90,24 +85,23 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Build version */}
+          {/* Build */}
           <div className="md:col-span-2">
-            <p className="font-mono text-meta text-[var(--text-muted)] mb-4">SYSTEM</p>
-            <ul className="space-y-2 font-mono text-meta text-[var(--text-muted)]">
-              <li>BUILD · 2.0</li>
-              <li>SIGNAL OS · 01</li>
-              <li className="text-[var(--success)]">● OPERATIONAL</li>
+            <p className="font-mono text-meta text-[var(--ink-quiet)] mb-4">BUILD</p>
+            <ul className="space-y-2 font-mono text-meta text-[var(--ink-quiet)]">
+              <li>v2.0</li>
+              <li>BUILT IN PUNE</li>
+              <li className="text-[var(--accent-warm)]">● OPERATIONAL</li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-[var(--border-soft)] flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-          <p className="font-mono text-meta text-[var(--text-muted)]">
-            © {year} {IDENTITY.name}. All systems reserved.
+          <p className="font-mono text-meta text-[var(--ink-quiet)]">
+            © {year} {PROFILE.name}. Built with care.
           </p>
-          <p className="font-mono text-meta text-[var(--text-muted)]">
-            Built in Pune · Deployed via Vercel · No tracking
+          <p className="font-mono text-meta text-[var(--ink-quiet)]">
+            Next.js · React Three Fiber · GSAP
           </p>
         </div>
       </div>

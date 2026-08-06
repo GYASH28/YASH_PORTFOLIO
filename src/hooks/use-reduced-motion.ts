@@ -2,10 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-/**
- * Returns true when the user has requested reduced motion.
- * Updates live if the preference changes.
- */
 export function useReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false);
 
