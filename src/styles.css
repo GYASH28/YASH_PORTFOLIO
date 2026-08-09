@@ -932,9 +932,9 @@ body.is-prologue-locked { overflow: hidden; }
     opacity: 0;
     visibility: hidden;
     transform: translateY(-1rem);
-    transition: opacity 220ms ease, transform 220ms ease, visibility 220ms ease;
+    transition: opacity 220ms ease, transform 220ms ease, visibility 0s linear 220ms;
   }
-  .mobile-navigation.is-open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .mobile-navigation.is-open { opacity: 1; visibility: visible; transform: translateY(0); transition-delay: 0s; }
   .mobile-navigation a { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; padding: 1.05rem 0; border-bottom: 1px solid var(--line); font-family: var(--display); font-size: 2.4rem; letter-spacing: 0; }
   .mobile-navigation a span { color: var(--cyan); font-family: var(--body); font-size: 0.55rem; }
   .mobile-navigation > a:last-child { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; color: var(--cyan); border: 0; font-family: var(--body); font-size: 0.65rem; }

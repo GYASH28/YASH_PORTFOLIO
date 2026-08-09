@@ -318,6 +318,7 @@ function Header() {
   const [open, setOpen] = useState(false);
   const menuButtonRef = useRef(null);
   const menuPanelRef = useRef(null);
+  const menuWasOpenRef = useRef(false);
   const home = window.location.pathname === "/";
   const links = [
     ["Work", home ? "#work" : "/#work"],
@@ -327,8 +328,13 @@ function Header() {
   ];
 
   useEffect(() => {
-    if (!open) return undefined;
+    if (!open) {
+      if (menuWasOpenRef.current) menuButtonRef.current?.focus({ preventScroll: true });
+      menuWasOpenRef.current = false;
+      return undefined;
+    }
 
+    menuWasOpenRef.current = true;
     const previousOverflow = document.body.style.overflow;
     const firstLink = menuPanelRef.current?.querySelector("a");
     const handleKeyDown = (event) => {
@@ -337,12 +343,12 @@ function Header() {
 
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
-    window.requestAnimationFrame(() => firstLink?.focus());
+    const focusFrame = window.requestAnimationFrame(() => firstLink?.focus({ preventScroll: true }));
 
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
-      menuButtonRef.current?.focus({ preventScroll: true });
+      window.cancelAnimationFrame(focusFrame);
     };
   }, [open]);
 
