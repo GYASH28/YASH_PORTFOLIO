@@ -10,7 +10,7 @@ export const projects = [
     summary:
       "A connected learning system for CWIT students that brings coursework, practice, revision, planning, and an AI tutor into one academic workspace.",
     statement: "One academic system. Every CWIT semester.",
-    media: "/images/projects/lernio-ai-home.webp",
+    media: "/images/projects/lernio-ai-production.webp",
     liveUrl: "https://lernioai.vercel.app",
     repoUrl: "https://github.com/GYASH28/LERNIOAI",
     embed: "protected",
@@ -93,7 +93,7 @@ export const projects = [
     summary:
       "A role-aware college platform for attendance, timetables, assignments, notices, notes, exams, and everyday campus workflows.",
     statement: "The campus day, in one place.",
-    media: "/images/projects/campusmate-home.webp",
+    media: "/images/projects/campusmate-production.webp",
     liveUrl: "https://campuscwit.vercel.app",
     repoUrl: "https://github.com/GYASH28/CAMPUSMATE",
     embed: "live",
@@ -135,7 +135,7 @@ export const projects = [
     summary:
       "A compact web-design learning experience combining structured course notes, immediate quiz feedback, and a clear progression across six units.",
     statement: "Learn it. Test it. See what stayed.",
-    media: "/images/projects/interactive-quiz-home.webp",
+    media: "/images/projects/interactive-quiz-production.webp",
     liveUrl: "https://gyash28.github.io/WD_practical_no_20/",
     repoUrl: "https://github.com/GYASH28/WD_practical_no_20",
     embed: "live",
@@ -178,7 +178,7 @@ export const projects = [
     summary:
       "A premium product-discovery website for a yarn and craft-material business, shaped around catalogue browsing and WhatsApp enquiries.",
     statement: "Modern retail without breaking the existing sales flow.",
-    media: "/images/projects/fakhri-mart-home.webp",
+    media: "/images/projects/fakhri-mart-production.webp",
     liveUrl: "https://fakhriyarns.vercel.app",
     repoUrl: "https://github.com/GYASH28/sample-website",
     embed: "protected",

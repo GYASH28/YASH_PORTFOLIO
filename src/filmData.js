@@ -11,8 +11,8 @@ export const films = {
   identity: {
     id: "build-manifesto",
     label: "Film 02 / A personal practice",
-    frameCount: 120,
-    fps: 10,
+    frameCount: 360,
+    fps: 30,
     duration: 12,
     poster: "/frames/build-manifesto/frame-0001.webp",
     source: "/videos/ykg-build-manifesto.mp4",

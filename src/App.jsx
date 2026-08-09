@@ -13,8 +13,8 @@ import {
 } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { drawCover, ScrollFilm } from "./ScrollFilm.jsx";
-import { films, getFilmFrame } from "./filmData.js";
+import { ScrollFilm } from "./ScrollFilm.jsx";
+import { films } from "./filmData.js";
 import {
   clientProjects,
   coreProjects,
@@ -45,12 +45,12 @@ function useReducedMotion() {
   return reduced;
 }
 
-const prologueStorageKey = "ykg-cinematic-prologue-seen";
+const prologueStorageKey = "ykg-cinematic-prologue-seen-v2";
 
 function CinematicPrologue({ reduced }) {
   const root = useRef(null);
-  const canvas = useRef(null);
-  const dismissRef = useRef(null);
+  const video = useRef(null);
+  const timers = useRef([]);
   const [visible, setVisible] = useState(() => {
     if (reduced) return false;
     try {
@@ -60,26 +60,14 @@ function CinematicPrologue({ reduced }) {
     }
   });
   const [ready, setReady] = useState(false);
+  const [holding, setHolding] = useState(false);
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
     if (!visible || reduced) return undefined;
     const element = root.current;
-    const surface = canvas.current;
-    if (!element || !surface) return undefined;
-
-    const context = surface.getContext("2d", { alpha: false, desynchronized: true });
-    const frameIndices = Array.from({ length: 50 }, (_, index) => index * 2);
-    if (frameIndices.at(-1) !== films.opening.frameCount - 1) {
-      frameIndices.push(films.opening.frameCount - 1);
-    }
-    const cache = new Map();
-    let cancelled = false;
-    let animationFrame;
-    let startTime;
-    let exitTimer;
-    let currentImage;
-    const duration = 5900;
+    const player = video.current;
+    if (!element || !player) return undefined;
     const backgroundElements = [
       ...element.parentElement.children,
       document.querySelector(".skip-link"),
@@ -88,29 +76,8 @@ function CinematicPrologue({ reduced }) {
     document.body.classList.add("is-prologue-locked");
     backgroundElements.forEach((node) => { node.inert = true; });
 
-    const resize = () => {
-      const bounds = surface.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      surface.width = Math.max(1, Math.round(bounds.width * dpr));
-      surface.height = Math.max(1, Math.round(bounds.height * dpr));
-      if (currentImage) drawCover(context, currentImage, surface.width, surface.height);
-    };
-
-    const drawNearest = (slot) => {
-      let image = cache.get(slot);
-      if (!image) {
-        for (let distance = 1; distance < frameIndices.length; distance += 1) {
-          image = cache.get(Math.max(0, slot - distance)) || cache.get(Math.min(frameIndices.length - 1, slot + distance));
-          if (image) break;
-        }
-      }
-      if (!image) return;
-      currentImage = image;
-      drawCover(context, image, surface.width, surface.height);
-    };
-
-    const beginExit = () => {
-      if (cancelled || element.dataset.exiting === "true") return;
+    const release = () => {
+      if (element.dataset.exiting === "true") return;
       element.dataset.exiting = "true";
       try {
         window.sessionStorage.setItem(prologueStorageKey, "1");
@@ -118,52 +85,42 @@ function CinematicPrologue({ reduced }) {
         // The sequence still works when storage is unavailable.
       }
       setExiting(true);
-      window.cancelAnimationFrame(animationFrame);
-      exitTimer = window.setTimeout(() => setVisible(false), 920);
-    };
-    dismissRef.current = beginExit;
-
-    const tick = (time) => {
-      if (!startTime) startTime = time;
-      const progress = Math.min(1, (time - startTime) / duration);
-      element.style.setProperty("--prologue-progress", progress.toFixed(4));
-      drawNearest(Math.round(progress * (frameIndices.length - 1)));
-      if (progress < 1) animationFrame = window.requestAnimationFrame(tick);
-      else beginExit();
+      timers.current.push(window.setTimeout(() => setVisible(false), 1150));
     };
 
-    resize();
+    const finish = () => {
+      if (element.dataset.finished === "true") return;
+      element.dataset.finished = "true";
+      setHolding(true);
+      timers.current.push(window.setTimeout(release, 780));
+    };
+
+    const updateProgress = () => {
+      const duration = Number.isFinite(player.duration) ? player.duration : 8;
+      element.style.setProperty("--prologue-progress", Math.min(1, player.currentTime / duration).toFixed(4));
+    };
+
     const onKeyDown = (event) => {
-      if (event.key === "Escape") beginExit();
+      if (event.key !== "Escape") return;
+      player.currentTime = Math.max(0, (player.duration || 8) - 0.04);
+      player.pause();
+      updateProgress();
+      finish();
     };
-    window.addEventListener("resize", resize, { passive: true });
     window.addEventListener("keydown", onKeyDown);
-
-    frameIndices.forEach((frameIndex, slot) => {
-      const image = new Image();
-      image.decoding = "async";
-      image.src = getFilmFrame(films.opening, frameIndex);
-      image.onload = () => {
-        if (cancelled) return;
-        cache.set(slot, image);
-        if (slot === 0) {
-          currentImage = image;
-          drawCover(context, image, surface.width, surface.height);
-          setReady(true);
-          animationFrame = window.requestAnimationFrame(tick);
-        }
-      };
-    });
+    player.addEventListener("timeupdate", updateProgress);
+    player.addEventListener("ended", finish);
+    const playPromise = player.play();
+    playPromise?.catch(() => setReady(true));
 
     return () => {
-      cancelled = true;
       document.body.classList.remove("is-prologue-locked");
       backgroundElements.forEach((node) => { node.inert = false; });
-      window.removeEventListener("resize", resize);
       window.removeEventListener("keydown", onKeyDown);
-      window.cancelAnimationFrame(animationFrame);
-      window.clearTimeout(exitTimer);
-      dismissRef.current = null;
+      player.removeEventListener("timeupdate", updateProgress);
+      player.removeEventListener("ended", finish);
+      timers.current.forEach(window.clearTimeout);
+      timers.current = [];
     };
   }, [reduced, visible]);
 
@@ -176,56 +133,62 @@ function CinematicPrologue({ reduced }) {
   return (
     <div
       ref={root}
-      className={`cinematic-prologue${ready ? " is-ready" : ""}${exiting ? " is-exiting" : ""}`}
+      className={`cinematic-prologue${ready ? " is-ready" : ""}${holding ? " is-holding" : ""}${exiting ? " is-exiting" : ""}`}
       style={{ "--prologue-progress": 0 }}
       role="dialog"
       aria-modal="true"
       aria-label="Opening title sequence"
     >
-      <canvas ref={canvas} className="cinematic-prologue__canvas" aria-hidden="true" />
+      <video
+        ref={video}
+        className="cinematic-prologue__video"
+        src="/videos/ykg-manga-hero-loop.mp4"
+        poster="/images/portraits/yash-hero-noir-suit-v4.webp"
+        preload="auto"
+        muted
+        playsInline
+        onCanPlay={() => setReady(true)}
+      />
       <div className="cinematic-prologue__grade" aria-hidden="true" />
-      <div className="cinematic-prologue__signal" aria-hidden="true"><i /></div>
       <div className="cinematic-prologue__meta">
-        <span>YKG / TITLE FILM 00</span>
-        <span>PUNE, INDIA / 2026</span>
+        <span>YKG / OPENING FILM</span>
+        <span>{holding ? "FRAME LOCKED" : "PLAYING ONCE"}</span>
       </div>
-      <div className="cinematic-prologue__credit">
-        <span>An independent practice by</span>
-        <strong>Yash Ganesh</strong>
-      </div>
-      <div className="cinematic-prologue__title" aria-hidden="true">
-        <span>Intelligence</span>
-        <span>Made useful<i>.</i></span>
-      </div>
-      <p className="visually-hidden">Yash Ganesh. Intelligence made useful.</p>
       <div className="cinematic-prologue__foot">
-        <span>AI systems / product engineering / implementation</span>
-        <button type="button" onClick={() => dismissRef.current?.()}>
+        <span>Yash Ganesh / AI systems and product engineering</span>
+        <button type="button" onClick={() => {
+          const player = video.current;
+          if (!player) return;
+          player.currentTime = Math.max(0, (player.duration || 8) - 0.04);
+          player.pause();
+          player.dispatchEvent(new Event("ended"));
+        }}>
           Skip intro <span>Esc</span>
         </button>
       </div>
       <div className="cinematic-prologue__progress" aria-hidden="true"><span /></div>
-      <div className="cinematic-prologue__curtain" aria-hidden="true" />
+      <div className="cinematic-prologue__match-line" aria-hidden="true" />
     </div>
   );
 }
 
-function useEditorialReveals(scope, reduced, dependency) {
+function useSiteMotion(scope, reduced, dependency) {
   useLayoutEffect(() => {
     if (reduced || !scope.current) return undefined;
     const context = gsap.context(() => {
       gsap.utils.toArray("[data-reveal]").forEach((element) => {
         gsap.fromTo(
           element,
-          { opacity: 0, y: 48 },
+          { opacity: 0, y: 54, clipPath: "inset(0 0 18% 0)" },
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
-            ease: "power3.out",
+            clipPath: "inset(0 0 0% 0)",
+            duration: 1.15,
+            ease: "expo.out",
             scrollTrigger: {
               trigger: element,
-              start: "top 88%",
+              start: "top 90%",
               once: true,
             },
           },
@@ -249,6 +212,95 @@ function useEditorialReveals(scope, reduced, dependency) {
           },
         );
       });
+
+      if (scope.current.classList.contains("home-page")) {
+        gsap.to(".hero-intro__media", {
+        yPercent: 7,
+        scale: 1.07,
+        ease: "none",
+        scrollTrigger: { trigger: ".hero-intro", start: "top top", end: "bottom top", scrub: 0.8 },
+      });
+      gsap.to(".hero-intro__headline", {
+        xPercent: -8,
+        yPercent: -12,
+        opacity: 0.18,
+        ease: "none",
+        scrollTrigger: { trigger: ".hero-intro", start: "top top", end: "bottom 15%", scrub: 0.7 },
+      });
+      gsap.fromTo(".hero-intro__statement", { yPercent: 0 }, {
+        yPercent: -18,
+        opacity: .18,
+        ease: "none",
+        scrollTrigger: { trigger: ".hero-intro", start: "35% top", end: "bottom top", scrub: .7 },
+      });
+      gsap.fromTo(".project-reel__screen", { yPercent: 3, scale: .965 }, {
+        yPercent: -2,
+        scale: 1,
+        ease: "none",
+        scrollTrigger: { trigger: ".project-reel", start: "top bottom", end: "bottom top", scrub: 1 },
+      });
+      gsap.utils.toArray(".cinematic-seam").forEach((seam) => {
+        const lines = seam.querySelectorAll("i, b");
+        const label = seam.querySelector("span");
+        gsap.fromTo(lines, { scaleX: .08, opacity: .22 }, {
+          scaleX: 1,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: { trigger: seam, start: "top bottom", end: "bottom 46%", scrub: .8 },
+        });
+        gsap.fromTo(label, { y: 20, opacity: 0 }, {
+          y: -8,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: { trigger: seam, start: "top 88%", end: "bottom 46%", scrub: .8 },
+        });
+      });
+      gsap.fromTo(".practice-intro__title", { xPercent: -4 }, {
+        xPercent: 4,
+        ease: "none",
+        scrollTrigger: { trigger: ".practice-intro", start: "top bottom", end: "bottom top", scrub: 1 },
+      });
+      gsap.fromTo(".practice-intro__copy", { yPercent: 12 }, {
+        yPercent: -10,
+        ease: "none",
+        scrollTrigger: { trigger: ".practice-intro", start: "top bottom", end: "bottom top", scrub: 1 },
+      });
+      gsap.fromTo(".client-work__media", { clipPath: "inset(12% 8% 12% 8%)", yPercent: 8 }, {
+        clipPath: "inset(0% 0% 0% 0%)",
+        yPercent: -4,
+        ease: "none",
+        scrollTrigger: { trigger: ".client-work", start: "top bottom", end: "bottom top", scrub: 1 },
+      });
+      gsap.utils.toArray(".service-ledger li").forEach((item, index) => {
+        gsap.fromTo(item, { x: index % 2 ? 54 : -54, opacity: 0.24 }, {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: { trigger: item, start: "top 92%", end: "center 62%", scrub: 0.6 },
+        });
+      });
+      gsap.utils.toArray(".process__steps article").forEach((item, index) => {
+        const figure = item.querySelector("figure");
+        gsap.fromTo(item, { xPercent: index % 2 ? 4 : -4 }, {
+          xPercent: 0,
+          ease: "none",
+          scrollTrigger: { trigger: item, start: "top bottom", end: "center center", scrub: 0.7 },
+        });
+        if (figure) {
+          gsap.fromTo(figure, { clipPath: "inset(10% 10% 10% 10%)" }, {
+            clipPath: "inset(0% 0% 0% 0%)",
+            ease: "none",
+            scrollTrigger: { trigger: item, start: "top 92%", end: "bottom 58%", scrub: 0.7 },
+          });
+        }
+      });
+        gsap.to(".experience-progress__fill", {
+          scaleY: 1,
+          ease: "none",
+          transformOrigin: "top",
+          scrollTrigger: { start: 0, end: "max", scrub: 0.35 },
+        });
+      }
     }, scope);
 
     const refreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 120);
@@ -314,8 +366,10 @@ function ExternalLink({ href, children, className = "", ...props }) {
   );
 }
 
-function Header() {
+function Header({ reduced = false }) {
   const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const headerRef = useRef(null);
   const menuButtonRef = useRef(null);
   const menuPanelRef = useRef(null);
   const menuWasOpenRef = useRef(false);
@@ -352,8 +406,29 @@ function Header() {
     };
   }, [open]);
 
+  useLayoutEffect(() => {
+    if (reduced) return undefined;
+    let currentState = false;
+    const trigger = ScrollTrigger.create({
+      start: 0,
+      end: "max",
+      onUpdate: (self) => {
+        const nextState = self.scroll() > 110 && self.direction === 1 && !open;
+        if (nextState === currentState) return;
+        currentState = nextState;
+        setHidden(nextState);
+      },
+    });
+    return () => trigger.kill();
+  }, [open, reduced]);
+
   return (
-    <header className="site-header">
+    <header
+      ref={headerRef}
+      className={`site-header${hidden ? " is-hidden" : ""}${open ? " is-menu-open" : ""}`}
+      onFocusCapture={() => setHidden(false)}
+      onMouseEnter={() => setHidden(false)}
+    >
       <SiteLink href="/" className="wordmark" aria-label="YKG home">
         YKG<i />
       </SiteLink>
@@ -393,7 +468,7 @@ function Header() {
   );
 }
 
-function FilmChrome({ index, label }) {
+function FilmChrome({ index, label, direction = "SCROLL DIRECTS THE FILM" }) {
   return (
     <>
       <div className="film-chrome film-chrome--top">
@@ -402,38 +477,42 @@ function FilmChrome({ index, label }) {
       </div>
       <div className="film-chrome film-chrome--bottom">
         <span>PUNE, INDIA / WORKING GLOBALLY</span>
-        <span>SCROLL DIRECTS THE FILM</span>
+        <span>{direction}</span>
       </div>
     </>
   );
 }
 
-function OpeningFilm({ reduced }) {
+function HeroIntro() {
   return (
-    <ScrollFilm
-      film={films.opening}
-      className="film film--opening"
-      height={250}
-      reducedMotion={reduced}
-      labelledBy="opening-film-title"
-    >
-      <FilmChrome index="FILM 001" label="THINKING IN SYSTEMS" />
-      <div className="film-beat film-beat--opening">
-        <p>Independent AI implementation consultancy</p>
-        <h1 id="opening-film-title">Intelligence.<br /><em>Made useful.</em></h1>
-        <span>I design and implement AI systems around the way real teams work.</span>
-        <a href="#identity-film" className="film-link">Enter the practice <ArrowDown weight="bold" /></a>
+    <section className="hero-intro" aria-labelledby="hero-intro-title">
+      <div className="hero-intro__media" aria-hidden="true">
+        <img src="/images/portraits/yash-hero-noir-suit-v4.webp" alt="" fetchPriority="high" />
       </div>
-      <div className="film-beat film-beat--middle">
-        <p>Before the model</p>
-        <h2>Read the work.<br />Map the system.</h2>
-        <span>The useful opportunity appears before the technology choice.</span>
+      <div className="hero-intro__shade" aria-hidden="true" />
+      <div className="hero-intro__headline">
+        <p><span>Yash Ganesh</span> / Independent AI systems practice</p>
+        <h1 id="hero-intro-title"><span>Intelligence,</span><br /><em>made useful.</em></h1>
+        <div className="hero-intro__statement">
+          <span>I find the operational friction worth solving, then design and build the complete system around it.</span>
+          <a href="#work">Selected work <ArrowDown weight="bold" /></a>
+        </div>
       </div>
-      <div className="film-beat film-beat--closing">
-        <p>From ambiguity to direction</p>
-        <h2>Then build<br />the whole loop.</h2>
+      <div className="hero-intro__action">
+        <span>AI strategy / product design / engineering / deployment</span>
+        <a href="#identity-film">Scroll to direct the film <ArrowDown weight="bold" /></a>
       </div>
-    </ScrollFilm>
+    </section>
+  );
+}
+
+function CinematicSeam({ tone = "dark", label }) {
+  return (
+    <div className={`cinematic-seam cinematic-seam--${tone}`} aria-hidden="true">
+      <i />
+      <span>{label}</span>
+      <b />
+    </div>
   );
 }
 
@@ -447,23 +526,19 @@ function IdentityFilm({ reduced }) {
       labelledBy="identity-film-title"
     >
       <FilmChrome index="FILM 002" label="A PERSONAL PRACTICE" />
-      <div className="identity-note identity-note--one">
-        <p>A practice built from first principles</p>
-        <h2 id="identity-film-title">Product thinking.<br />Engineering depth.<br />Human judgment.</h2>
-      </div>
       <div className="identity-note identity-note--two">
-        <p>The point is not more AI.</p>
-        <h2>It is better<br />work.</h2>
-        <a href="#work">See the evidence <ArrowDown weight="bold" /></a>
+        <p>A practice built from first principles</p>
+        <h2 id="identity-film-title">I built what<br />I couldn&apos;t find.</h2>
+        <a href="#work">Follow the evidence <ArrowDown weight="bold" /></a>
       </div>
-      <p className="visually-hidden">I built what I could not find. The work keeps moving.</p>
+      <p className="visually-hidden">I built what I could not find.</p>
     </ScrollFilm>
   );
 }
 
 function PracticeIntro() {
   return (
-    <section className="practice-intro" id="approach">
+    <section className="practice-intro" id="approach" data-motion-section>
       <div className="practice-intro__index" data-reveal>
         <span>01</span><i /><span>THE PRACTICE</span>
       </div>
@@ -501,6 +576,14 @@ function ProjectReel() {
   }, [reduced]);
 
   const moveToProject = (index) => {
+    if (window.matchMedia("(max-width: 800px)").matches || reduced) {
+      setActive(index);
+      root.current?.querySelector(".project-reel__screen")?.scrollIntoView({
+        behavior: reduced ? "auto" : "smooth",
+        block: "center",
+      });
+      return;
+    }
     const available = root.current.offsetHeight - window.innerHeight;
     window.scrollTo({
       top: root.current.offsetTop + ((index + 0.12) / coreProjects.length) * available,
@@ -512,7 +595,7 @@ function ProjectReel() {
     <section className="project-reel" id="work" ref={root} style={{ "--project-count": coreProjects.length }}>
       <div className="project-reel__stage">
         <div className="project-reel__topline">
-          <span>Selected work / independent products</span>
+          <span>Selected work / verified independent builds</span>
           <SiteLink href="/work">Full index <ArrowUpRight /></SiteLink>
         </div>
         <nav className="project-reel__index" aria-label="Select a featured project">
@@ -523,22 +606,36 @@ function ProjectReel() {
               className={active === index ? "is-active" : ""}
               onClick={() => moveToProject(index)}
             >
-              <span>{project.number}</span><i />
+              <span>{project.number}</span><b>{project.name}</b><i />
             </button>
           ))}
         </nav>
-        <div className="project-reel__panels" aria-live="polite">
+        <div className="project-reel__screen" aria-live="polite">
           {coreProjects.map((project, index) => (
-            <article className={`reel-project${active === index ? " is-active" : ""}`} key={project.slug}>
-              <SiteLink href={`/work/${project.slug}`} className="reel-project__media" aria-label={`Open ${project.name} case study`}>
-                <img src={project.media} alt={`${project.name} interface`} loading={index === 0 ? "eager" : "lazy"} />
-                <span className="reel-project__media-index">FRAME / {project.number}</span>
-              </SiteLink>
+            <SiteLink
+              href={`/work/${project.slug}`}
+              className={`project-reel__capture${active === index ? " is-active" : ""}`}
+              aria-label={`Open ${project.name} case study`}
+              aria-hidden={active !== index}
+              tabIndex={active === index ? 0 : -1}
+              key={project.slug}
+            >
+              <img src={project.media} alt={`${project.name} production interface`} loading={index === 0 ? "eager" : "lazy"} />
+            </SiteLink>
+          ))}
+          <div className="project-reel__screen-shade" aria-hidden="true" />
+          <div className="project-reel__screen-meta" aria-hidden="true">
+            <span>PRODUCTION CAPTURE / 2026</span>
+            <span>{coreProjects[active].status} / FRAME {coreProjects[active].number}</span>
+          </div>
+        </div>
+        <div className="project-reel__details">
+          {coreProjects.map((project, index) => (
+            <article className={`reel-project${active === index ? " is-active" : ""}`} key={project.slug} aria-hidden={active !== index}>
               <div className="reel-project__copy">
                 <p>{project.number} / {project.category}</p>
                 <h2>{project.name}</h2>
                 <h3>{project.statement}</h3>
-                <p className="reel-project__summary">{project.summary}</p>
                 <div className="reel-project__proof">
                   {project.proof.slice(0, 3).map((item) => <span key={item}>{item}</span>)}
                 </div>
@@ -549,6 +646,7 @@ function ProjectReel() {
             </article>
           ))}
         </div>
+        <div className="project-reel__ghost" aria-hidden="true">{coreProjects[active].number}</div>
         <div className="project-reel__progress" aria-hidden="true">
           <span style={{ width: `${((active + 1) / coreProjects.length) * 100}%` }} />
         </div>
@@ -560,7 +658,7 @@ function ProjectReel() {
 function ClientWork() {
   const project = clientProjects[0];
   return (
-    <section className="client-work">
+    <section className="client-work" data-motion-section>
       <div className="client-work__label" data-reveal>
         <span>Client work</span><b>C01</b>
       </div>
@@ -586,7 +684,7 @@ function ClientWork() {
 
 function Approach() {
   return (
-    <section className="approach">
+    <section className="approach" data-motion-section>
       <div className="approach__heading" data-reveal>
         <p>02 / What I do</p>
         <h2>Systems that<br /><em>compound.</em></h2>
@@ -614,7 +712,7 @@ function Process() {
     ["04", "Validate", "Test real scenarios, accessibility, deployment behavior, performance, and handover.", "/images/projects/lernio-ai-home.webp"],
   ];
   return (
-    <section className="process">
+    <section className="process" data-motion-section>
       <div className="process__heading" data-reveal>
         <p>03 / How I work</p>
         <h2>Clarity first.<br />Build precisely.</h2>
@@ -623,7 +721,7 @@ function Process() {
       <div className="process__steps">
         {steps.map(([number, title, copy, image]) => (
           <article key={title} data-reveal>
-            <figure><img src={image} alt="" loading="lazy" data-parallax /></figure>
+            <figure><img src={image} alt={`Visual for the ${title.toLowerCase()} phase`} loading="lazy" data-parallax /></figure>
             <span>{number}</span>
             <div><h3>{title}</h3><p>{copy}</p></div>
           </article>
@@ -633,51 +731,76 @@ function Process() {
   );
 }
 
-function FinaleFilm({ reduced }) {
+function Footer({ reduced }) {
+  const media = useRef(null);
+
+  useEffect(() => {
+    const player = media.current;
+    if (!player || reduced) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) player.play().catch(() => {});
+      else player.pause();
+    }, { rootMargin: "20% 0px", threshold: 0.08 });
+    observer.observe(player);
+    return () => observer.disconnect();
+  }, [reduced]);
+
   return (
-    <ScrollFilm
-      film={films.finale}
-      className="film film--finale"
-      height={260}
-      reducedMotion={reduced}
-      labelledBy="finale-film-title"
-    >
-      <FilmChrome index="FILM 003" label="LIVING SYSTEMS" />
-      <div className="finale-copy">
+    <footer className="loop-finale site-footer site-footer--film" id="contact" aria-labelledby="finale-film-title" data-motion-section>
+      {reduced ? (
+        <img className="loop-finale__media" src={films.finale.poster} alt="" />
+      ) : (
+        <video
+          ref={media}
+          className="loop-finale__media"
+          src={films.finale.source}
+          poster={films.finale.poster}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+        />
+      )}
+      <div className="loop-finale__shade" aria-hidden="true" />
+      <FilmChrome index="FILM 003" label="LIVING SYSTEMS" direction="AMBIENT LOOP / ALWAYS IN MOTION" />
+      <div className="finale-copy" data-reveal>
         <p>Useful AI systems, designed and implemented end to end.</p>
         <h2 id="finale-film-title">Build<br />what<br />matters<span>.</span></h2>
       </div>
-      <div className="finale-action">
+      <div className="finale-action" data-reveal>
         <span>Have a difficult workflow worth fixing?</span>
         <a href={contactHref}>Start a project <ArrowUpRight weight="bold" /></a>
       </div>
-    </ScrollFilm>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="site-footer" id="contact">
-      <h2>Let&apos;s build<br />something useful<span>.</span></h2>
-      <div className="site-footer__contact">
-        <a href={contactHref}>Start a project <ArrowUpRight weight="bold" /></a>
+      <div className="site-footer__contact-rail">
         <a href="mailto:yashganesh.work@gmail.com">yashganesh.work@gmail.com</a>
         <ExternalLink href="https://github.com/GYASH28">GitHub <ArrowUpRight /></ExternalLink>
         <ExternalLink href="https://www.linkedin.com/in/yash-ganesh-/">LinkedIn <ArrowUpRight /></ExternalLink>
       </div>
-      <div className="site-footer__meta">
+      <div className="site-footer__meta site-footer__meta--film">
         <span>Available for focused projects</span>
         <span>Pune, India / Working globally</span>
         <span>© 2026 Yash Ganesh</span>
       </div>
+      <div className="loop-finale__orbit" aria-hidden="true"><i /><i /><i /></div>
     </footer>
+  );
+}
+
+function ExperienceProgress() {
+  return (
+    <div className="experience-progress" aria-hidden="true">
+      <span>YKG / INDEX</span>
+      <i><b className="experience-progress__fill" /></i>
+      <span>END</span>
+    </div>
   );
 }
 
 function HomePage() {
   const root = useRef(null);
   const reduced = useReducedMotion();
-  useEditorialReveals(root, reduced, "home");
+  useSiteMotion(root, reduced, "home");
 
   useEffect(() => {
     document.title = "Yash Ganesh — AI Systems, Made Useful";
@@ -686,18 +809,21 @@ function HomePage() {
   return (
     <div ref={root} className="home-page">
       <CinematicPrologue reduced={reduced} />
-      <Header />
+      <ExperienceProgress />
+      <Header reduced={reduced} />
       <main>
-        <OpeningFilm reduced={reduced} />
+        <HeroIntro />
         <div id="identity-film"><IdentityFilm reduced={reduced} /></div>
+        <CinematicSeam label="FROM SIGNAL TO PRACTICE" />
         <PracticeIntro />
         <ProjectReel />
+        <CinematicSeam tone="paper" label="INDEPENDENT WORK / CLIENT WORK" />
         <ClientWork />
+        <CinematicSeam tone="ink" label="CLIENT WORK / OPERATING SYSTEM" />
         <Approach />
         <Process />
-        <div id="about"><FinaleFilm reduced={reduced} /></div>
       </main>
-      <Footer />
+      <div id="about"><Footer reduced={reduced} /></div>
     </div>
   );
 }
@@ -799,7 +925,7 @@ function ProjectPage({ project }) {
   const nextProject = getNextProject(project.slug);
   const reduced = useReducedMotion();
   const root = useRef(null);
-  useEditorialReveals(root, reduced, project.slug);
+  useSiteMotion(root, reduced, project.slug);
 
   useEffect(() => {
     document.title = `${project.name} — Yash Ganesh`;
