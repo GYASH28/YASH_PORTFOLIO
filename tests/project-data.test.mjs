@@ -27,10 +27,12 @@ test("uses live iframes only where a public deployment allows framing", () => {
   const liveEmbeds = projects.filter((project) => project.embed === "live");
   assert.deepEqual(
     liveEmbeds.map((project) => project.slug).sort(),
-    ["campusmate", "fakhri-mart", "interactive-quiz"],
+    ["campusmate", "interactive-quiz"],
   );
   assert.ok(liveEmbeds.every((project) => project.liveUrl));
   assert.equal(getProject("lernio-ai").embed, "protected");
+  assert.equal(getProject("fakhri-mart").embed, "protected");
+  assert.equal(getProject("fakhri-mart").liveUrl, "https://fakhriyarns.vercel.app");
   assert.equal(getProject("brace").embed, "local");
   assert.equal(getProject("brace").liveUrl, undefined);
 });

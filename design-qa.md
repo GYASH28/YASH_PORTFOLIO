@@ -1,92 +1,50 @@
-# YKG Cinematic Portfolio — Design QA
+# Design QA — YKG Cinematic Editorial
 
 ## Comparison target
 
-- Source visual truth: `design/ykg-cinematic-editorial-target.png`
-- Browser-rendered implementation storyboard: `output/playwright/implementation-storyboard.png`
-- Combined comparison evidence: `output/playwright/source-vs-implementation.png`
+- Source visual truth: `C:/Users/Admin/Desktop/projects/real portfolio/design/ykg-cinematic-editorial-target.png`
 - Source pixels: 793 × 1983
-- Implementation storyboard pixels: 793 × 1983
-- Combined comparison pixels: 1602 × 2023
-- Browser capture viewport: 1440 × 1024 CSS px, device scale factor 1
-- Mobile verification viewport: 390 × 844 CSS px, device scale factor 1
-- State: first-visit opening captured separately; homepage storyboard uses the completed opening and seven representative scroll states.
-- Normalization: each implementation frame was captured at the same desktop viewport, cover-cropped into a 793 px editorial storyboard, and placed beside the source at equal pixel dimensions. The opening, mobile hero, menu, and case-study states were evaluated as focused captures.
+- Verified production build: `http://127.0.0.1:4180/`
+- Desktop viewport: 1440 × 900 CSS px at deviceScaleFactor 1
+- Mobile viewport: 390 × 844 CSS px at deviceScaleFactor 1
+- Combined comparison: `output/playwright/production-audit/target-vs-production.png`
 
-## Full-view comparison evidence
+## Outcome
 
-The combined comparison confirms the intended near-black / warm-bone / electric-cyan system, oversized condensed typography, casual portrait treatment, real product imagery, evidence-led chapters, warm client-work intermission, systems section, portrait-led manifesto stage, and cinematic pacing. The implementation intentionally replaces the source mock's image-clipped monogram and tilted strip collage because the user explicitly rejected those treatments; solid display type and separate photographic frames preserve the same art direction while resolving readability.
+The production build preserves the target's near-black, warm-bone, and electric-cyan palette; condensed editorial scale; photographic subject treatment; thin signal lines; and cinematic restraint. The final hero deliberately replaces the target's aperture collage with a clearer full-frame portrait and solid live type, following the approved durable direction. The result has stronger first-screen readability while retaining the target's visual authority.
 
-## Focused evidence
+No open P0, P1, or P2 visual defects remain in the checked states.
 
-- Opening second beat: `output/playwright/after-opening-second-beat.png`
-- Hero opening frame: `output/playwright/final-01-hero.png`
-- Hero system frame: `output/playwright/final-02-hero-system.png`
-- Hero resolution frame: `output/playwright/final-03-hero-resolution.png`
-- Project reel: `output/playwright/final-04-projects.png`
-- Client-work intermission: `output/playwright/final-05-client.png`
-- Systems chapter: `output/playwright/final-06-approach.png`
-- Manifesto stage: `output/playwright/final-08-manifesto.png`
-- Mobile hero: `output/playwright/after-home-mobile-top-final.png`
-- Mobile navigation: `output/playwright/after-mobile-menu.png`
-- Mobile case study: `output/playwright/after-campusmate-mobile-final.png`
-- Live iframe: `output/playwright/after-campusmate-live-desktop.png`
-- Protected-deployment fallback: `output/playwright/after-lernio-fallback-desktop.png`
+## Browser evidence
 
-Focused captures were required because opening timing, mobile title fit, navigation state, live embed behavior, and protected-frame behavior are not readable at storyboard scale.
+- Desktop opening film: `output/playwright/production-audit/prod-home-top.png`
+- Pinned project reel: `output/playwright/production-audit/prod-project-reel.png`
+- Warm client-work intermission: `output/playwright/production-audit/prod-client-work.png`
+- Process chapter: `output/playwright/production-audit/prod-process.png`
+- Final living-monogram film: `output/playwright/production-audit/prod-finale.png`
+- Protected client deployment fallback: `output/playwright/production-audit/prod-fakhri-live.png`
+- Mobile process chapter: `output/playwright/production-audit/prod-mobile-process.png`
 
-## Required fidelity surfaces
-
-- Fonts and typography: Bebas Neue display type and Recursive body type load locally. Hero, opening, project, process, and manifesto hierarchy match the source's condensed editorial language. Mobile headline and case-study title fit without horizontal overflow.
-- Spacing and layout rhythm: desktop sections preserve full-viewport cinematic frames and deliberate chapter changes; mobile converts the pinned hero into a readable linear sequence. Browser checks report `scrollWidth === clientWidth` at 390 px.
-- Colors and visual tokens: near-black, warm bone, and electric cyan match the approved direction. The dim text token was raised to `#968f82`; automated contrast checks now pass.
-- Image quality and asset fidelity: all visible portraits and product captures use approved optimized WebP assets. No placeholder imagery, CSS drawings, handcrafted SVG art, or emoji substitutes are present.
-- Copy and content: service claims remain forward-looking; project proof is repository/deployment-backed. No testimonials, client outcomes, enterprise claims, or fabricated metrics were added. Fakhri Mart remains separated as client work.
-- Interaction and responsiveness: opening is skippable, route transitions use the View Transition API with a fallback, mobile navigation works, every case-study route resolves, CampusMate embeds live, Lernio presents an explicit security fallback, and reduced-motion users are not scroll-locked.
-- Accessibility: automated axe checks pass with zero violations on desktop homepage, mobile homepage, and a representative case-study page. All tested buttons have names; images have alt attributes; iframes have titles; IDs are unique; focus indicators are visible.
+Additional desktop and mobile screenshots for the prologue, identity film, every project-reel state, approach, process, finale, archive, and all five case-study routes are stored under `output/playwright/main-audit/`.
 
 ## Comparison history
 
-### Pass 0 — blocked
+1. Initial browser pass found transparent scroll-film canvases in development. React Strict Mode cleanup left frame requests stranded; the frame cache lifecycle was corrected and all three production canvases now reach `is-ready` with decoded, non-transparent pixels.
+2. Desktop case-study review found the live-system description collapsing into a seven-rem column. The heading was rebuilt as an explicit editorial grid with a single-column mobile cut.
+3. Mobile review found the process copy placed in a 2.5-rem column and a 532px document width at a 390px viewport. The mobile grid was corrected; production now reports a 390px document width and no horizontal scroll.
+4. Fakhri Mart's previous GitHub Pages URL returned broken root assets inside the iframe. The working Vercel deployment is now used with an explicit protected-frame fallback because its security policy blocks third-party embedding.
+5. The opening-title timing was tightened to eliminate overlap between the maker credit and the main statement. Mobile navigation gained a 44px touch target, Escape dismissal, focus transfer, and background scroll lock.
+6. Final side-by-side review confirmed that typography, hierarchy, crop, palette, and negative space align with the target while improving legibility and avoiding the rejected aperture composition.
 
-- [P1] Opening relied on image-filled letterforms and visually fragmented frames, making the title hard to read.
-- [P1] Hero used four competing tilted strips that covered copy and weakened hierarchy.
-- Fix: replaced both with solid typography, a separate portrait shot, a signal-line reveal, a three-act pinned hero, and staged real project frames.
-- Post-fix evidence: `after-opening-second-beat.png`, `final-01-hero.png`, `final-02-hero-system.png`.
+## Verification
 
-### Pass 1 — blocked
-
-- [P1] The final hero statement was oversized and clipped its final line at the third scroll beat.
-- [P2] Mobile hero and CampusMate case-study titles overflowed the viewport.
-- Fix: reduced the final statement scale and width; set mobile-specific display sizing; verified no horizontal overflow.
-- Post-fix evidence: `final-03-hero-resolution.png`, `after-home-mobile-top-final.png`, `after-campusmate-mobile-final.png`.
-
-### Pass 2 — blocked
-
-- [P1] Automated accessibility checks found low-contrast dim copy and focusable links inside hidden desktop project panels; reduced-motion initially left the body scroll-locked briefly.
-- Fix: raised the dim token, removed incorrect `aria-hidden`/tab-index handling so CSS visibility controls desktop panels and mobile links remain reachable, and made the reduced-motion opening complete immediately.
-- Post-fix evidence: final Playwright/axe run reports zero violations; reduced-motion reports `openingVisible: false`, `bodyLocked: false`; fresh console reports zero errors and warnings.
-
-### Pass 3 — passed
-
-- No actionable P0, P1, or P2 visual, responsive, interaction, or accessibility findings remain.
-
-## Primary interactions tested
-
-- First-visit opening, skip path, and repeat-visit bypass
-- Desktop scrubbed hero at three scroll states
-- Scroll-stopping project sequence and case-study navigation
-- Mobile menu open state
-- All homepage and project routes
-- CampusMate live iframe and Lernio protected-frame fallback
-- Responsive layout at 1440 × 1024 and 390 × 844
-- Reduced-motion behavior
-- Keyboard/focus semantics through automated accessibility analysis
-- Console and network error checks
-
-## Follow-up polish
-
-- [P3] The film timecode is intentionally decorative and could be made dynamic in a future iteration.
-- [P3] A future content pass could add verified project diagrams when repository-level architecture artifacts are available.
+- Seven production routes return HTTP 200 with the correct title and H1.
+- No same-origin 4xx/5xx responses and no page errors occurred during the production-route pass.
+- All three cinematic films decoded successfully in the production build.
+- Axe WCAG 2 A/AA and 2.1 A/AA reported zero violations on desktop and mobile for the homepage, archive, and all five case studies.
+- Reduced-motion mode removes the prologue and canvases while keeping all project content visible.
+- Unit tests: 8/8 passed.
+- Sites worker tests: 4/4 passed.
+- Required Sites artifacts are present in `dist/client`, `dist/server`, and `dist/.openai`.
 
 final result: passed
