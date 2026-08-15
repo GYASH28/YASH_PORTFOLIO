@@ -1,28 +1,30 @@
-# YKG Digital — Conversion Site V3
+# YKG Digital V4
 
-A single-page sales experience for YKG Digital built around the customer's buying decision instead of a generic agency template.
+Conversion-focused single-page website for YKG Digital.
 
-## Core narrative
+## Direction
 
-1. Hero sells immediately: Grow membership vs one-time makeover.
-2. Trust → Fit → Action: three decisions a visitor makes before contacting the business.
-3. Real proof: FakhriMart case study and live link.
-4. Offer stack: Message, Design, Build, Action, Care.
-5. Pricing: featured Grow membership + alternatives.
-6. Clear objections and direct enquiry handoff.
+- Minimal image-led hero with direct offer and pricing above the fold
+- Plans immediately after hero
+- Real FakhriMart commercial proof
+- 20-second interactive website self-test
+- Drag-to-compare transformation demo
+- Short 3-step process
+- GSAP + ScrollTrigger + Lenis progressive enhancement
+- Fully functional no-animation fallback
 
-## Front-end approach
+## Files
 
-- Static HTML/CSS/JS for reliability and fast deployment.
-- GSAP 3.15 + ScrollTrigger for orchestrated motion.
-- Lenis 1.3.26 for smooth scrolling with native-scroll fallback.
-- Motion uses transforms and opacity; reduced-motion is respected.
-- No fabricated testimonials, metrics, urgency, or sales claims.
+- `index.html`
+- `styles.css`
+- `app.js`
+- `vercel.json`
+- `assets/fakhri-mart-home.webp`
 
-## Local preview
+## Deployment
 
-```bash
-python3 -m http.server 4173
-```
+Static deployment. No build step required.
 
-Then open `http://localhost:4173`.
+## Hero image
+
+Photography sourced from Unsplash (Alex Simpson, “Closed flower shop”). The image is loaded from Unsplash at runtime; the site remains usable if the image cannot load.
