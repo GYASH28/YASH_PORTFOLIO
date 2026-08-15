@@ -6,6 +6,10 @@
   const finePointer = matchMedia('(pointer:fine)').matches;
   const hasGSAP = typeof window.gsap !== 'undefined';
   const hasST = typeof window.ScrollTrigger !== 'undefined';
+  const session = {
+    get(key) { try { return window.sessionStorage?.getItem(key) || null; } catch (_) { return null; } },
+    set(key, value) { try { window.sessionStorage?.setItem(key, value); } catch (_) {} }
+  };
 
   // Opening: short, purposeful, once per tab session.
   const boot = $('#boot');
@@ -14,7 +18,7 @@
     if (!boot || boot.dataset.done) return;
     boot.dataset.done = '1';
     document.body.classList.remove('is-locked');
-    sessionStorage.setItem('ykg-v3-intro-seen', '1');
+    session.set('ykg-v3-intro-seen', '1');
     if (hasGSAP && !reduceMotion) {
       gsap.to(boot, { yPercent: -100, duration: .72, ease: 'power4.inOut', onComplete: () => boot.remove() });
     } else {
@@ -23,7 +27,7 @@
   };
 
   if (boot) {
-    if (reduceMotion || sessionStorage.getItem('ykg-v3-intro-seen')) {
+    if (reduceMotion || session.get('ykg-v3-intro-seen')) {
       boot.remove();
     } else {
       document.body.classList.add('is-locked');
