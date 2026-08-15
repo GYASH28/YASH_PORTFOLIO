@@ -1,31 +1,28 @@
-# YKG Digital — Masterpiece V2
+# YKG Digital — Conversion Site V3
 
-A single-page, conversion-focused website for YKG Digital's two commercial offers:
+A single-page sales experience for YKG Digital built around the customer's buying decision instead of a generic agency template.
 
-1. Managed Website Membership (recurring website-as-a-service)
-2. One-time Digital Makeover
+## Core narrative
 
-## Design principle
-Every section must do one of three jobs: increase desire, prove capability, or remove purchase friction. No generic service-card filler.
+1. Hero sells immediately: Grow membership vs one-time makeover.
+2. Trust → Fit → Action: three decisions a visitor makes before contacting the business.
+3. Real proof: FakhriMart case study and live link.
+4. Offer stack: Message, Design, Build, Action, Care.
+5. Pricing: featured Grow membership + alternatives.
+6. Clear objections and direct enquiry handoff.
 
-## Experience
-- Short skippable opening sequence (session-only)
-- Cinematic hero with interactive 3D browser stack
-- Tight problem framing
-- Real FakhriMart commercial case study
-- Scroll-driven proof image treatment
-- Interactive value / break-even illustration
-- Membership vs one-time pricing switch
-- WhatsApp enquiry handoff
-- Reduced-motion support
-- Responsive mobile sales bar
+## Front-end approach
 
-## Run locally
-Open `index.html` through a static server, for example:
+- Static HTML/CSS/JS for reliability and fast deployment.
+- GSAP 3.15 + ScrollTrigger for orchestrated motion.
+- Lenis 1.3.26 for smooth scrolling with native-scroll fallback.
+- Motion uses transforms and opacity; reduced-motion is respected.
+- No fabricated testimonials, metrics, urgency, or sales claims.
+
+## Local preview
 
 ```bash
-python -m http.server 4173
+python3 -m http.server 4173
 ```
 
-## Deployment
-Static site; no build step required. Designed for Vercel.
+Then open `http://localhost:4173`.
