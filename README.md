@@ -1,30 +1,28 @@
-# YKG Digital V4
+# YKG Digital — V5
 
-Conversion-focused single-page website for YKG Digital.
+Conversion-focused studio website for YKG Digital.
 
-## Direction
+## V5 direction
 
-- Minimal image-led hero with direct offer and pricing above the fold
-- Plans immediately after hero
-- Real FakhriMart commercial proof
-- 20-second interactive website self-test
-- Drag-to-compare transformation demo
-- Short 3-step process
-- GSAP + ScrollTrigger + Lenis progressive enhancement
-- Fully functional no-animation fallback
+- calmer, image-led hero with a single primary route into pricing
+- plans remain the second section
+- fresh FakhriMart proof replaces the old portfolio screenshot
+- separate `experience.html` client-facing experience lab
+- live FakhriMart iframe with screenshot fallback
+- Desktop / Mobile / Wide preview modes
+- feature focus for discovery, search, compare, enquiry, responsive themes
+- real FakhriMart release capabilities only; no invented metrics or testimonials
+- progressive enhancement: core pricing, forms and navigation work without animation libraries
 
 ## Files
 
-- `index.html`
-- `styles.css`
-- `app.js`
-- `vercel.json`
-- `assets/fakhri-mart-home.webp`
+- `index.html` — main conversion page
+- `styles.css` — main experience
+- `v5.css` — V5 minimal hero refinement
+- `app.js` — main interactions
+- `experience.html` — interactive work/feature experience
+- `experience.css` — experience page styling
+- `experience.js` — device/feature lab interactions
+- `vercel.json` — static deployment configuration
 
-## Deployment
-
-Static deployment. No build step required.
-
-## Hero image
-
-Photography sourced from Unsplash (Alex Simpson, “Closed flower shop”). The image is loaded from Unsplash at runtime; the site remains usable if the image cannot load.
+FakhriMart visual proof uses its current live deployment with a screenshot fallback. Hero photography is sourced from Unsplash under the Unsplash License.
