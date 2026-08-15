@@ -1,29 +1,285 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#070707" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta
-      name="description"
-      content="Yash Ganesh designs and implements useful AI systems, digital products, and the full stack around them."
-    />
-    <meta property="og:title" content="Yash Ganesh — AI Systems, Made Useful" />
-    <meta
-      property="og:description"
-      content="Independent AI implementation consultancy, product engineering, and selected work by Yash Ganesh."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://ykg.vercel.app" />
-    <meta property="og:image" content="/images/portraits/yash-hero.webp" />
-    <link rel="canonical" href="https://ykg.vercel.app" />
-    <title>Yash Ganesh — AI Systems, Made Useful</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#070807" />
+  <meta name="description" content="YKG Digital builds and continuously runs high-converting websites for growing businesses — available as a one-time digital makeover or a managed monthly website membership." />
+  <meta property="og:title" content="YKG Digital — You run the business. We run the website." />
+  <meta property="og:description" content="Custom websites, hosting, updates and support. One team. One clear price." />
+  <title>YKG Digital — Websites that earn attention</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <div class="intro" id="intro" aria-label="Opening animation">
+    <button class="intro-skip" id="introSkip" type="button">Skip</button>
+    <div class="intro-center">
+      <div class="intro-mark" aria-hidden="true">
+        <span class="mark-line mark-line-a"></span>
+        <span class="mark-line mark-line-b"></span>
+        <span class="mark-line mark-line-c"></span>
+      </div>
+      <div class="intro-words" aria-hidden="true">
+        <span>SEEN.</span><span>TRUSTED.</span><span>CHOSEN.</span>
+      </div>
+      <div class="intro-brand">YKG <i>DIGITAL</i></div>
+    </div>
+    <div class="intro-progress"><span></span></div>
+  </div>
+
+  <header class="nav" id="nav">
+    <a class="brand" href="#top" aria-label="YKG Digital home">
+      <span class="brand-glyph">Y</span><span>YKG / DIGITAL</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#proof">Work</a>
+      <a href="#model">How it works</a>
+      <a href="#plans">Plans</a>
+    </nav>
+    <a class="nav-cta magnetic" href="#plans"><span>Build mine</span><b>↗</b></a>
+  </header>
+
+  <main id="top">
+    <section class="hero section-dark">
+      <div class="hero-orbit orbit-a" aria-hidden="true"></div>
+      <div class="hero-orbit orbit-b" aria-hidden="true"></div>
+      <div class="hero-content">
+        <div class="eyebrow reveal">WEBSITE + GROWTH PARTNER / PUNE → EVERYWHERE</div>
+        <h1 class="hero-title" aria-label="Your website should make the next sale easier.">
+          <span class="line-mask"><span>Your website should</span></span>
+          <span class="line-mask"><span>make the next sale</span></span>
+          <span class="line-mask accent-line"><span>easier.</span></span>
+        </h1>
+        <p class="hero-copy reveal">We design, launch and keep improving websites for businesses that are done looking ordinary online.</p>
+        <div class="hero-actions reveal">
+          <a class="button button-primary magnetic" href="#plans"><span>See the plans</span><b>↗</b></a>
+          <button class="button button-ghost play-proof" type="button" data-scroll="#proof"><span>Watch a real makeover</span><i>▶</i></button>
+        </div>
+        <div class="hero-trust reveal" aria-label="Included services">
+          <span>Custom design</span><span>Hosting + SSL</span><span>Updates handled</span><span>WhatsApp ready</span>
+        </div>
+      </div>
+
+      <div class="hero-stage" id="heroStage" aria-hidden="true">
+        <div class="stage-glow"></div>
+        <div class="browser-card browser-back">
+          <div class="browser-top"><i></i><i></i><i></i></div>
+          <div class="back-layout"><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="browser-card browser-mid">
+          <div class="browser-top"><i></i><i></i><i></i></div>
+          <div class="mid-grid"><span></span><span></span><span></span></div>
+        </div>
+        <div class="browser-card browser-front">
+          <div class="browser-top"><i></i><i></i><i></i><em>yourbusiness.com</em></div>
+          <div class="front-hero">
+            <div class="front-copy"><small>YOUR BUSINESS</small><strong>Looks premium.<br/>Feels effortless.</strong><span></span><span></span><button>Enquire now ↗</button></div>
+            <div class="front-art"><i></i><i></i><i></i></div>
+          </div>
+          <div class="front-strip"><span>01</span><span>02</span><span>03</span></div>
+        </div>
+        <div class="stage-tag tag-one">Built to be remembered</div>
+        <div class="stage-tag tag-two">Managed every month</div>
+      </div>
+
+      <div class="scroll-hint" aria-hidden="true"><span>SCROLL TO TRANSFORM</span><i></i></div>
+    </section>
+
+    <section class="reality section-light" id="model">
+      <div class="reality-heading">
+        <div class="eyebrow reveal">THE ACTUAL PROBLEM</div>
+        <h2 class="display reveal">A website can be <em>online</em><br/>and still be invisible.</h2>
+      </div>
+      <div class="reality-track">
+        <div class="reality-card rc-1 reveal-card">
+          <span>01</span><strong>Looks forgettable</strong><p>When every competitor uses the same template, nobody gives you a second look.</p>
+        </div>
+        <div class="reality-card rc-2 reveal-card">
+          <span>02</span><strong>Creates friction</strong><p>Customers hunt for prices, directions, WhatsApp or a simple next step.</p>
+        </div>
+        <div class="reality-card rc-3 reveal-card">
+          <span>03</span><strong>Gets abandoned</strong><p>The developer leaves, updates stop, and the website slowly becomes a liability.</p>
+        </div>
+      </div>
+      <div class="reality-answer reveal">
+        <span>So we changed the deal.</span>
+        <strong>You run the business.<br/>We run the website.</strong>
+      </div>
+    </section>
+
+    <section class="transformation section-dark" id="proof">
+      <div class="proof-sticky">
+        <div class="proof-copy">
+          <div class="eyebrow">REAL CLIENT WORK / FAKHRIMART</div>
+          <h2>From a traditional yarn business to a digital storefront people can actually explore.</h2>
+          <p>FakhriMart needed product discovery without forcing customers into a fake checkout flow. We designed around the way the business already sells: catalogue → shade/quantity → contextual WhatsApp enquiry.</p>
+          <div class="proof-facts"><span>Catalogue filtering</span><span>WhatsApp enquiries</span><span>Responsive experience</span><span>Accessibility QA</span></div>
+          <a class="text-link magnetic" href="https://fakhriyarns.vercel.app" target="_blank" rel="noreferrer"><span>Visit live project</span><b>↗</b></a>
+        </div>
+        <div class="proof-visual" id="proofVisual">
+          <div class="proof-frame pf-shadow"></div>
+          <div class="proof-frame pf-main">
+            <div class="browser-top"><i></i><i></i><i></i><em>fakhriyarns.vercel.app</em></div>
+            <div class="fakhri-shot">
+              <img src="./assets/fakhri-mart-home.webp" alt="FakhriMart website homepage" />
+              <div class="shot-sheen"></div>
+            </div>
+          </div>
+          <div class="proof-label pl-a"><small>DESIGN</small><b>Warm, editorial retail language</b></div>
+          <div class="proof-label pl-b"><small>FLOW</small><b>Browse → ask → buy</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="experience section-cream">
+      <div class="experience-head">
+        <div class="eyebrow reveal">THE DIFFERENCE YOU CAN FEEL</div>
+        <h2 class="display reveal">Not “more pages.”<br/><em>More reasons to choose you.</em></h2>
+      </div>
+      <div class="experience-grid">
+        <article class="exp-panel exp-large reveal-card">
+          <div class="exp-index">01 / FIRST IMPRESSION</div>
+          <h3>Make the first five seconds unmistakably yours.</h3>
+          <div class="kinetic-word" aria-hidden="true"><span>MEMORABLE</span><span>MEMORABLE</span><span>MEMORABLE</span></div>
+        </article>
+        <article class="exp-panel reveal-card">
+          <div class="exp-index">02 / ACTION</div>
+          <h3>Every screen tells the visitor what to do next.</h3>
+          <div class="mini-flow" aria-hidden="true"><span>Discover</span><i>→</i><span>Trust</span><i>→</i><span>Enquire</span></div>
+        </article>
+        <article class="exp-panel reveal-card">
+          <div class="exp-index">03 / AFTER LAUNCH</div>
+          <h3>Your site keeps moving even when you’re busy.</h3>
+          <div class="pulse-list" aria-hidden="true"><span>✓ Hosting</span><span>✓ SSL</span><span>✓ Updates</span><span>✓ Monitoring</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="process section-dark">
+      <div class="process-layout">
+        <div class="process-copy">
+          <div class="eyebrow reveal">ZERO WEBSITE DRAMA</div>
+          <h2 class="display reveal">Four moves.<br/>Then we keep going.</h2>
+          <p class="reveal">Designjoy’s model works because the process is obvious. Ours should be too.</p>
+        </div>
+        <div class="process-steps">
+          <div class="process-step active"><span>01</span><strong>Tell us what you sell</strong><p>One focused kickoff. We pull out the offer, audience, proof and action that matter.</p></div>
+          <div class="process-step"><span>02</span><strong>We design the experience</strong><p>Not a template. A visual direction shaped around your business and customers.</p></div>
+          <div class="process-step"><span>03</span><strong>We build + launch</strong><p>Responsive, fast, secure, tracked and connected to the enquiries you actually use.</p></div>
+          <div class="process-step"><span>04</span><strong>We keep it sharp</strong><p>Membership clients send changes. We handle the website while they handle the business.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="calculator section-light" id="value">
+      <div class="calc-copy">
+        <div class="eyebrow reveal">MAKE THE PRICE MAKE SENSE</div>
+        <h2 class="display reveal">How many extra customers would cover your website?</h2>
+        <p class="reveal">Move the slider to roughly what one new customer is worth to your business.</p>
+      </div>
+      <div class="calc-box reveal-card">
+        <div class="calc-value"><small>VALUE OF ONE CUSTOMER</small><strong id="customerValue">₹2,500</strong></div>
+        <input id="valueSlider" type="range" min="500" max="25000" step="500" value="2500" aria-label="Average value of one new customer" />
+        <div class="calc-result">
+          <span>Launch membership / ₹2,499 mo</span>
+          <strong><b id="breakEven">1</b> extra customer<span id="pluralCustomer"></span></strong>
+          <p>could cover the monthly plan.*</p>
+        </div>
+        <small class="calc-note">*Illustration only. A website cannot guarantee leads or sales.</small>
+      </div>
+    </section>
+
+    <section class="plans section-cream" id="plans">
+      <div class="plans-head">
+        <div>
+          <div class="eyebrow reveal">CHOOSE HOW YOU WANT TO WORK</div>
+          <h2 class="display reveal">Own it once.<br/>Or keep us on the team.</h2>
+        </div>
+        <div class="mode-switch reveal" role="tablist" aria-label="Pricing mode">
+          <button class="mode active" data-mode="membership" role="tab" aria-selected="true">Website membership</button>
+          <button class="mode" data-mode="once" role="tab" aria-selected="false">Pay once</button>
+        </div>
+      </div>
+
+      <div class="plan-stage" data-mode-panel="membership">
+        <article class="plan-card">
+          <div class="plan-top"><span>LAUNCH</span><small>For a focused local business</small></div>
+          <div class="price"><b>₹2,499</b><span>/month</span></div>
+          <div class="setup">+ ₹4,999 setup</div>
+          <ul><li>Custom 5-page site</li><li>Hosting + SSL</li><li>2 small update requests / month</li><li>WhatsApp + enquiry flow</li><li>Analytics foundation</li></ul>
+          <button class="button button-dark choose-plan magnetic" data-plan="Launch Membership"><span>Choose Launch</span><b>↗</b></button>
+        </article>
+        <article class="plan-card featured">
+          <div class="popular">MOST BUSINESSES SHOULD START HERE</div>
+          <div class="plan-top"><span>GROW</span><small>For a business that changes often</small></div>
+          <div class="price"><b>₹3,999</b><span>/month</span></div>
+          <div class="setup">+ ₹6,999 setup</div>
+          <ul><li>Up to 10 key pages</li><li>Hosting + SSL + monitoring</li><li>Frequent content changes</li><li>Local SEO care</li><li>Monthly performance summary</li></ul>
+          <button class="button button-primary choose-plan magnetic" data-plan="Grow Membership"><span>Choose Grow</span><b>↗</b></button>
+        </article>
+        <article class="plan-card">
+          <div class="plan-top"><span>PRO</span><small>For catalogues + advanced flows</small></div>
+          <div class="price"><b>₹5,999+</b><span>/month</span></div>
+          <div class="setup">Custom setup</div>
+          <ul><li>Catalogue / booking flows</li><li>Custom interactions</li><li>Advanced SEO + analytics</li><li>Automations + integrations</li><li>Priority support</li></ul>
+          <button class="button button-dark choose-plan magnetic" data-plan="Pro Membership"><span>Talk about Pro</span><b>↗</b></button>
+        </article>
+      </div>
+
+      <div class="plan-stage hidden" data-mode-panel="once">
+        <article class="once-card reveal-card"><span>ESSENTIAL</span><b>₹9,999+</b><p>Focused business site, mobile-ready, enquiry flow and launch.</p><button class="text-button choose-plan" data-plan="Essential Makeover">Start Essential ↗</button></article>
+        <article class="once-card reveal-card"><span>BUSINESS</span><b>₹17,999+</b><p>More pages, richer interactions, stronger SEO foundation and analytics.</p><button class="text-button choose-plan" data-plan="Business Makeover">Start Business ↗</button></article>
+        <article class="once-card reveal-card"><span>PREMIUM</span><b>₹25k–35k+</b><p>Custom art direction, advanced motion, catalogues, booking or complex flows.</p><button class="text-button choose-plan" data-plan="Premium Makeover">Plan Premium ↗</button></article>
+      </div>
+
+      <div class="plan-assurance reveal"><span>No template-looking builds.</span><span>Clear scope before work starts.</span><span>Real human support.</span></div>
+    </section>
+
+    <section class="objections section-dark">
+      <div class="objection-intro">
+        <div class="eyebrow reveal">BEFORE YOU ASK</div>
+        <h2 class="display reveal">The four questions that actually matter.</h2>
+      </div>
+      <div class="faq">
+        <details class="faq-item"><summary><span>Do I own the website?</span><b>+</b></summary><p>One-time projects are yours after final payment. Membership ownership and handover depend on the selected term and are written clearly in the proposal before work begins.</p></details>
+        <details class="faq-item"><summary><span>Is this another template service?</span><b>+</b></summary><p>No. The reusable part is our internal delivery system. The visible design, structure and messaging are shaped for your business.</p></details>
+        <details class="faq-item"><summary><span>What counts as an update?</span><b>+</b></summary><p>Text, image, offer, contact and similar content changes are typical updates. New pages, major features, integrations or redesigns are scoped separately.</p></details>
+        <details class="faq-item"><summary><span>Can a website guarantee more sales?</span><b>+</b></summary><p>No honest agency can promise that. We can improve clarity, credibility, usability, discoverability and the path to enquiry—then measure what happens.</p></details>
+      </div>
+    </section>
+
+    <section class="finale section-dark">
+      <div class="finale-orb" aria-hidden="true"></div>
+      <div class="eyebrow reveal">ENOUGH SCROLLING</div>
+      <h2 class="finale-title reveal">Your next customer is going to look you up anyway.</h2>
+      <p class="reveal">Give them something worth choosing.</p>
+      <button class="button button-primary button-xl choose-plan magnetic reveal" data-plan="Website Project"><span>Build my website</span><b>↗</b></button>
+      <div class="finale-meta"><span>YKG / DIGITAL</span><span>Pune, India · Working remotely</span><span>© 2026</span></div>
+    </section>
+  </main>
+
+  <div class="mobile-buy"><a href="#plans">Plans from ₹2,499/mo <b>↗</b></a></div>
+
+  <dialog class="lead-dialog" id="leadDialog">
+    <form method="dialog" class="lead-card" id="leadForm">
+      <button class="dialog-close" value="cancel" aria-label="Close enquiry form">×</button>
+      <div class="eyebrow">LET'S MAKE THIS REAL</div>
+      <h2 id="selectedPlan">Website Project</h2>
+      <p>Tell me just enough to understand the business. This should take about a minute.</p>
+      <label><span>Your name</span><input required name="name" autocomplete="name" placeholder="Yash" /></label>
+      <label><span>Business name</span><input required name="business" autocomplete="organization" placeholder="Your business" /></label>
+      <label><span>Phone / WhatsApp</span><input required name="phone" inputmode="tel" autocomplete="tel" placeholder="+91 …" /></label>
+      <label><span>Current website <i>(optional)</i></span><input name="website" inputmode="url" placeholder="https://" /></label>
+      <label><span>What should the new site achieve?</span><textarea required name="goal" rows="3" placeholder="More enquiries, better first impression, show products…"></textarea></label>
+      <button class="button button-primary dialog-submit" type="submit"><span>Prepare my enquiry</span><b>↗</b></button>
+      <small>No payment happens here. You’ll review scope and terms before committing.</small>
+    </form>
+  </dialog>
+
+  <script src="./script.js"></script>
+</body>
 </html>
