@@ -9,14 +9,17 @@
   <meta property="og:description" content="Managed websites from ₹2,499/month or one-time builds from ₹9,999." />
   <meta property="og:type" content="website" />
   <title>YKG Digital — Make the website sell before the call</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./v5.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
+
   <div class="intro" id="intro" aria-label="Opening sequence">
     <button class="intro-skip" id="introSkip" type="button">Skip</button>
     <div class="intro-word intro-word-a" aria-hidden="true">FOUND.</div>
@@ -25,28 +28,39 @@
     <div class="intro-brand" aria-hidden="true"><b>YKG</b><span>DIGITAL</span></div>
     <span class="intro-bar" aria-hidden="true"></span>
   </div>
+
   <header class="nav" id="nav">
     <a class="brand" href="#top" aria-label="YKG Digital home"><b>YKG</b><span>DIGITAL</span></a>
-    <nav class="nav-links" aria-label="Primary navigation"><a href="#plans">Plans</a><a href="#work">Work</a><a href="#test">Website test</a></nav>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#plans">Plans</a>
+      <a href="#work">Work</a>
+      <a href="./experience.html">Experience</a>
+    </nav>
     <button class="nav-cta js-plan" type="button" data-plan="Grow Membership">Start Grow <span>↗</span></button>
   </header>
+
   <main id="main">
-    <section class="hero" id="top">
-      <img class="hero-image" src="https://images.unsplash.com/photo-1575081838238-d06e716afa28?fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&ixlib=rb-4.1.0&q=60&w=3000" alt="A brightly lit independent storefront at night" width="3000" height="2000" fetchpriority="high" decoding="async" />
-      <div class="hero-shade" aria-hidden="true"></div><div class="hero-grain" aria-hidden="true"></div><div class="hero-spot" id="heroSpot" aria-hidden="true"></div>
-      <div class="hero-copy">
-        <p class="eyebrow">WEBSITES FOR REAL BUSINESSES</p>
-        <h1>They’ll look you up<br />before they call you.</h1>
-        <p class="hero-script">Make that moment sell.</p>
-        <div class="hero-actions">
-          <button class="hero-primary magnetic js-plan" type="button" data-plan="Grow Membership"><span>Make mine sell</span><b>↗</b></button>
-          <a class="hero-secondary" href="#work">See FakhriMart <span>↓</span></a>
+    <section class="hero hero-v5" id="top">
+      <img class="hero-image" src="https://images.unsplash.com/photo-1768487435091-1209b2687b2b?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=82&w=2600" alt="A warm independent storefront glowing at night" width="2600" height="1733" fetchpriority="high" decoding="async" />
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-grain" aria-hidden="true"></div>
+      <div class="hero-spot" id="heroSpot" aria-hidden="true"></div>
+
+      <div class="hero-copy hero-copy-v5">
+        <p class="eyebrow">YKG DIGITAL / WEBSITES FOR REAL BUSINESSES</p>
+        <h1>Look worth<br />choosing.</h1>
+        <p class="hero-sub">Your next customer will check you before they call.</p>
+        <div class="hero-actions hero-actions-v5">
+          <a class="hero-primary magnetic" href="#plans"><span>See plans</span><b>↓</b></a>
+          <a class="hero-experience" href="./experience.html">Experience what we build <span>↗</span></a>
         </div>
-        <p class="hero-price">Managed from <b>₹2,499/mo</b> <i>·</i> Own it from <b>₹9,999</b></p>
+        <p class="hero-price">Managed from <b>₹2,499/mo</b><i>·</i> Own it from <b>₹9,999</b></p>
       </div>
-      <a class="hero-proof" href="#work" aria-label="View FakhriMart case study"><span class="hero-proof-image"><img src="./assets/fakhri-mart-home.webp" alt="FakhriMart website preview" width="1600" height="1100" decoding="async" /></span><span class="hero-proof-copy"><small>FEATURED BUILD</small><b>FakhriMart</b><i>real client work ↗</i></span></a>
-      <div class="hero-scroll" aria-hidden="true"><span>SCROLL</span><i></i></div>
+
+      <div class="hero-value-line" aria-label="What every website includes"><span>Custom design</span><i></i><span>Mobile-first</span><i></i><span>Hosting + SSL</span><i></i><span>Ongoing support</span></div>
+      <div class="hero-scroll" aria-hidden="true"><span>PLANS NEXT</span><i></i></div>
     </section>
+
     <section class="plans" id="plans">
       <div class="section-shell plans-shell">
         <div class="plans-head"><p class="section-label">PLANS / SECOND, ON PURPOSE</p><h2>Choose how you want<br />to buy the result.</h2><p>No mystery quote maze. Pick managed monthly or buy the build once. We confirm scope before work starts.</p></div>
@@ -70,34 +84,62 @@
         </div>
       </div>
     </section>
+
     <section class="work" id="work">
       <div class="work-pin" id="workPin">
         <div class="work-copy"><p class="section-label light">REAL WORK / NOT A CONCEPT</p><div class="work-steps" id="workSteps">
           <article class="work-step active" data-step="0"><small>DISCOVER</small><h2>FakhriMart had products.<br />The website gave them a storefront.</h2><p>Instead of making customers hunt through messages, the experience organizes product discovery and makes enquiry obvious.</p></article>
           <article class="work-step" data-step="1"><small>UNDERSTAND</small><h2>A catalogue should feel like browsing, not reading a spreadsheet.</h2><p>Clear product grouping, filtering, responsive layouts and visual hierarchy help visitors understand what is available quickly.</p></article>
           <article class="work-step" data-step="2"><small>ACT</small><h2>When interest peaks,<br />the next step is one tap away.</h2><p>WhatsApp enquiry is integrated directly into the customer journey so the website hands the conversation to the business.</p></article>
-        </div><div class="work-chips"><span>Catalogue</span><span>WhatsApp enquiries</span><span>Responsive</span><span>Commercial build</span></div><a class="text-link" href="https://fakhriyarns.vercel.app" target="_blank" rel="noopener">Open live project ↗</a></div>
-        <div class="work-screen" id="workScreen"><div class="browser-bar"><i></i><i></i><i></i><span>fakhriyarns.vercel.app</span></div><div class="work-image-window"><img id="workImage" src="./assets/fakhri-mart-home.webp" alt="FakhriMart website" width="1600" height="1100" loading="lazy" decoding="async" /></div><div class="work-marker marker-a"><b>01</b><span>Find products</span></div><div class="work-marker marker-b"><b>02</b><span>Understand quickly</span></div><div class="work-marker marker-c"><b>03</b><span>Enquire</span></div></div>
+        </div><div class="work-chips"><span>Catalogue</span><span>WhatsApp enquiries</span><span>Responsive</span><span>Commercial build</span></div><div class="work-links"><a class="text-link" href="./experience.html">Experience the build ↗</a><a class="text-link subtle-link" href="https://fakhriyarns.vercel.app" target="_blank" rel="noopener">Open live site ↗</a></div></div>
+        <div class="work-screen" id="workScreen"><div class="browser-bar"><i></i><i></i><i></i><span>fakhriyarns.vercel.app</span></div><div class="work-image-window"><img id="workImage" src="https://image.thum.io/get/width/1440/crop/960/maxAge/1/noanimate/https://fakhriyarns.vercel.app/" alt="Current FakhriMart website" width="1440" height="960" loading="lazy" decoding="async" /></div><div class="work-marker marker-a"><b>01</b><span>Find products</span></div><div class="work-marker marker-b"><b>02</b><span>Understand quickly</span></div><div class="work-marker marker-c"><b>03</b><span>Enquire</span></div></div>
       </div><div class="work-scroll-space" aria-hidden="true"></div>
     </section>
+
     <section class="site-test" id="test"><div class="section-shell test-grid">
       <div class="test-copy"><p class="section-label">20-SECOND WEBSITE TEST</p><h2>Would you buy from<br />your own website?</h2><p>Tap the problems that sound familiar. This is not an audit score — it simply helps you identify obvious friction.</p><div class="test-result" id="testResult"><small>CURRENT SIGNAL</small><b id="testCount">0 friction points</b><span id="testRecommendation">Your current site may already be doing the basics well.</span></div><button class="test-cta js-plan" id="testCta" type="button" data-plan="Grow Membership">Fix these with Grow ↗</button></div>
       <div class="test-list" id="testList"><button class="test-item" type="button" aria-pressed="false"><span>01</span><b>People can’t tell what I sell in five seconds.</b><i>+</i></button><button class="test-item" type="button" aria-pressed="false"><span>02</span><b>The mobile version feels weaker than the business.</b><i>+</i></button><button class="test-item" type="button" aria-pressed="false"><span>03</span><b>Contacting me takes more than one obvious tap.</b><i>+</i></button><button class="test-item" type="button" aria-pressed="false"><span>04</span><b>The site looks outdated compared with competitors.</b><i>+</i></button><button class="test-item" type="button" aria-pressed="false"><span>05</span><b>Changing offers or products is a headache.</b><i>+</i></button></div>
     </div></section>
+
     <section class="transform" id="transform"><div class="section-shell"><div class="transform-head"><p class="section-label">DRAG THE DIFFERENCE</p><h2>A redesign isn’t “prettier.”<br />It changes what the eye does next.</h2></div><div class="compare" id="compare">
       <div class="compare-layer before"><div class="mock-site old-site"><div class="mock-nav"><b>BUSINESS NAME</b><span>HOME SERVICES ABOUT CONTACT</span></div><div class="old-hero"><h3>WELCOME TO OUR WEBSITE</h3><p>We provide many quality services. Contact us to learn more about our company.</p><button>Learn More</button></div><div class="old-boxes"><i></i><i></i><i></i></div></div><span class="compare-label">BEFORE · INFORMATION</span></div>
       <div class="compare-layer after" id="compareAfter"><div class="mock-site new-site"><div class="mock-nav"><b>BUSINESS NAME</b><span>Services · Proof</span><button>Book now ↗</button></div><div class="new-hero"><small>FOR PEOPLE WHO NEED THIS SERVICE NOW</small><h3>Know what it costs.<br />Know why it’s worth it.</h3><button>Get started ↗</button></div><div class="new-proof"><b>4.9</b><span>Clear proof / one next step</span></div></div><span class="compare-label">AFTER · DECISION</span></div>
       <input class="compare-range" id="compareRange" type="range" min="8" max="92" value="58" aria-label="Compare before and after website examples" /><div class="compare-handle" id="compareHandle" aria-hidden="true"><span>↔</span></div>
     </div></div></section>
+
     <section class="process" id="process"><div class="section-shell process-shell"><div class="process-head"><p class="section-label light">WHAT HAPPENS AFTER YES</p><h2>Three moves.<br />No agency theatre.</h2></div><div class="process-list">
       <article><span>01</span><div><small>YOU</small><h3>Tell us what the business needs.</h3><p>A short brief, current assets and the outcome you want. We ask for what is actually necessary.</p></div></article>
       <article><span>02</span><div><small>US</small><h3>We design, build and launch.</h3><p>Message, layout, responsive build, enquiry flow, deployment and QA handled as one system.</p></div></article>
       <article><span>03</span><div><small>TOGETHER</small><h3>Own it — or keep us on the job.</h3><p>Choose a one-time handoff or stay on a managed plan for updates, maintenance and ongoing improvements.</p></div></article>
     </div></div></section>
-    <section class="final" id="contact"><div class="final-bg" aria-hidden="true"></div><div class="final-copy"><p class="section-label light">YOUR NEXT CUSTOMER IS GOING TO LOOK ANYWAY.</p><h2>Give them something<br />worth choosing.</h2><div class="final-actions"><button class="final-primary magnetic js-plan" type="button" data-plan="Grow Membership"><span>Start Grow</span><b>₹3,999/mo ↗</b></button><button class="final-secondary js-plan" type="button" data-plan="Essential Makeover">Own it from ₹9,999 ↗</button></div></div><footer><span>YKG DIGITAL</span><span>PUNE → EVERYWHERE</span><span>© 2026</span></footer></section>
+
+    <section class="final" id="contact"><div class="final-bg" aria-hidden="true"></div><div class="final-copy"><p class="section-label light">YOUR NEXT CUSTOMER IS GOING TO LOOK ANYWAY.</p><h2>Give them something<br />worth choosing.</h2><div class="final-actions"><button class="final-primary magnetic js-plan" type="button" data-plan="Grow Membership"><span>Start Grow</span><b>₹3,999/mo ↗</b></button><a class="final-secondary" href="./experience.html">Experience the work ↗</a></div></div><footer><span>YKG DIGITAL</span><span>PUNE → EVERYWHERE</span><span>© 2026</span></footer></section>
   </main>
+
   <button class="mobile-buy js-plan" type="button" data-plan="Grow Membership"><span>Start Grow</span><b>₹3,999/mo</b></button>
-  <dialog class="lead-dialog" id="leadDialog"><form method="dialog" class="dialog-card" id="leadForm"><button class="dialog-close" type="button" id="dialogClose" aria-label="Close">×</button><p class="section-label">PROJECT ENQUIRY</p><h2 id="dialogTitle">Grow Membership</h2><p class="dialog-sub">Tell us just enough to understand the business. We’ll prepare a WhatsApp enquiry so the conversation starts with context.</p><input type="hidden" name="plan" id="planInput" value="Grow Membership" /><div class="form-grid"><label><span>Your name</span><input required name="name" autocomplete="name" placeholder="Your name" /></label><label><span>Business</span><input required name="business" autocomplete="organization" placeholder="Business name" /></label><label><span>Phone</span><input required name="phone" autocomplete="tel" inputmode="tel" placeholder="+91…" /></label><label><span>Current website <i>(optional)</i></span><input name="website" inputmode="url" placeholder="yourbusiness.com" /></label><label class="form-wide"><span>What should the website help you do?</span><textarea required name="goal" rows="4" placeholder="More enquiries, look more premium, show products clearly…"></textarea></label></div><button class="form-submit" value="default" type="submit"><span>Prepare my enquiry</span><b>WhatsApp ↗</b></button><small class="form-note">No payment is taken here. Scope and commercial terms are confirmed before work starts.</small></form></dialog>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script><script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script><script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script><script src="./app.js"></script>
+
+  <dialog class="lead-dialog" id="leadDialog">
+    <form method="dialog" class="dialog-card" id="leadForm">
+      <button class="dialog-close" type="button" id="dialogClose" aria-label="Close">×</button>
+      <p class="section-label">PROJECT ENQUIRY</p>
+      <h2 id="dialogTitle">Grow Membership</h2>
+      <p class="dialog-sub">Tell us just enough to understand the business. We’ll prepare a WhatsApp enquiry so the conversation starts with context.</p>
+      <input type="hidden" name="plan" id="planInput" value="Grow Membership" />
+      <div class="form-grid">
+        <label><span>Your name</span><input required name="name" autocomplete="name" placeholder="Your name" /></label>
+        <label><span>Business</span><input required name="business" autocomplete="organization" placeholder="Business name" /></label>
+        <label><span>Phone</span><input required name="phone" autocomplete="tel" inputmode="tel" placeholder="+91…" /></label>
+        <label><span>Current website <i>(optional)</i></span><input name="website" inputmode="url" placeholder="yourbusiness.com" /></label>
+        <label class="form-wide"><span>What should the website help you do?</span><textarea required name="goal" rows="4" placeholder="More enquiries, look more premium, show products clearly…"></textarea></label>
+      </div>
+      <button class="form-submit" value="default" type="submit"><span>Prepare my enquiry</span><b>WhatsApp ↗</b></button>
+      <small class="form-note">No payment is taken here. Scope and commercial terms are confirmed before work starts.</small>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
