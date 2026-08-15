@@ -1,17 +1,194 @@
 (() => {
-  const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
-  const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches, finePointer=matchMedia('(pointer:fine)').matches;
-  const safeStorage={get(k){try{return sessionStorage.getItem(k)}catch{return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch{}}};
-  const intro=$('#intro');
-  const closeIntro=()=>{if(!intro||intro.dataset.done)return;intro.dataset.done='1';safeStorage.set('ykg-v4-intro','1');if(window.gsap&&!reduceMotion)gsap.to(intro,{yPercent:-100,duration:.75,ease:'power4.inOut',onComplete:()=>intro.remove()});else intro.remove()};
+  const $ = (s,p=document)=>p.querySelector(s);
+  const $$ = (s,p=document)=>[...p.querySelectorAll(s)];
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = matchMedia('(pointer:fine)').matches;
+  const safeStorage = {
+    get(k){ try{return sessionStorage.getItem(k)}catch{return null} },
+    set(k,v){ try{sessionStorage.setItem(k,v)}catch{} }
+  };
+
+  // Opening: short, cinematic, skippable, once per session.
+  const intro = $('#intro');
+  const closeIntro = () => {
+    if(!intro || intro.dataset.done) return;
+    intro.dataset.done='1';
+    safeStorage.set('ykg-v4-intro','1');
+    if(window.gsap && !reduceMotion){
+      gsap.to(intro,{yPercent:-100,duration:.75,ease:'power4.inOut',onComplete:()=>intro.remove()});
+    }else intro.remove();
+  };
   $('#introSkip')?.addEventListener('click',closeIntro);
-  if(intro){if(reduceMotion||safeStorage.get('ykg-v4-intro'))intro.remove();else if(window.gsap){const w=$$('.intro-word'),tl=gsap.timeline({onComplete:()=>setTimeout(closeIntro,250)});tl.to('.intro-bar',{scaleX:1,duration:1.55,ease:'power2.inOut'},0).to(w[0],{autoAlpha:1,y:0,duration:.28},.08).to(w[0],{autoAlpha:0,y:-28,duration:.25},.48).to(w[1],{autoAlpha:1,y:0,duration:.28},.56).to(w[1],{autoAlpha:0,y:-28,duration:.25},.96).to(w[2],{autoAlpha:1,y:0,duration:.28},1.04).to(w[2],{autoAlpha:0,y:-28,duration:.25},1.38).to('.intro-brand',{autoAlpha:1,duration:.25},1.44)}else setTimeout(closeIntro,1800)}
-  const nav=$('#nav'),syncNav=()=>nav?.classList.toggle('scrolled',scrollY>24);addEventListener('scroll',syncNav,{passive:true});syncNav();
-  if(window.gsap&&window.ScrollTrigger&&!reduceMotion){gsap.registerPlugin(ScrollTrigger);if(window.Lenis){const lenis=new Lenis({duration:1.05,smoothWheel:true});lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0)}gsap.from('.hero-copy>*',{y:28,autoAlpha:0,stagger:.08,duration:.8,ease:'power3.out',delay:safeStorage.get('ykg-v4-intro')?.2:1.7});gsap.from('.hero-proof',{x:40,autoAlpha:0,duration:.8,ease:'power3.out',delay:2});gsap.to('.hero-image',{scale:1.08,yPercent:3,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1.2}});gsap.to('.hero-copy',{y:-38,autoAlpha:.5,ease:'none',scrollTrigger:{trigger:'.hero',start:'45% top',end:'bottom top',scrub:1}});$$('.plans-head,.mode-switch,.plan-theatre,.test-copy,.test-item,.transform-head,.compare,.process-list article,.final-copy').forEach(el=>gsap.from(el,{y:30,autoAlpha:0,duration:.7,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}}));const work=$('.work'),steps=$$('.work-step'),markers=$$('.work-marker'),shot=$('#workImage');ScrollTrigger.create({trigger:work,start:'top top',end:'bottom bottom',onUpdate:self=>{const idx=Math.min(2,Math.floor(self.progress*3));steps.forEach((x,i)=>x.classList.toggle('active',i===idx));markers.forEach((x,i)=>x.classList.toggle('active',i===idx));if(shot)gsap.set(shot,{yPercent:-22*self.progress})}});gsap.to('#workScreen',{rotateY:0,rotateX:0,scale:1.02,ease:'none',scrollTrigger:{trigger:work,start:'top top',end:'bottom bottom',scrub:1}})}
-  if(finePointer&&!reduceMotion){const hero=$('.hero'),spot=$('#heroSpot'),img=$('.hero-image');if(hero&&spot)hero.addEventListener('pointermove',e=>{const x=e.clientX/innerWidth*100,y=e.clientY/innerHeight*100;spot.style.setProperty('--mx',`${x}%`);spot.style.setProperty('--my',`${y}%`);if(window.gsap&&img)gsap.to(img,{x:(x-50)*-.035,y:(y-50)*-.025,duration:1.2,ease:'power3.out',overwrite:true})});$$('.magnetic').forEach(el=>{if(window.gsap){const xTo=gsap.quickTo(el,'x',{duration:.35,ease:'power3'}),yTo=gsap.quickTo(el,'y',{duration:.35,ease:'power3'});el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();xTo((e.clientX-r.left-r.width/2)*.12);yTo((e.clientY-r.top-r.height/2)*.12)});el.addEventListener('pointerleave',()=>{xTo(0);yTo(0)})}})}
-  const PLANS={monthly:{launch:{badge:'LAUNCH MEMBERSHIP',price:'₹2,499',unit:'/month',setup:'+ ₹4,999 one-time setup',title:'For businesses that need a sharp, dependable presence.',best:'Best for straightforward service businesses that need a strong site, enquiries and maintenance without frequent changes.',features:['Custom website up to 5 core pages','Hosting + HTTPS/SSL','2 small update requests / month','Basic analytics setup','Email / WhatsApp support'],plan:'Launch Membership'},grow:{badge:'GROW MEMBERSHIP',price:'₹3,999',unit:'/month',setup:'+ ₹6,999 one-time setup',title:'For businesses that want the website to keep getting better.',best:'Best for clinics, salons, wholesalers, coaches and local businesses that update services, offers or products.',features:['Custom website up to 10 core pages','Hosting + HTTPS/SSL + monitoring','Regular content and service updates','Analytics + local SEO care','Priority support'],plan:'Grow Membership'},pro:{badge:'PRO MEMBERSHIP',price:'₹5,999+',unit:'/month',setup:'Custom setup based on scope',title:'For businesses whose website is becoming an operating tool.',best:'Best when you need catalogue depth, booking, automations, advanced SEO or custom workflows.',features:['Larger / advanced website','Catalogue, booking or custom workflows','Automation integrations','Advanced growth / SEO scope','Higher support allowance'],plan:'Pro Membership'}},once:{essential:{badge:'ESSENTIAL MAKEOVER',price:'₹9,999+',unit:'one time',setup:'Scope confirmed before work starts',title:'A focused rebuild that makes the business look credible online.',best:'Best when you need a strong brochure/service website and prefer a one-time project.',features:['Up to 5 core pages','Responsive custom design','WhatsApp + enquiry forms','Maps + basic analytics','Deployment support'],plan:'Essential Makeover'},business:{badge:'BUSINESS MAKEOVER',price:'₹17,999+',unit:'one time',setup:'Scope confirmed before work starts',title:'A fuller commercial website built to explain, prove and convert.',best:'Best for businesses with multiple services, products, locations or stronger presentation needs.',features:['Up to 10 core pages','Stronger motion / interaction system','Catalogue or richer service structure','Analytics + SEO foundation','30 days post-launch support'],plan:'Business Makeover'},custom:{badge:'CUSTOM BUILD',price:'₹25k–35k+',unit:'starting range',setup:'Quoted from requirements',title:'For the website that cannot be squeezed into a template.',best:'Best for ecommerce, admin systems, advanced automation, custom product experiences or unique interactive builds.',features:['Custom architecture and scope','Advanced animation / interaction','CMS, ecommerce or workflows','Automation / AI integrations','Custom deployment and support'],plan:'Custom Build'}}};
-  let mode='monthly',key='grow';const els={badge:$('#planBadge'),price:$('#planPrice'),unit:$('#planUnit'),setup:$('#planSetup'),title:$('#planTitle'),best:$('#planBest'),features:$('#planFeatures'),cta:$('#planCta')};function renderPlan(){const p=PLANS[mode][key];if(!p)return;els.badge.textContent=p.badge;els.price.textContent=p.price;els.unit.textContent=p.unit;els.setup.textContent=p.setup;els.title.textContent=p.title;els.best.textContent=p.best;els.features.innerHTML=p.features.map(x=>`<li>${x}</li>`).join('');els.cta.dataset.plan=p.plan;els.cta.querySelector('span').textContent=`Choose ${p.plan.replace(' Membership','').replace(' Makeover','')}`;if(window.gsap&&!reduceMotion)gsap.from('.plan-stage>*',{autoAlpha:0,y:10,stagger:.035,duration:.33,ease:'power2.out'})}$$('.mode').forEach(btn=>btn.addEventListener('click',()=>{mode=btn.dataset.mode;key=mode==='monthly'?'grow':'business';$$('.mode').forEach(x=>{const a=x===btn;x.classList.toggle('active',a);x.setAttribute('aria-selected',a)});$$('.plan-tab').forEach(x=>x.classList.toggle('hidden',x.dataset.mode!==mode));$$('.plan-tab').forEach(x=>{const a=x.dataset.mode===mode&&x.dataset.key===key;x.classList.toggle('active',a);x.setAttribute('aria-selected',a)});renderPlan()}));$$('.plan-tab').forEach(btn=>btn.addEventListener('click',()=>{mode=btn.dataset.mode;key=btn.dataset.key;$$('.plan-tab').forEach(x=>{const a=x===btn;x.classList.toggle('active',a);x.setAttribute('aria-selected',a)});renderPlan()}));$('#planTalk')?.addEventListener('click',()=>$('#test')?.scrollIntoView({behavior:reduceMotion?'auto':'smooth'}));
-  const testItems=$$('.test-item'),countEl=$('#testCount'),recEl=$('#testRecommendation'),testCta=$('#testCta');function updateTest(){const n=testItems.filter(x=>x.classList.contains('active')).length;countEl.textContent=`${n} friction point${n===1?'':'s'}`;if(n===0){recEl.textContent='Your current site may already be doing the basics well.';testCta.textContent='Still want a sharper site? ↗';testCta.dataset.plan='Launch Membership'}else if(n<=2){recEl.textContent='A focused makeover or Launch plan is probably enough.';testCta.textContent='Fix these with Launch ↗';testCta.dataset.plan='Launch Membership'}else if(n<=4){recEl.textContent='You likely need both a rebuild and ongoing care. Grow is the cleanest fit.';testCta.textContent='Fix these with Grow ↗';testCta.dataset.plan='Grow Membership'}else{recEl.textContent='Your website is probably holding the business back in multiple places. Start with a full review.';testCta.textContent='Start a full rebuild ↗';testCta.dataset.plan='Business Makeover'}}testItems.forEach(item=>item.addEventListener('click',()=>{const active=item.classList.toggle('active');item.setAttribute('aria-pressed',active);updateTest()}));
-  const range=$('#compareRange'),after=$('#compareAfter'),handle=$('#compareHandle'),updateCompare=()=>{if(!range)return;const v=Number(range.value);after.style.clipPath=`inset(0 0 0 ${v}%)`;handle.style.left=`${v}%`};range?.addEventListener('input',updateCompare);updateCompare();
-  const dialog=$('#leadDialog'),form=$('#leadForm'),title=$('#dialogTitle'),planInput=$('#planInput'),openPlan=plan=>{title.textContent=plan;planInput.value=plan;if(dialog?.showModal)dialog.showModal();else dialog?.setAttribute('open','')};document.addEventListener('click',e=>{const btn=e.target.closest('.js-plan');if(btn)openPlan(btn.dataset.plan||'Website Project')});$('#dialogClose')?.addEventListener('click',()=>dialog?.close?.());dialog?.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});form?.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const d=new FormData(form),plan=d.get('plan'),msg=[`Hi Yash, I'm interested in the ${plan}.`,`Name: ${d.get('name')}`,`Business: ${d.get('business')}`,`Phone: ${d.get('phone')}`,d.get('website')?`Current website: ${d.get('website')}`:'',`Goal: ${d.get('goal')}`].filter(Boolean).join('\n');navigator.clipboard?.writeText(msg).catch(()=>{});dialog.close();window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer')});
+  if(intro){
+    if(reduceMotion || safeStorage.get('ykg-v4-intro')) intro.remove();
+    else if(window.gsap){
+      const words=$$('.intro-word');
+      const tl=gsap.timeline({onComplete:()=>setTimeout(closeIntro,250)});
+      tl.to('.intro-bar',{scaleX:1,duration:1.55,ease:'power2.inOut'},0)
+        .to(words[0],{autoAlpha:1,y:0,duration:.28},0.08).to(words[0],{autoAlpha:0,y:-28,duration:.25},.48)
+        .to(words[1],{autoAlpha:1,y:0,duration:.28},.56).to(words[1],{autoAlpha:0,y:-28,duration:.25},.96)
+        .to(words[2],{autoAlpha:1,y:0,duration:.28},1.04).to(words[2],{autoAlpha:0,y:-28,duration:.25},1.38)
+        .to('.intro-brand',{autoAlpha:1,duration:.25},1.44);
+    } else setTimeout(closeIntro,1800);
+  }
+
+  // Navigation.
+  const nav=$('#nav');
+  const syncNav=()=>nav?.classList.toggle('scrolled',scrollY>24);
+  addEventListener('scroll',syncNav,{passive:true});syncNav();
+
+  // Smooth scroll + GSAP only when available. The site works without both.
+  if(window.gsap && window.ScrollTrigger && !reduceMotion){
+    gsap.registerPlugin(ScrollTrigger);
+    if(window.Lenis){
+      const lenis=new Lenis({duration:1.05,smoothWheel:true});
+      lenis.on('scroll',ScrollTrigger.update);
+      gsap.ticker.add(t=>lenis.raf(t*1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+
+    // Hero choreography; keep the image calm and text readable.
+    gsap.from('.hero-copy>*',{y:28,autoAlpha:0,stagger:.08,duration:.8,ease:'power3.out',delay:safeStorage.get('ykg-v4-intro')?.2:1.7});
+    gsap.to('.hero-image',{scale:1.045,yPercent:1.5,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1.2}});
+    gsap.to('.hero-copy',{y:-24,autoAlpha:.58,ease:'none',scrollTrigger:{trigger:'.hero',start:'45% top',end:'bottom top',scrub:1}});
+
+    // Section reveals.
+    $$('.plans-head,.mode-switch,.plan-theatre,.test-copy,.test-item,.transform-head,.compare,.process-list article,.final-copy').forEach((el,i)=>{
+      gsap.from(el,{y:30,autoAlpha:0,duration:.7,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}});
+    });
+
+    // Work section: three narrative states across a pinned scroll span.
+    const work=$('.work'), steps=$$('.work-step'), markers=$$('.work-marker');
+    ScrollTrigger.create({
+      trigger:work,start:'top top',end:'bottom bottom',
+      onUpdate:self=>{
+        const idx=Math.min(2,Math.floor(self.progress*3));
+        steps.forEach((x,i)=>x.classList.toggle('active',i===idx));
+        markers.forEach((x,i)=>x.classList.toggle('active',i===idx));
+      }
+    });
+    gsap.to('#workScreen',{rotateY:0,rotateX:0,scale:1.02,ease:'none',scrollTrigger:{trigger:work,start:'top top',end:'bottom bottom',scrub:1}});
+  }
+
+  // Hero pointer: subtle; never moves text/CTA.
+  if(finePointer && !reduceMotion){
+    const hero=$('.hero'), spot=$('#heroSpot'), img=$('.hero-image');
+    if(hero && spot){
+      hero.addEventListener('pointermove',e=>{
+        const x=(e.clientX/innerWidth)*100,y=(e.clientY/innerHeight)*100;
+        spot.style.setProperty('--mx',`${x}%`);spot.style.setProperty('--my',`${y}%`);
+        if(window.gsap && img){
+          gsap.to(img,{x:(x-50)*-.035,y:(y-50)*-.025,duration:1.2,ease:'power3.out',overwrite:true});
+        }
+      });
+    }
+    $$('.magnetic').forEach(el=>{
+      if(window.gsap){
+        const xTo=gsap.quickTo(el,'x',{duration:.35,ease:'power3'}),yTo=gsap.quickTo(el,'y',{duration:.35,ease:'power3'});
+        el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();xTo((e.clientX-r.left-r.width/2)*.12);yTo((e.clientY-r.top-r.height/2)*.12)});
+        el.addEventListener('pointerleave',()=>{xTo(0);yTo(0)});
+      }
+    });
+  }
+
+  // Plan data / product theatre.
+  const PLANS={
+    monthly:{
+      launch:{badge:'LAUNCH MEMBERSHIP',price:'₹2,499',unit:'/month',setup:'+ ₹4,999 one-time setup',title:'For businesses that need a sharp, dependable presence.',best:'Best for straightforward service businesses that need a strong site, enquiries and maintenance without frequent changes.',features:['Custom website up to 5 core pages','Hosting + HTTPS/SSL','2 small update requests / month','Basic analytics setup','Email / WhatsApp support'],plan:'Launch Membership'},
+      grow:{badge:'GROW MEMBERSHIP',price:'₹3,999',unit:'/month',setup:'+ ₹6,999 one-time setup',title:'For businesses that want the website to keep getting better.',best:'Best for clinics, salons, wholesalers, coaches and local businesses that update services, offers or products.',features:['Custom website up to 10 core pages','Hosting + HTTPS/SSL + monitoring','Regular content and service updates','Analytics + local SEO care','Priority support'],plan:'Grow Membership'},
+      pro:{badge:'PRO MEMBERSHIP',price:'₹5,999+',unit:'/month',setup:'Custom setup based on scope',title:'For businesses whose website is becoming an operating tool.',best:'Best when you need catalogue depth, booking, automations, advanced SEO or custom workflows.',features:['Larger / advanced website','Catalogue, booking or custom workflows','Automation integrations','Advanced growth / SEO scope','Higher support allowance'],plan:'Pro Membership'}
+    },
+    once:{
+      essential:{badge:'ESSENTIAL MAKEOVER',price:'₹9,999+',unit:'one time',setup:'Scope confirmed before work starts',title:'A focused rebuild that makes the business look credible online.',best:'Best when you need a strong brochure/service website and prefer a one-time project.',features:['Up to 5 core pages','Responsive custom design','WhatsApp + enquiry forms','Maps + basic analytics','Deployment support'],plan:'Essential Makeover'},
+      business:{badge:'BUSINESS MAKEOVER',price:'₹17,999+',unit:'one time',setup:'Scope confirmed before work starts',title:'A fuller commercial website built to explain, prove and convert.',best:'Best for businesses with multiple services, products, locations or stronger presentation needs.',features:['Up to 10 core pages','Stronger motion / interaction system','Catalogue or richer service structure','Analytics + SEO foundation','30 days post-launch support'],plan:'Business Makeover'},
+      custom:{badge:'CUSTOM BUILD',price:'₹25k–35k+',unit:'starting range',setup:'Quoted from requirements',title:'For the website that cannot be squeezed into a template.',best:'Best for ecommerce, admin systems, advanced automation, custom product experiences or unique interactive builds.',features:['Custom architecture and scope','Advanced animation / interaction','CMS, ecommerce or workflows','Automation / AI integrations','Custom deployment and support'],plan:'Custom Build'}
+    }
+  };
+  let mode='monthly',key='grow';
+  const els={badge:$('#planBadge'),price:$('#planPrice'),unit:$('#planUnit'),setup:$('#planSetup'),title:$('#planTitle'),best:$('#planBest'),features:$('#planFeatures'),cta:$('#planCta')};
+  function renderPlan(){
+    const p=PLANS[mode][key];if(!p)return;
+    els.badge.textContent=p.badge;els.price.textContent=p.price;els.unit.textContent=p.unit;els.setup.textContent=p.setup;els.title.textContent=p.title;els.best.textContent=p.best;
+    els.features.innerHTML=p.features.map(x=>`<li>${x}</li>`).join('');
+    els.cta.dataset.plan=p.plan;els.cta.querySelector('span').textContent=`Choose ${p.plan.replace(' Membership','').replace(' Makeover','')}`;
+    if(window.gsap && !reduceMotion) gsap.from('.plan-stage>*',{autoAlpha:0,y:10,stagger:.035,duration:.33,ease:'power2.out'});
+  }
+  $$('.mode').forEach(btn=>btn.addEventListener('click',()=>{
+    mode=btn.dataset.mode;key=mode==='monthly'?'grow':'business';
+    $$('.mode').forEach(x=>{const a=x===btn;x.classList.toggle('active',a);x.setAttribute('aria-selected',a)});
+    $$('.plan-tab').forEach(x=>x.classList.toggle('hidden',x.dataset.mode!==mode));
+    $$('.plan-tab').forEach(x=>{const a=x.dataset.mode===mode&&x.dataset.key===key;x.classList.toggle('active',a);x.setAttribute('aria-selected',a)});
+    renderPlan();
+  }));
+  $$('.plan-tab').forEach(btn=>btn.addEventListener('click',()=>{
+    mode=btn.dataset.mode;key=btn.dataset.key;
+    $$('.plan-tab').forEach(x=>{const a=x===btn;x.classList.toggle('active',a);x.setAttribute('aria-selected',a)});renderPlan();
+  }));
+  $('#planTalk')?.addEventListener('click',()=>$('#test')?.scrollIntoView({behavior:reduceMotion?'auto':'smooth'}));
+
+  // FakhriMart live preview is opt-in; audited screenshots remain visible by default.
+  const workLiveToggle=$('#workLiveToggle'), workLiveFrame=$('#workLiveFrame'), workScreen=$('#workScreen');
+  workLiveToggle?.addEventListener('click',()=>{
+    const active=workScreen?.classList.toggle('live-mode');
+    workLiveToggle.classList.toggle('active',!!active);
+    workLiveToggle.textContent=active?'Return to audited screenshots':'Try live preview ↗';
+    if(active && workLiveFrame?.getAttribute('src')==='about:blank') workLiveFrame.setAttribute('src','https://fakhriyarns.vercel.app');
+  });
+
+  // 20-second test.
+  const testItems=$$('.test-item'),countEl=$('#testCount'),recEl=$('#testRecommendation'),testCta=$('#testCta');
+  function updateTest(){
+    const n=testItems.filter(x=>x.classList.contains('active')).length;
+    countEl.textContent=`${n} friction point${n===1?'':'s'}`;
+    if(n===0){recEl.textContent='Your current site may already be doing the basics well.';testCta.textContent='Still want a sharper site? ↗';testCta.dataset.plan='Launch Membership'}
+    else if(n<=2){recEl.textContent='A focused makeover or Launch plan is probably enough.';testCta.textContent='Fix these with Launch ↗';testCta.dataset.plan='Launch Membership'}
+    else if(n<=4){recEl.textContent='You likely need both a rebuild and ongoing care. Grow is the cleanest fit.';testCta.textContent='Fix these with Grow ↗';testCta.dataset.plan='Grow Membership'}
+    else{recEl.textContent='Your website is probably holding the business back in multiple places. Start with a full review.';testCta.textContent='Start a full rebuild ↗';testCta.dataset.plan='Business Makeover'}
+  }
+  testItems.forEach(item=>item.addEventListener('click',()=>{const active=item.classList.toggle('active');item.setAttribute('aria-pressed',active);updateTest()}));
+
+  // Before / after transformation theatre.
+  const range=$('#compareRange'),after=$('#compareAfter'),handle=$('#compareHandle'),compare=$('#compare'),comparePercent=$('#comparePercent');
+  const updateCompare=()=>{
+    if(!range)return;
+    const v=Number(range.value);
+    after.style.clipPath=`inset(0 0 0 ${v}%)`;
+    handle.style.left=`${v}%`;
+    if(comparePercent) comparePercent.textContent=`${v}%`;
+    compare?.classList.toggle('after-visible',v<72);
+  };
+  range?.addEventListener('input',updateCompare);updateCompare();
+  if(compare && range && matchMedia('(pointer:fine)').matches){
+    compare.addEventListener('pointermove',e=>{
+      if(e.buttons!==1)return;
+      const r=compare.getBoundingClientRect();
+      range.value=Math.max(4,Math.min(96,Math.round((e.clientX-r.left)/r.width*100)));
+      updateCompare();
+    });
+  }
+
+  // Cinematic internal page transition.
+  const wipe=$('#pageWipe');
+  $$('.page-link').forEach(link=>link.addEventListener('click',e=>{
+    if(reduceMotion || !window.gsap || !wipe)return;
+    const href=link.getAttribute('href');
+    if(!href || href.startsWith('#'))return;
+    e.preventDefault();
+    gsap.set(wipe,{yPercent:101});
+    gsap.to(wipe,{yPercent:0,duration:.62,ease:'power4.inOut',onComplete:()=>{location.href=href}});
+  }));
+
+  // Enquiry modal.
+  const dialog=$('#leadDialog'),form=$('#leadForm'),title=$('#dialogTitle'),planInput=$('#planInput');
+  const openPlan=plan=>{title.textContent=plan;planInput.value=plan;if(dialog?.showModal)dialog.showModal();else dialog?.setAttribute('open','')};
+  document.addEventListener('click',e=>{const btn=e.target.closest('.js-plan');if(btn)openPlan(btn.dataset.plan||'Website Project')});
+  $('#dialogClose')?.addEventListener('click',()=>dialog?.close?.());
+  dialog?.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
+  form?.addEventListener('submit',e=>{
+    e.preventDefault();if(!form.reportValidity())return;
+    const d=new FormData(form),plan=d.get('plan');
+    const msg=[`Hi Yash, I'm interested in the ${plan}.`,`Name: ${d.get('name')}`,`Business: ${d.get('business')}`,`Phone: ${d.get('phone')}`,d.get('website')?`Current website: ${d.get('website')}`:'',`Goal: ${d.get('goal')}`].filter(Boolean).join('\n');
+    navigator.clipboard?.writeText(msg).catch(()=>{});
+    dialog.close();window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank','noopener,noreferrer');
+  });
 })();
