@@ -15,13 +15,16 @@ jobs:
         with:
           ref: ykg-digital-v9
           fetch-depth: 0
-      - name: Patch V9 markup once
+      - name: Keep V9 markup clean and idempotent
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text()
-          s=s.replace('<link rel="stylesheet" href="./v9-hero.css">','<link rel="stylesheet" href="./v9-hero.css">\n  <link rel="stylesheet" href="./v9-refine.css" data-v9-refine>')
+          refine='  <link rel="stylesheet" href="./v9-refine.css" data-v9-refine>\n'
+          # Deduplicate the refinement layer, then ensure exactly one follows the hero stylesheet.
+          s=s.replace(refine,'')
+          s=s.replace('<link rel="stylesheet" href="./v9-hero.css">','<link rel="stylesheet" href="./v9-hero.css">\n'+refine.rstrip())
           s=s.replace('<div class="v9-hero-meta" aria-label="Starting prices">','<div class="v9-hero-meta" role="group" aria-label="Starting prices">')
           s=s.replace('<div class="v9-feature-rail" aria-label="Client-work experience stages">','<div class="v9-feature-rail" role="group" aria-label="Client-work experience stages">')
           s=s.replace('<div class="v9-device-controls" aria-label="Preview device">','<div class="v9-device-controls" role="group" aria-label="Preview device">')
@@ -42,6 +45,6 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add index.html v9-refine.css
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "fix(v9): validate markup and load screenshot geometry before paint"
+          git commit -m "fix(v9): keep refinement layer and semantic markup stable"
           git pull --rebase origin ykg-digital-v9
           git push origin HEAD:ykg-digital-v9
