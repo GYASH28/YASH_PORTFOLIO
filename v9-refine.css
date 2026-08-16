@@ -1,0 +1,71 @@
+/* V9 refinement — screenshot integrity + interaction polish */
+
+/* Hero entrance: minimal surface, richer behavior */
+.v9-hero-copy > *{animation:v9HeroIn .9s cubic-bezier(.16,1,.3,1) both}
+.v9-hero-copy > *:nth-child(1){animation-delay:.08s}.v9-hero-copy > *:nth-child(2){animation-delay:.14s}.v9-hero-copy > *:nth-child(3){animation-delay:.22s}.v9-hero-copy > *:nth-child(4){animation-delay:.3s}.v9-hero-copy > *:nth-child(5){animation-delay:.36s}
+@keyframes v9HeroIn{from{opacity:0;transform:translateY(28px);filter:blur(7px)}to{opacity:1;transform:none;filter:none}}
+.v9-signal-wrap{animation:v9SignalIn 1.2s .16s cubic-bezier(.16,1,.3,1) both}
+@keyframes v9SignalIn{from{opacity:0;transform:scale(.88) rotate(-4deg);filter:blur(14px)}to{opacity:1;transform:none;filter:none}}
+.v9-signal:before{content:"";position:absolute;inset:-5%;border-radius:50%;background:conic-gradient(from 180deg,transparent 0 21%,rgba(141,242,221,.09) 27%,transparent 34% 66%,rgba(255,255,255,.045) 73%,transparent 80%);filter:blur(1px);animation:v9Aura 22s linear infinite;pointer-events:none}
+@keyframes v9Aura{to{transform:rotate(360deg)}}
+.v9-signal-core{overflow:hidden}.v9-signal-core:after{content:"";position:absolute;inset:-80% -35%;background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.13) 49%,transparent 56%);transform:translateX(-45%) rotate(16deg);animation:v9CoreSweep 5.4s ease-in-out infinite;pointer-events:none}
+@keyframes v9CoreSweep{0%,60%{transform:translateX(-55%) rotate(16deg)}85%,100%{transform:translateX(55%) rotate(16deg)}}
+
+/* Make each section hand off into the next instead of feeling stacked */
+.v9-plans,.v9-client,.v9-diagnostic,.v9-transform,.v9-process,.v9-faq{position:relative;isolation:isolate}
+.v9-plans:after,.v9-diagnostic:after,.v9-process:after{content:"";position:absolute;z-index:5;left:50%;bottom:-1px;width:min(94vw,1500px);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,rgba(0,0,0,.15),transparent);pointer-events:none}
+.v9-client:after,.v9-transform:after{content:"";position:absolute;z-index:5;left:50%;bottom:-1px;width:min(94vw,1500px);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);pointer-events:none}
+
+/* CLIENT WORK: never treat audited screenshots like decorative cover photos */
+.v9-device-shell{overflow:visible}
+.v9-device-frame{position:relative;display:block;overflow:hidden;background:#f1f1ef;contain:paint;isolation:isolate}
+.v9-device-frame:after{content:"";position:absolute;z-index:4;left:0;right:0;top:-22%;height:18%;background:linear-gradient(180deg,transparent,rgba(141,242,221,.11),transparent);opacity:0;pointer-events:none}
+.v9-device-frame.switching:after{opacity:1;animation:v9Scan .55s cubic-bezier(.16,1,.3,1)}
+@keyframes v9Scan{from{transform:translateY(0)}to{transform:translateY(660%)}}
+.v9-device-frame img{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  object-fit:initial!important;
+  object-position:top left!important;
+  transform-origin:50% 0;
+  image-rendering:auto;
+  backface-visibility:hidden;
+  transition:opacity .18s ease,transform .08s linear!important;
+}
+.v9-device-frame.switching img{opacity:.18!important}
+.v9-device[data-mode="desktop"] .v9-device-shell{width:100%;margin-inline:auto}
+.v9-device[data-mode="desktop"] .v9-device-frame{height:min(68vh,690px)}
+.v9-device[data-mode="mobile"] .v9-device-shell{width:min(390px,100%);margin-inline:auto}
+.v9-device[data-mode="mobile"] .v9-device-frame{height:min(70vh,720px)}
+.v9-device[data-mode="full"] .v9-device-shell{width:100%;margin-inline:auto}
+.v9-device[data-mode="full"] .v9-device-frame{height:min(74vh,760px)}
+.v9-device[data-mode="full"] .v9-device-frame img{width:100%!important}
+
+/* stronger inspection affordances */
+.v9-device{transform-style:preserve-3d}.v9-device-shell:after{content:"DRAG THE BAR BELOW TO INSPECT THE PAGE";position:absolute;z-index:7;right:15px;bottom:14px;padding:7px 9px;border-radius:999px;background:rgba(5,8,7,.78);border:1px solid rgba(255,255,255,.13);color:#b9c3bf;font:500 6px var(--v9-mono);letter-spacing:.08em;pointer-events:none;backdrop-filter:blur(9px)}
+.v9-feature-btn{position:relative;overflow:hidden}.v9-feature-btn:after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--v9-mint);transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.16,1,.3,1)}.v9-feature-btn.active:after{transform:scaleX(1)}
+.v9-feature-btn.active b{color:#fff}.v9-feature-btn.active span{color:#9aa7a2}
+.v9-story{transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .35s}.v9-story:hover{transform:translateY(-4px);border-color:#34443f}
+.v9-shot-card{transform:translateZ(0)}.v9-shot-card:after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(141,242,221,0);transition:box-shadow .35s;pointer-events:none}.v9-shot-card:hover:after{box-shadow:inset 0 0 0 1px rgba(141,242,221,.35)}
+
+/* compare feels tactile */
+.v9-compare-line{box-shadow:0 0 28px rgba(141,242,221,.25)}
+.v9-compare-handle{transition:transform .25s,box-shadow .25s}.v9-compare:hover .v9-compare-handle{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 18px 60px rgba(0,0,0,.34),0 0 0 8px rgba(141,242,221,.05)}
+
+/* sensible paint containment for the heavy lower page */
+.v9-diagnostic,.v9-transform,.v9-process,.v9-faq{content-visibility:auto;contain-intrinsic-size:900px}
+
+@media(max-width:780px){
+  .v9-device-shell:after{display:none}
+  .v9-device-frame,.v9-device[data-mode="desktop"] .v9-device-frame,.v9-device[data-mode="full"] .v9-device-frame{height:58vh;max-height:620px}
+  .v9-device[data-mode="mobile"] .v9-device-frame{height:min(68vh,650px)}
+  .v9-signal:before{inset:-2%}
+}
+@media(prefers-reduced-motion:reduce){
+  .v9-hero-copy>* ,.v9-signal-wrap,.v9-signal:before,.v9-signal-core:after{animation:none!important}
+  .v9-device-frame:after{display:none}
+}
