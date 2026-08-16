@@ -34,23 +34,34 @@ for (const vp of viewports) {
   if (!heroBox || heroBox.height < 80 || heroBox.width < 180) fail(vp.name, 'hero headline has suspicious dimensions', {heroBox});
   const heroImgs = await page.locator('.v9-hero img').count();
   if (heroImgs !== 0) fail(vp.name, 'hero unexpectedly contains image elements', {heroImgs});
+  const heroCtaColor = await page.locator('.v9-primary').first().evaluate(el => getComputedStyle(el).color);
+  observations.push({viewport:vp.name, heroCtaColor});
 
   await page.locator('#plans').scrollIntoViewIfNeeded();
-  await page.waitForTimeout(250);
+  await page.waitForTimeout(650);
   const once = page.locator('.v9-price-mode [data-mode="once"]');
   await once.click();
   if (!await page.locator('.v9-plan-tab[data-key="business"]').isVisible()) fail(vp.name, 'one-time pricing did not reveal');
   await page.locator('.v9-price-mode [data-mode="monthly"]').click();
 
-  /* Deliberately enter the sticky Lab, instead of stopping at the section heading. */
-  await page.locator('.v9-lab-sticky').evaluate(el => el.scrollIntoView({block:'center', inline:'nearest'}));
-  await page.waitForTimeout(450);
+  const enterLab = async () => {
+    await page.evaluate((mobile) => {
+      const lab = document.querySelector('.v9-lab');
+      if (!lab) return;
+      const top = lab.getBoundingClientRect().top + scrollY;
+      const extra = mobile ? 8 : Math.min(190, innerHeight * .22);
+      scrollTo({top: top + extra, behavior:'instant'});
+    }, vp.width <= 780);
+    await page.waitForTimeout(550);
+  };
+  await enterLab();
+
   const preview = page.locator('#v9Preview');
   if (!await preview.isVisible()) fail(vp.name, 'client screenshot preview not visible');
 
   const validateImage = async (label) => {
     await preview.evaluate(img => img.decode?.().catch(()=>{}));
-    await page.waitForTimeout(160);
+    await page.waitForTimeout(180);
     const info = await preview.evaluate(img => {
       const r = img.getBoundingClientRect();
       return {src:img.getAttribute('src'), naturalWidth:img.naturalWidth, naturalHeight:img.naturalHeight, width:r.width, height:r.height, opacity:getComputedStyle(img).opacity};
@@ -69,21 +80,23 @@ for (const vp of viewports) {
   const featureCount = await buttons.count();
   for (let i=0;i<featureCount;i++) {
     const btn = buttons.nth(i);
-    await btn.evaluate(el => el.scrollIntoView({block:'center', inline:'center'}));
-    await page.waitForTimeout(100);
-    await btn.click();
-    await page.waitForTimeout(350);
+    await btn.evaluate(el => el.scrollIntoView({block:'nearest', inline:'center'}));
+    await page.waitForTimeout(80);
+    const box = await btn.boundingBox();
+    if (!box || box.bottom < 0 || box.top > vp.height || box.right < 0 || box.left > vp.width) {
+      fail(`${vp.name}/feature-${i+1}`, 'feature control is outside viewport in client Lab', {box});
+    }
+    await btn.evaluate(el => el.click());
+    await page.waitForTimeout(380);
     await validateImage(`feature-${i+1}`);
   }
 
   const deviceButtons = page.locator('.v9-device-controls button');
-  await page.locator('.v9-device-controls').evaluate(el => el.scrollIntoView({block:'center', inline:'nearest'}));
-  await page.waitForTimeout(100);
   for (const mode of ['desktop','mobile','full']) {
     const label = mode === 'full' ? 'Full page' : mode[0].toUpperCase()+mode.slice(1);
     const btn = deviceButtons.filter({hasText: label});
-    await btn.click();
-    await page.waitForTimeout(350);
+    await btn.evaluate(el => el.click());
+    await page.waitForTimeout(380);
     const info = await validateImage(`device-${mode}`);
     const currentMode = await page.locator('#v9Device').getAttribute('data-mode');
     if (currentMode !== mode) fail(`${vp.name}/device-${mode}`, 'device mode did not apply', {currentMode,src:info.src});
@@ -102,7 +115,7 @@ for (const vp of viewports) {
   await page.locator('#v9ShotClose').click();
 
   await page.locator('#transform').scrollIntoViewIfNeeded();
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(650);
   const range = page.locator('#v9CompareRange');
   await range.fill('72');
   const clip = await page.locator('.v9-compare-after').evaluate(el => getComputedStyle(el).clipPath);
@@ -110,15 +123,14 @@ for (const vp of viewports) {
 
   const experienceLinks = await page.locator('a[href*="experience.html"]').count();
   if (experienceLinks) fail(vp.name, 'standalone Experience link still present', {experienceLinks});
-
   if (errors.length) fail(vp.name, 'browser errors', {errors});
 
   await page.goto(`${base}/index.html`, {waitUntil:'networkidle'});
-  await page.waitForTimeout(650);
+  await page.waitForTimeout(900);
   await page.screenshot({path:`${out}/${vp.name}-hero.png`, fullPage:false});
-  await page.locator('#plans').scrollIntoViewIfNeeded(); await page.waitForTimeout(250); await page.screenshot({path:`${out}/${vp.name}-plans.png`, fullPage:false});
-  await page.locator('.v9-lab-sticky').evaluate(el => el.scrollIntoView({block:'center', inline:'nearest'})); await page.waitForTimeout(400); await page.screenshot({path:`${out}/${vp.name}-work.png`, fullPage:false});
-  await page.locator('#transform').scrollIntoViewIfNeeded(); await page.waitForTimeout(250); await page.screenshot({path:`${out}/${vp.name}-transform.png`, fullPage:false});
+  await page.locator('#plans').scrollIntoViewIfNeeded(); await page.waitForTimeout(700); await page.screenshot({path:`${out}/${vp.name}-plans.png`, fullPage:false});
+  await enterLab(); await page.waitForTimeout(300); await page.screenshot({path:`${out}/${vp.name}-work.png`, fullPage:false});
+  await page.locator('#transform').scrollIntoViewIfNeeded(); await page.waitForTimeout(700); await page.screenshot({path:`${out}/${vp.name}-transform.png`, fullPage:false});
   await page.close();
 }
 await browser.close();
