@@ -8,6 +8,10 @@ on:
       - 'assets/mobile-light-*.png'
   workflow_dispatch:
 
+concurrency:
+  group: ykg-v7-proof-capture
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -41,7 +45,6 @@ jobs:
           import { chromium } from 'playwright';
           const browser = await chromium.launch({ headless: true });
           const base = 'https://fakhriyarns.vercel.app';
-
           async function capture(route, file, viewport, dpr = 2, fullPage = false) {
             const context = await browser.newContext({ viewport, deviceScaleFactor: dpr, colorScheme: 'light' });
             const page = await context.newPage();
@@ -53,7 +56,6 @@ jobs:
             await page.screenshot({ path: file, fullPage, animations: 'disabled', type: 'png' });
             await context.close();
           }
-
           await capture('/', 'assets/desktop-light-home-section-00.png', { width: 1440, height: 960 }, 2);
           await capture('/catalogue', 'assets/desktop-light-catalogue-section-00.png', { width: 1440, height: 960 }, 2);
           await capture('/compare', 'assets/desktop-light-compare.png', { width: 1440, height: 960 }, 2);
@@ -68,6 +70,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git pull --rebase origin ykg-digital-v7
           git add assets/desktop-light-*.png assets/mobile-light-*.png
           if git diff --cached --quiet; then
             echo 'Proof assets are already current.'
