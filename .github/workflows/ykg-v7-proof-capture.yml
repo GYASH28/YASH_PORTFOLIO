@@ -24,12 +24,10 @@ jobs:
         with:
           ref: ykg-digital-v7
           fetch-depth: 0
-
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
       - name: Install Playwright Chromium
         run: |
           mkdir -p /tmp/ykg-capture
@@ -37,7 +35,6 @@ jobs:
           npm init -y
           npm install playwright@1.55.0
           npx playwright install --with-deps chromium
-
       - name: Capture current FakhriMart release as lossless PNG
         run: |
           mkdir -p assets
@@ -57,7 +54,7 @@ jobs:
             await context.close();
           }
           await capture('/', 'assets/desktop-light-home-section-00.png', { width: 1440, height: 960 }, 2);
-          await capture('/catalogue', 'assets/desktop-light-catalogue-section-00.png', { width: 1440, height: 960 }, 2);
+          await capture('/products', 'assets/desktop-light-catalogue-section-00.png', { width: 1440, height: 960 }, 2);
           await capture('/compare', 'assets/desktop-light-compare.png', { width: 1440, height: 960 }, 2);
           await capture('/enquiry', 'assets/desktop-light-enquiry-section-00.png', { width: 1440, height: 960 }, 2);
           await capture('/', 'assets/mobile-light-home-section-00.png', { width: 390, height: 844 }, 3);
@@ -65,7 +62,6 @@ jobs:
           await browser.close();
           JS
           node /tmp/ykg-capture/capture.mjs
-
       - name: Commit refreshed proof assets
         run: |
           git config user.name 'github-actions[bot]'
