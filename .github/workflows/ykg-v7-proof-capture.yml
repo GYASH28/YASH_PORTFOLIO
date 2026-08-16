@@ -1,0 +1,77 @@
+name: Refresh YKG V7 FakhriMart proof
+
+on:
+  push:
+    branches: [ykg-digital-v7]
+    paths-ignore:
+      - 'assets/desktop-light-*.png'
+      - 'assets/mobile-light-*.png'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout V7
+        uses: actions/checkout@v4
+        with:
+          ref: ykg-digital-v7
+          fetch-depth: 0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright Chromium
+        run: |
+          mkdir -p /tmp/ykg-capture
+          cd /tmp/ykg-capture
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Capture current FakhriMart release as lossless PNG
+        run: |
+          mkdir -p assets
+          cat > /tmp/ykg-capture/capture.mjs <<'JS'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({ headless: true });
+          const base = 'https://fakhriyarns.vercel.app';
+
+          async function capture(route, file, viewport, dpr = 2, fullPage = false) {
+            const context = await browser.newContext({ viewport, deviceScaleFactor: dpr, colorScheme: 'light' });
+            const page = await context.newPage();
+            await page.goto(base + route, { waitUntil: 'networkidle', timeout: 90000 });
+            await page.waitForTimeout(3000);
+            const skip = page.getByRole('button', { name: /skip/i });
+            if (await skip.count()) await skip.first().click({ timeout: 1200 }).catch(() => {});
+            await page.waitForTimeout(900);
+            await page.screenshot({ path: file, fullPage, animations: 'disabled', type: 'png' });
+            await context.close();
+          }
+
+          await capture('/', 'assets/desktop-light-home-section-00.png', { width: 1440, height: 960 }, 2);
+          await capture('/catalogue', 'assets/desktop-light-catalogue-section-00.png', { width: 1440, height: 960 }, 2);
+          await capture('/compare', 'assets/desktop-light-compare.png', { width: 1440, height: 960 }, 2);
+          await capture('/enquiry', 'assets/desktop-light-enquiry-section-00.png', { width: 1440, height: 960 }, 2);
+          await capture('/', 'assets/mobile-light-home-section-00.png', { width: 390, height: 844 }, 3);
+          await capture('/', 'assets/desktop-light-home.png', { width: 1440, height: 960 }, 1, true);
+          await browser.close();
+          JS
+          node /tmp/ykg-capture/capture.mjs
+
+      - name: Commit refreshed proof assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/desktop-light-*.png assets/mobile-light-*.png
+          if git diff --cached --quiet; then
+            echo 'Proof assets are already current.'
+            exit 0
+          fi
+          git commit -m 'chore(v7): refresh lossless FakhriMart proof'
+          git push origin HEAD:ykg-digital-v7
