@@ -7,6 +7,13 @@
     link.dataset.v9Refine = 'true';
     document.head.appendChild(link);
   }
+  if (!document.querySelector('link[data-v9-runtime]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = './v9-runtime.css';
+    link.dataset.v9Runtime = 'true';
+    document.head.appendChild(link);
+  }
 
   const hero = document.querySelector('.v9-hero');
   if (!hero) return;
