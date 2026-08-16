@@ -1,0 +1,51 @@
+name: V8 one-time semantic HTML cleanup
+
+on:
+  push:
+    branches: [ykg-digital-v8]
+    paths:
+      - '.github/workflows/v8-semantic-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ykg-digital-v8
+          fetch-depth: 0
+      - name: Fix semantic HTML issues
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          # Homepage: remove redundant ARIA labels from non-interactive visual
+          # containers and make every input type explicit.
+          p=Path('index.html'); s=p.read_text()
+          s=s.replace('<div class="intro" id="intro" aria-label="Opening sequence">','<div class="intro" id="intro">')
+          s=s.replace('<h1 aria-label="Be the obvious choice">','<h1>')
+          s=s.replace('<div class="hero-v8-offer" aria-label="Starting prices">','<div class="hero-v8-offer">')
+          s=re.sub(r'<input(?![^>]*\btype=)([^>]*)>', r'<input type="text"\1>', s)
+          p.write_text(s)
+
+          # Experience: the proof stack already has visible context; remove the
+          # redundant label. Gallery buttons must contain phrasing content, so
+          # replace the inner div wrappers with spans.
+          p=Path('experience.html'); s=p.read_text()
+          s=s.replace('<div class="hero-proof-stack" data-exp-reveal aria-label="Current FakhriMart desktop and mobile previews">','<div class="hero-proof-stack" data-exp-reveal>')
+          s=re.sub(r'(<button class="capture-card"[^>]*>\s*<img[^>]*?/?>)<div>(.*?)</div></button>', r'\1<span class="capture-card-copy">\2</span></button>', s, flags=re.S)
+          p.write_text(s)
+          PY
+      - name: Commit semantic cleanup
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html experience.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'fix(v8): clean semantic HTML for accessibility and validation'
+          git pull --rebase origin ykg-digital-v8
+          git push origin HEAD:ykg-digital-v8
