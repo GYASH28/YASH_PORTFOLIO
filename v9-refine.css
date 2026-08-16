@@ -34,9 +34,10 @@
   transform-origin:50% 0;
   image-rendering:auto;
   backface-visibility:hidden;
-  transition:opacity .18s ease,transform .08s linear!important;
+  transition:transform .08s linear!important;
 }
-.v9-device-frame.switching img{opacity:.18!important}
+/* Do not fade the current proof while a 3–9 MB lossless state decodes. */
+.v9-device-frame.switching img{opacity:1!important}
 .v9-device[data-mode="desktop"] .v9-device-shell{width:100%;margin-inline:auto}
 .v9-device[data-mode="desktop"] .v9-device-frame{height:min(68vh,690px)}
 .v9-device[data-mode="mobile"] .v9-device-shell{width:min(390px,100%);margin-inline:auto}
