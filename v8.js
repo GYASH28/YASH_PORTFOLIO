@@ -52,11 +52,35 @@
   const plans=$('#plans'), work=$('#work');
   if(plans && work && !$('.v8-kinetic')){const band=document.createElement('section');band.className='v8-kinetic';band.setAttribute('aria-hidden','true');band.innerHTML='<div class="v8-kinetic-track"><span>CLEAR OFFER</span><i></i><span>real proof</span><i></i><span>OBVIOUS ACTION</span><i></i><span>less friction</span><i></i><span>CLEAR OFFER</span><i></i><span>real proof</span><i></i><span>OBVIOUS ACTION</span><i></i><span>less friction</span></div>';work.before(band);if(window.gsap && !reduce){const track=$('.v8-kinetic-track',band);gsap.fromTo(track,{xPercent:-8},{xPercent:-52,ease:'none',scrollTrigger:{trigger:band,start:'top bottom',end:'bottom top',scrub:1}})}}
 
-  const revealTargets=$$('.plans-head,.plan-theatre,.work-copy,.case-stage,.test-copy,.test-list,.transform-head-v6,.compare-theatre,.transform-principles,.process-head,.process-list,.final-copy');
+  // The base layer already animates pricing, tests, comparison and process rows.
+  // V8 only owns reveals that are unique to the new experience, avoiding the
+  // blurry/double-animation effect seen in Playwright screenshots.
+  const revealTargets=$$('.work-copy,.case-stage,.transform-principles,.process-head');
   revealTargets.forEach(el=>el.classList.add('v8-reveal'));
   if(reduce||!('IntersectionObserver'in window)){revealTargets.forEach(el=>el.classList.add('is-visible'))}else{const io=new IntersectionObserver(entries=>entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('is-visible');io.unobserve(en.target)}}),{threshold:.08,rootMargin:'0px 0px -4%'});revealTargets.forEach(el=>io.observe(el))}
 
   const shots=$$('.case-shot'); if(window.gsap && !reduce && shots.length){const mo=new MutationObserver(records=>records.forEach(rec=>{if(rec.type==='attributes'&&rec.target.classList.contains('active'))gsap.fromTo(rec.target,{clipPath:'inset(0 0 0 100%)',scale:1.05},{clipPath:'inset(0 0 0 0%)',scale:1,duration:.72,ease:'power4.out',overwrite:true})})); shots.forEach(s=>mo.observe(s,{attributes:true,attributeFilter:['class']}))}
+
+  // Older layers each registered their own work-section ScrollTrigger. Kill
+  // those overlapping controllers and replace them with one authoritative V8
+  // controller that drives the existing accessible stage buttons.
+  const workRoot=$('.work-v7');
+  const caseButtons=$$('.case-progress button');
+  if(workRoot && window.ScrollTrigger && !reduce && caseButtons.length){
+    ScrollTrigger.getAll().forEach(trigger=>{if(trigger.trigger===workRoot)trigger.kill()});
+    let active=-1;
+    ScrollTrigger.create({
+      trigger:workRoot,
+      start:'top top',
+      end:'bottom bottom',
+      onUpdate:self=>{
+        const next=Math.min(caseButtons.length-1,Math.floor(self.progress*caseButtons.length));
+        if(next===active)return;
+        active=next;
+        caseButtons[next]?.click();
+      }
+    });
+  }
 
   const cursor=$('.v7-cursor'); if(cursor&&fine&&!reduce){$$('.case-stage,.compare-theatre').forEach(el=>{el.addEventListener('pointerenter',()=>cursor.classList.add('is-view'));el.addEventListener('pointerleave',()=>cursor.classList.remove('is-view'))})}
 
