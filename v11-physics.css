@@ -14,5 +14,28 @@ body.v11 .v11-scene-portal::before,body.v11 .v11-scene-portal::after{border-radi
 body.v11 .v11-scene-portal::after{border-radius:50% 50% 0 0/22% 22% 0 0}
 body.v11 .work-screen{border-radius:22px;box-shadow:0 42px 110px rgba(0,0,0,.46),0 0 calc(18px + var(--v11-work-curve,0)*36px) rgba(101,186,255,.06)}
 body.v11 .screen-viewport{border-radius:0 0 18px 18px}
-@media(max-width:700px){.v11-bend-horizon{display:none}}
-@media(prefers-reduced-motion:reduce){.v11-bend-horizon{display:none!important}}
+
+/* Treat the manifesto as one camera volume. The four statements occupy the same viewport
+   and the V11 JS moves them toward/through the viewer instead of normal document flow. */
+body.v11 .manifesto-sticky{display:grid;grid-template-rows:auto 1fr auto;align-items:stretch;padding-top:calc(var(--nav) + 34px);padding-bottom:26px}
+body.v11 .manifesto-sticky>.section-label{align-self:start;margin:0;position:relative;z-index:4}
+body.v11 .manifesto-lines{position:relative;height:100%;min-height:0;perspective:950px;transform-style:preserve-3d;display:block}
+body.v11 .manifesto-lines p{position:absolute;left:0;right:0;top:50%;margin:0;transform-origin:50% 50%;font-size:clamp(58px,8.6vw,142px);line-height:.86;color:#f3f7f5;will-change:transform,opacity,filter;pointer-events:none}
+body.v11 .manifesto-lines p.active{color:#f3f7f5}
+body.v11 .manifesto-lines em{color:var(--mint)}
+body.v11 .manifesto-index{position:relative;left:auto;right:auto;bottom:auto;align-self:end;z-index:4}
+body.v11 .v11-depth-mark{top:50%;height:54vh}
+
+@media(max-width:700px){
+  .v11-bend-horizon{display:none}
+  body.v11 .manifesto-sticky{padding-top:calc(var(--nav) + 24px);padding-bottom:22px}
+  body.v11 .manifesto-lines p{font-size:clamp(48px,17vw,78px);line-height:.9}
+  body.v11 .v11-depth-mark{height:44vh}
+}
+@media(prefers-reduced-motion:reduce){
+  .v11-bend-horizon{display:none!important}
+  body.v11 .manifesto-sticky{display:flex;justify-content:center}
+  body.v11 .manifesto-lines{height:auto;display:block}
+  body.v11 .manifesto-lines p{position:relative;top:auto;opacity:1!important;filter:none!important;transform:none!important;margin:.08em 0;color:#f3f7f5}
+  body.v11 .manifesto-index{position:absolute;left:clamp(18px,5vw,84px);right:clamp(18px,5vw,84px);bottom:28px}
+}
