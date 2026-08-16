@@ -23,7 +23,6 @@ jobs:
           npm install playwright@1.55.0 html-validate@10.4.0
           npx playwright install --with-deps chromium
       - name: Validate semantic HTML
-        continue-on-error: true
         run: npx html-validate index.html
       - name: Start static preview
         run: |
