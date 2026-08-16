@@ -1,19 +1,230 @@
 (() => {
-'use strict';
-const q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
-const link=document.createElement('link');link.rel='stylesheet';link.href='./experience-v7.css';document.head.appendChild(link);
-document.body.insertAdjacentHTML('afterbegin','<div class="exp-progress" aria-hidden="true"><i></i></div><div class="exp-cursor" aria-hidden="true"></div><div class="exp-page-wipe" aria-hidden="true"></div>');
-qa('img').forEach(img=>{if(img.src.includes('fakhrimart-desktop-current'))img.src='./assets/desktop-light-home-section-00.png';if(img.src.includes('fakhrimart-mobile-current'))img.src='./assets/mobile-light-home-section-00.png'});
-const preview=q('#previewImage');if(preview)preview.src='./assets/desktop-light-home-section-00.png';
-const release=q('.release-image img');if(release){release.src='./assets/desktop-light-home.png';release.width=1440;release.height=13205;}
-['.exp-hero-copy','.hero-proof-stack','.lab-head','.lab-shell','.story-heading','.decision-line','.release-copy','.release-image'].forEach(s=>q(s)?.setAttribute('data-exp-reveal',''));
-const story=q('.experience-story');if(story)story.insertAdjacentHTML('beforebegin',`<section class="capture-gallery" id="captures"><div class="shell"><div class="capture-gallery-head" data-exp-reveal><div><p class="exp-kicker">CURRENT RELEASE / LOSSLESS PNG</p><h2>Don’t trust one<br><em>perfect screenshot.</em></h2></div><p>Open the real states that matter. These captures are refreshed automatically from the live FakhriMart deployment.</p></div><div class="capture-strip" data-exp-reveal><button class="capture-card" data-src="./assets/desktop-light-home-section-00.png" data-title="Homepage / product discovery"><img src="./assets/desktop-light-home-section-00.png" alt="Current FakhriMart homepage"><div><small>01 / HOMEPAGE</small><b>Understand the store.</b><span>Open full resolution ↗</span></div></button><button class="capture-card" data-src="./assets/desktop-light-catalogue-section-00.png" data-title="Catalogue / search"><img src="./assets/desktop-light-catalogue-section-00.png" alt="Current FakhriMart catalogue" loading="lazy"><div><small>02 / CATALOGUE</small><b>Find the right material.</b><span>Open full resolution ↗</span></div></button><button class="capture-card" data-shot="compare" data-src="./assets/desktop-light-compare.png" data-title="Compare / decision support"><img src="./assets/desktop-light-compare.png" alt="Current FakhriMart compare page" loading="lazy"><div><small>03 / COMPARE</small><b>Support the decision.</b><span>Open full resolution ↗</span></div></button><button class="capture-card" data-src="./assets/desktop-light-enquiry-section-00.png" data-title="Enquiry / WhatsApp handoff"><img src="./assets/desktop-light-enquiry-section-00.png" alt="Current FakhriMart enquiry flow" loading="lazy"><div><small>04 / ENQUIRY</small><b>Carry intent forward.</b><span>Open full resolution ↗</span></div></button></div></div></section><dialog class="capture-dialog" id="captureDialog"><div class="capture-dialog-top"><b id="dialogCaptureTitle">FakhriMart capture</b><button type="button" id="captureDialogClose" aria-label="Close">×</button></div><div class="capture-dialog-body"><img id="dialogCapture" alt="Full-resolution FakhriMart capture"></div></dialog>`);
+  'use strict';
 
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const progress=q('.exp-progress i');addEventListener('scroll',()=>{if(progress){const m=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${m?scrollY/m:0})`}},{passive:true});
-const cursor=q('.exp-cursor');if(cursor&&matchMedia('(pointer:fine)').matches&&!reduce){let x=-50,y=-50,cx=x,cy=y;addEventListener('pointermove',e=>{x=e.clientX;y=e.clientY});const loop=()=>{cx+=(x-cx)*.18;cy+=(y-cy)*.18;cursor.style.transform=`translate(${cx}px,${cy}px) translate(-50%,-50%)`;requestAnimationFrame(loop)};loop();qa('a,button,.capture-card').forEach(e=>{e.addEventListener('pointerenter',()=>cursor.classList.add('big'));e.addEventListener('pointerleave',()=>cursor.classList.remove('big'))})}
-const data={discover:['01 / DISCOVER','Help the customer find the right product before they need to ask.','The homepage turns a large material range into a visual journey with categories and product context.',['HOMEPAGE','CATALOGUE','PROJECT JOURNEYS'],'“I can actually find what I need.”','./assets/desktop-light-home-section-00.png','desktop'],search:['02 / SEARCH','Make product discovery resilient instead of fragile.','Search and catalogue structure reduce dead ends even when customers do not know the exact product name.',['SEARCH','FILTERS','CATEGORIES'],'“I’m getting closer, not lost.”','./assets/desktop-light-catalogue-section-00.png','desktop'],compare:['03 / COMPARE','Give the decision a workspace of its own.','Comparison lets customers evaluate materials before they start the conversation.',['COMPARE','SHORTLIST','DECISION SUPPORT'],'“I know what I want to ask about.”','./assets/desktop-light-compare.png','desktop'],enquire:['04 / ENQUIRE','Carry buying intent into the enquiry instead of resetting it.','The enquiry flow preserves context so WhatsApp continues the journey.',['ENQUIRY','PRODUCT CONTEXT','WHATSAPP'],'“They already know what I’m asking about.”','./assets/desktop-light-enquiry-section-00.png','desktop'],theme:['05 / ADAPT','Keep the experience strong when the screen changes.','Mobile, themes and accessibility are tested so the experience survives outside the perfect screenshot.',['MOBILE','THEMES','ACCESSIBILITY'],'“This feels intentional on my phone too.”','./assets/mobile-light-home-section-00.png','mobile']};
-const frame=q('#captureFrame'),live=q('#liveFrame'),stage=q('#deviceStage'),status=q('#previewStatus');function show(src,mode){if(!preview)return;frame?.classList.add('is-switching');setTimeout(()=>{preview.src=src;preview.style.display='block';if(live)live.style.display='none';stage?.setAttribute('data-device',mode);frame?.classList.remove('is-switching')},160)}function storySet(x){q('#storyIndex').textContent=x[0];q('#storyTitle').textContent=x[1];q('#storyBody').textContent=x[2];q('#storyProof').innerHTML=x[3].map(v=>`<span>${v}</span>`).join('');q('#storyOutcome').textContent=x[4];}
-qa('.feature').forEach(b=>b.addEventListener('click',()=>{qa('.feature').forEach(x=>x.classList.remove('active'));b.classList.add('active');const x=data[b.dataset.feature];storySet(x);show(x[5],x[6]);if(status)status.textContent=x[6]==='mobile'?'CURRENT MOBILE CAPTURE':'CURRENT FEATURE CAPTURE'}));qa('.device').forEach(b=>b.addEventListener('click',()=>{qa('.device').forEach(x=>x.classList.remove('active'));b.classList.add('active');const m=b.dataset.device;if(m==='desktop'){show('./assets/desktop-light-home-section-00.png','desktop');status.textContent='CURRENT DESKTOP CAPTURE'}else if(m==='mobile'){show('./assets/mobile-light-home-section-00.png','mobile');status.textContent='CURRENT MOBILE CAPTURE'}else if(m==='full'){show('./assets/desktop-light-home.png','full');status.textContent='FULL-PAGE LIVE CAPTURE'}else{preview.style.display='none';live.src='https://fakhriyarns.vercel.app';live.style.display='block';stage?.setAttribute('data-device','live');status.textContent='LIVE DEPLOYMENT / EMBED IF ALLOWED'}}));
-const dialog=q('#captureDialog'),di=q('#dialogCapture'),dt=q('#dialogCaptureTitle');qa('.capture-card').forEach(c=>c.addEventListener('click',()=>{di.src=c.dataset.src;dt.textContent=c.dataset.title;dialog.showModal()}));q('#captureDialogClose')?.addEventListener('click',()=>dialog.close());dialog?.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
-const reveals=qa('[data-exp-reveal]');if(reduce||!('IntersectionObserver'in window))reveals.forEach(e=>e.classList.add('visible'));else{const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target)}}),{threshold:.12});reveals.forEach(e=>io.observe(e))}
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(pointer:fine)').matches;
+
+  // The V8 page owns its markup. This file only initializes it — no dynamic
+  // galleries, duplicate dialogs, duplicate progress bars, or duplicate styles.
+  const progress = $('.exp-progress i');
+  const syncProgress = () => {
+    if (!progress) return;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    progress.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+  };
+  addEventListener('scroll', syncProgress, { passive: true });
+  syncProgress();
+
+  const cursor = $('.exp-cursor');
+  if (cursor && fine && !reduce) {
+    let x = -80, y = -80, cx = x, cy = y, raf = 0;
+    const loop = () => {
+      cx += (x - cx) * .18;
+      cy += (y - cy) * .18;
+      cursor.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+      raf = requestAnimationFrame(loop);
+    };
+    addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; }, { passive: true });
+    $$('a,button,.capture-card').forEach(el => {
+      el.addEventListener('pointerenter', () => cursor.classList.add('big'));
+      el.addEventListener('pointerleave', () => cursor.classList.remove('big'));
+    });
+    raf = requestAnimationFrame(loop);
+    addEventListener('pagehide', () => cancelAnimationFrame(raf), { once: true });
+  }
+
+  // Hero content must never depend on an observer firing. Reveal the first
+  // viewport immediately; below-the-fold sections may animate in afterwards.
+  $$('.exp-hero [data-exp-reveal]').forEach((el, i) => {
+    if (reduce) el.classList.add('visible');
+    else setTimeout(() => el.classList.add('visible'), 70 + i * 90);
+  });
+
+  const belowFoldReveals = $$('[data-exp-reveal]').filter(el => !el.closest('.exp-hero'));
+  if (reduce || !('IntersectionObserver' in window)) {
+    belowFoldReveals.forEach(el => el.classList.add('visible'));
+  } else {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      });
+    }, { threshold: .08, rootMargin: '0px 0px -4% 0px' });
+    belowFoldReveals.forEach(el => io.observe(el));
+  }
+
+  const STATES = {
+    discover: {
+      index: '01 / DISCOVER',
+      title: 'Help the customer find the right product before they need to ask.',
+      body: 'The homepage turns a large material range into a visual journey with categories and product context.',
+      proof: ['HOMEPAGE', 'CATALOGUE', 'PROJECT JOURNEYS'],
+      outcome: '“I can actually find what I need.”',
+      src: './assets/desktop-light-home-section-00.png',
+      mode: 'desktop',
+      status: 'CURRENT HOMEPAGE CAPTURE'
+    },
+    search: {
+      index: '02 / SEARCH',
+      title: 'Make product discovery resilient instead of fragile.',
+      body: 'Search and catalogue structure reduce dead ends even when customers do not know the exact product name.',
+      proof: ['SEARCH', 'FILTERS', 'CATEGORIES'],
+      outcome: '“I’m getting closer, not lost.”',
+      src: './assets/desktop-light-catalogue-section-00.png',
+      mode: 'desktop',
+      status: 'CURRENT CATALOGUE CAPTURE'
+    },
+    compare: {
+      index: '03 / COMPARE',
+      title: 'Give the decision a workspace of its own.',
+      body: 'Comparison lets customers evaluate materials before they start the conversation.',
+      proof: ['COMPARE', 'SHORTLIST', 'DECISION SUPPORT'],
+      outcome: '“I know what I want to ask about.”',
+      src: './assets/desktop-light-compare.png',
+      mode: 'desktop',
+      status: 'CURRENT COMPARE CAPTURE'
+    },
+    enquire: {
+      index: '04 / ENQUIRE',
+      title: 'Carry buying intent into the enquiry instead of resetting it.',
+      body: 'The enquiry flow preserves context so WhatsApp continues the journey instead of starting from zero.',
+      proof: ['ENQUIRY', 'PRODUCT CONTEXT', 'WHATSAPP'],
+      outcome: '“They already know what I’m asking about.”',
+      src: './assets/desktop-light-enquiry-section-00.png',
+      mode: 'desktop',
+      status: 'CURRENT ENQUIRY CAPTURE'
+    },
+    theme: {
+      index: '05 / ADAPT',
+      title: 'Keep the experience strong when the screen changes.',
+      body: 'Mobile, themes and accessibility are tested so the experience survives outside the perfect desktop screenshot.',
+      proof: ['MOBILE', 'THEMES', 'ACCESSIBILITY'],
+      outcome: '“This feels intentional on my phone too.”',
+      src: './assets/mobile-light-home-section-00.png',
+      mode: 'mobile',
+      status: 'CURRENT MOBILE CAPTURE'
+    }
+  };
+
+  const stage = $('#deviceStage');
+  const frame = $('#captureFrame');
+  const preview = $('#previewImage');
+  const live = $('#liveFrame');
+  const status = $('#previewStatus');
+  const deviceUrl = $('#deviceUrl');
+  let switchTimer = 0;
+
+  const setDeviceButtons = mode => {
+    $$('.device').forEach(btn => {
+      const active = btn.dataset.device === mode;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  };
+
+  const setPreview = ({ src, mode = 'desktop', label }) => {
+    if (!stage || !frame || !preview) return;
+    clearTimeout(switchTimer);
+    frame.classList.add('is-switching');
+    switchTimer = setTimeout(() => {
+      stage.dataset.device = mode;
+      if (live) live.style.display = 'none';
+      preview.style.display = 'block';
+      if (preview.getAttribute('src') !== src) preview.setAttribute('src', src);
+      preview.style.transform = '';
+      frame.classList.remove('is-switching');
+      if (status) status.textContent = label || 'CURRENT CAPTURE';
+      if (deviceUrl) deviceUrl.textContent = mode === 'mobile' ? 'fakhriyarns.vercel.app / mobile' : 'fakhriyarns.vercel.app';
+      setDeviceButtons(mode === 'mobile' ? 'mobile' : mode === 'full' ? 'full' : 'desktop');
+    }, reduce ? 0 : 130);
+  };
+
+  const setStory = state => {
+    if (!state) return;
+    const index = $('#storyIndex'), title = $('#storyTitle'), body = $('#storyBody'), proof = $('#storyProof'), outcome = $('#storyOutcome');
+    if (index) index.textContent = state.index;
+    if (title) title.textContent = state.title;
+    if (body) body.textContent = state.body;
+    if (proof) proof.innerHTML = state.proof.map(item => `<span>${item}</span>`).join('');
+    if (outcome) outcome.textContent = state.outcome;
+  };
+
+  $$('.feature').forEach(btn => {
+    btn.setAttribute('aria-pressed', btn.classList.contains('active') ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      $$('.feature').forEach(item => {
+        const active = item === btn;
+        item.classList.toggle('active', active);
+        item.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      const state = STATES[btn.dataset.feature];
+      setStory(state);
+      setPreview({ src: state.src, mode: state.mode, label: state.status });
+    });
+  });
+
+  $$('.device').forEach(btn => {
+    btn.setAttribute('aria-pressed', btn.classList.contains('active') ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.device;
+      if (mode === 'live') {
+        clearTimeout(switchTimer);
+        stage.dataset.device = 'live';
+        preview.style.display = 'none';
+        if (live) {
+          live.style.display = 'block';
+          if (live.getAttribute('src') === 'about:blank') live.setAttribute('src', 'https://fakhriyarns.vercel.app');
+        }
+        if (status) status.textContent = 'LIVE DEPLOYMENT / EMBED WHEN ALLOWED';
+        if (deviceUrl) deviceUrl.textContent = 'fakhriyarns.vercel.app / live';
+        setDeviceButtons('live');
+        return;
+      }
+      if (mode === 'mobile') setPreview({ src: './assets/mobile-light-home-section-00.png', mode: 'mobile', label: 'CURRENT MOBILE CAPTURE' });
+      else if (mode === 'full') setPreview({ src: './assets/desktop-light-home.png', mode: 'full', label: 'FULL-PAGE CURRENT CAPTURE' });
+      else setPreview({ src: './assets/desktop-light-home-section-00.png', mode: 'desktop', label: 'CURRENT DESKTOP CAPTURE' });
+    });
+  });
+
+  if (preview) {
+    preview.addEventListener('error', () => {
+      if (preview.dataset.fallbackUsed) return;
+      preview.dataset.fallbackUsed = '1';
+      preview.src = './assets/desktop-light-home-section-00.png';
+      if (status) status.textContent = 'FALLBACK CURRENT CAPTURE';
+    });
+  }
+
+  const dialog = $('#captureDialog');
+  const dialogImage = $('#dialogCapture');
+  const dialogTitle = $('#dialogCaptureTitle');
+  $$('.capture-card').forEach(card => {
+    card.addEventListener('click', () => {
+      if (!dialog || !dialogImage) return;
+      dialogImage.src = card.dataset.src || '';
+      dialogImage.alt = card.dataset.alt || 'FakhriMart full-resolution capture';
+      if (dialogTitle) dialogTitle.textContent = card.dataset.title || 'FakhriMart capture';
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      else dialog.setAttribute('open', '');
+    });
+  });
+  $('#captureDialogClose')?.addEventListener('click', () => dialog?.close?.());
+  dialog?.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close?.();
+  });
+
+  // Internal page transitions stay decorative and never trap navigation.
+  const wipe = $('.exp-page-wipe');
+  $$('a[href^="./index.html"]').forEach(link => {
+    link.addEventListener('click', event => {
+      if (reduce || !wipe || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const href = link.href;
+      event.preventDefault();
+      wipe.classList.add('go');
+      setTimeout(() => { location.href = href; }, 360);
+    });
+  });
 })();
