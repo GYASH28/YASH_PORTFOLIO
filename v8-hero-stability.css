@@ -5,3 +5,4 @@
 .hero-v8.is-entered h1 .hero-v8-line{opacity:1;transform:none}
 @media(max-width:720px){.hero-v8 h1 .hero-v8-line>i{line-height:.84!important}.hero-v8 h1 .hero-v8-accent>i{line-height:.86!important}}
 @media(prefers-reduced-motion:reduce){.hero-v8 h1 .hero-v8-line{opacity:1;transform:none;transition:none}}
+/* Final QA trigger: this layer intentionally remains tiny and isolated. */
