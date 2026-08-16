@@ -2,6 +2,7 @@
   'use strict';
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, fine=matchMedia('(pointer:fine)').matches;
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  $('.experience-lab')?.style.setProperty('overflow','clip');
   const nav=$('#expNav'); addEventListener('scroll',()=>nav?.classList.toggle('scrolled',scrollY>24),{passive:true});
   const hero=$('.exp-hero'),stack=$('.hero-proof-stack');
   if(hero&&stack&&fine&&!reduce){hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;stack.style.transform=`perspective(1400px) rotateY(${x*3}deg) rotateX(${y*-2}deg) translate3d(${x*-9}px,${y*-8}px,0)`});hero.addEventListener('pointerleave',()=>stack.style.transform='')}
