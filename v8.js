@@ -3,6 +3,22 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(pointer:fine)').matches;
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+
+  // V8 keeps the opening as a quick brand beat, never a gate. Clicking Skip
+  // removes it immediately and a hard timeout prevents slow/failed animation
+  // libraries from trapping the actual hero behind the overlay.
+  const intro=$('#intro');
+  const introSkip=$('#introSkip');
+  const killIntro=()=>{
+    if(!intro || !intro.isConnected) return;
+    intro.dataset.done='1';
+    try{sessionStorage.setItem('ykg-v4-intro','1')}catch{}
+    intro.remove();
+  };
+  introSkip?.addEventListener('click',killIntro,{capture:true});
+  if(reduce) killIntro();
+  else setTimeout(killIntro,1250);
+
   const hero=$('.hero-v8');
   if(!hero) return;
 
@@ -25,7 +41,7 @@
   const lines=$$('.hero-v8-line i'), small=$$('.hero-v8-topline,.hero-v8-sub,.hero-v8-bottom,.hero-v8-lens-copy');
   if(window.gsap && !reduce){
     gsap.set(lines,{yPercent:112}); gsap.set(small,{opacity:0,y:14});
-    gsap.timeline({delay:.72}).to(lines,{yPercent:0,duration:1.12,stagger:.1,ease:'power4.out'}).to(small,{opacity:1,y:0,duration:.7,stagger:.06,ease:'power3.out'},'-=.64').add(()=>hero.classList.add('is-entered'));
+    gsap.timeline({delay:.18}).to(lines,{yPercent:0,duration:.92,stagger:.08,ease:'power4.out'}).to(small,{opacity:1,y:0,duration:.58,stagger:.05,ease:'power3.out'},'-=.5').add(()=>hero.classList.add('is-entered'));
     const art=$('#heroArt'); if(art) gsap.to(art,{scale:1.06,yPercent:7,ease:'none',scrollTrigger:{trigger:hero,start:'top top',end:'bottom top',scrub:true}});
     gsap.to(transition,{scale:Math.max(innerWidth,innerHeight)*3.25,duration:1,ease:'none',scrollTrigger:{trigger:hero,start:'72% top',end:'bottom top',scrub:true}});
     gsap.to('.hero-v8-copy',{yPercent:-18,opacity:.22,ease:'none',scrollTrigger:{trigger:hero,start:'48% top',end:'bottom top',scrub:true}});
@@ -38,11 +54,11 @@
 
   const revealTargets=$$('.plans-head,.plan-theatre,.work-copy,.case-stage,.test-copy,.test-list,.transform-head-v6,.compare-theatre,.transform-principles,.process-head,.process-list,.final-copy');
   revealTargets.forEach(el=>el.classList.add('v8-reveal'));
-  if(reduce||!('IntersectionObserver'in window)){revealTargets.forEach(el=>el.classList.add('is-visible'))}else{const io=new IntersectionObserver(entries=>entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('is-visible');io.unobserve(en.target)}}),{threshold:.12,rootMargin:'0px 0px -5%'});revealTargets.forEach(el=>io.observe(el))}
+  if(reduce||!('IntersectionObserver'in window)){revealTargets.forEach(el=>el.classList.add('is-visible'))}else{const io=new IntersectionObserver(entries=>entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('is-visible');io.unobserve(en.target)}}),{threshold:.08,rootMargin:'0px 0px -4%'});revealTargets.forEach(el=>io.observe(el))}
 
-  const shots=$$('.case-shot'); if(window.gsap && !reduce && shots.length){const mo=new MutationObserver(records=>records.forEach(rec=>{if(rec.type==='attributes'&&rec.target.classList.contains('active'))gsap.fromTo(rec.target,{clipPath:'inset(0 0 0 100%)',scale:1.05},{clipPath:'inset(0 0 0 0%)',scale:1,duration:.9,ease:'power4.out',overwrite:true})})); shots.forEach(s=>mo.observe(s,{attributes:true,attributeFilter:['class']}))}
+  const shots=$$('.case-shot'); if(window.gsap && !reduce && shots.length){const mo=new MutationObserver(records=>records.forEach(rec=>{if(rec.type==='attributes'&&rec.target.classList.contains('active'))gsap.fromTo(rec.target,{clipPath:'inset(0 0 0 100%)',scale:1.05},{clipPath:'inset(0 0 0 0%)',scale:1,duration:.72,ease:'power4.out',overwrite:true})})); shots.forEach(s=>mo.observe(s,{attributes:true,attributeFilter:['class']}))}
 
   const cursor=$('.v7-cursor'); if(cursor&&fine&&!reduce){$$('.case-stage,.compare-theatre').forEach(el=>{el.addEventListener('pointerenter',()=>cursor.classList.add('is-view'));el.addEventListener('pointerleave',()=>cursor.classList.remove('is-view'))})}
 
-  $$('.plan-tab').forEach(tab=>tab.addEventListener('click',()=>{if(window.gsap&&!reduce){gsap.fromTo(tab,{scale:.98},{scale:1.025,duration:.45,ease:'back.out(1.8)'});const stage=$('.plan-stage');if(stage)gsap.fromTo(stage,{y:9,opacity:.86},{y:0,opacity:1,duration:.55,ease:'power3.out'})}}));
+  $$('.plan-tab').forEach(tab=>tab.addEventListener('click',()=>{if(window.gsap&&!reduce){gsap.fromTo(tab,{scale:.98},{scale:1.025,duration:.4,ease:'back.out(1.8)'});const stage=$('.plan-stage');if(stage)gsap.fromTo(stage,{y:7,opacity:.9},{y:0,opacity:1,duration:.46,ease:'power3.out'})}}));
 })();
