@@ -1,5 +1,13 @@
 (() => {
   'use strict';
+  if (!document.querySelector('link[data-v9-refine]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = './v9-refine.css';
+    link.dataset.v9Refine = 'true';
+    document.head.appendChild(link);
+  }
+
   const hero = document.querySelector('.v9-hero');
   if (!hero) return;
 
@@ -118,12 +126,12 @@
       const r = hero.getBoundingClientRect();
       const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height)));
       hero.style.setProperty('--v9-scroll', p.toFixed(3));
-      if (signal && !pointer.active) {
-        signal.style.transform = `translateY(${p * 42}px) scale(${1 - p * .08}) rotate(${p * 3}deg)`;
-      }
+      if (signal && !pointer.active) signal.style.transform = `translateY(${p * 42}px) scale(${1 - p * .08}) rotate(${p * 3}deg)`;
       const copy = hero.querySelector('.v9-hero-copy');
-      if (copy) copy.style.transform = `translateY(${p * 20}px)`;
-      if (copy) copy.style.opacity = String(1 - p * .72);
+      if (copy) {
+        copy.style.transform = `translateY(${p * 20}px)`;
+        copy.style.opacity = String(1 - p * .72);
+      }
       if (glow) glow.style.setProperty('--v9-gs', String(1 + p * .28));
     };
     addEventListener('scroll', onScroll, { passive: true }); onScroll();
