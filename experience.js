@@ -1,53 +1,19 @@
 (() => {
-  'use strict';
-  const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const DATA={
-    desktop:{src:'./assets/fakhrimart-desktop-current.avif',alt:'Current FakhriMart desktop homepage capture',status:'CURRENT DESKTOP CAPTURE'},
-    mobile:{src:'./assets/fakhrimart-mobile-current.avif',alt:'Current FakhriMart mobile homepage capture',status:'CURRENT MOBILE CAPTURE'},
-    full:{src:'./assets/fakhrimart-desktop-current.avif',alt:'Current FakhriMart full-page homepage capture',status:'CURRENT FULL-PAGE CAPTURE'}
-  };
-  const STORIES={
-    discover:{index:'01 / DISCOVER',title:'Help the customer find the right product before they need to ask.',body:'FakhriMart organizes the range around categories, projects, craft intent, material, thickness and colour so discovery feels guided instead of overwhelming.',proof:['CATALOGUE','PROJECT JOURNEYS','FILTERING'],outcome:'“I can actually find what I need.”'},
-    search:{index:'02 / SEARCH',title:'Search should understand intent, not demand perfect spelling.',body:'Grouped autocomplete and typo-tolerant discovery reduce dead ends when someone only partly knows the product, craft or material they are looking for.',proof:['TYPO TOLERANCE','AUTOCOMPLETE','RELEVANCE'],outcome:'“I don’t need the exact product name.”'},
-    compare:{index:'03 / COMPARE',title:'When options look similar, the website should help make the decision.',body:'Comparison turns similar materials into a readable decision instead of forcing customers to bounce between pages or ask basic questions in chat.',proof:['3-WAY COMPARE','MOBILE CARDS','DECISION CONTEXT'],outcome:'“Now I can see the difference.”'},
-    enquire:{index:'04 / ENQUIRE',title:'Carry high-intent context into WhatsApp instead of starting from zero.',body:'Selected products and shade context stay attached to the enquiry journey, so the conversation begins closer to the actual buying decision.',proof:['WHATSAPP','SHADE CONTEXT','ENQUIRY BRIEF'],outcome:'“They already know what I’m asking about.”'},
-    theme:{index:'05 / ADAPT',title:'The experience should still feel intentional on the smallest screen.',body:'Responsive layouts, theme contrast, accessibility checks and viewport integrity protect the experience after the desktop design is finished.',proof:['LIGHT / DARK','MOBILE','ACCESSIBILITY'],outcome:'“This feels built for my phone too.”'}
-  };
+'use strict';
+const q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
+const link=document.createElement('link');link.rel='stylesheet';link.href='./experience-v7.css';document.head.appendChild(link);
+document.body.insertAdjacentHTML('afterbegin','<div class="exp-progress" aria-hidden="true"><i></i></div><div class="exp-cursor" aria-hidden="true"></div><div class="exp-page-wipe" aria-hidden="true"></div>');
+qa('img').forEach(img=>{if(img.src.includes('fakhrimart-desktop-current'))img.src='./assets/desktop-light-home-section-00.png';if(img.src.includes('fakhrimart-mobile-current'))img.src='./assets/mobile-light-home-section-00.png'});
+const preview=q('#previewImage');if(preview)preview.src='./assets/desktop-light-home-section-00.png';
+const release=q('.release-image img');if(release){release.src='./assets/desktop-light-home.png';release.width=1440;release.height=13205;}
+['.exp-hero-copy','.hero-proof-stack','.lab-head','.lab-shell','.story-heading','.decision-line','.release-copy','.release-image'].forEach(s=>q(s)?.setAttribute('data-exp-reveal',''));
+const story=q('.experience-story');if(story)story.insertAdjacentHTML('beforebegin',`<section class="capture-gallery" id="captures"><div class="shell"><div class="capture-gallery-head" data-exp-reveal><div><p class="exp-kicker">CURRENT RELEASE / LOSSLESS PNG</p><h2>Don’t trust one<br><em>perfect screenshot.</em></h2></div><p>Open the real states that matter. These captures are refreshed automatically from the live FakhriMart deployment.</p></div><div class="capture-strip" data-exp-reveal><button class="capture-card" data-src="./assets/desktop-light-home-section-00.png" data-title="Homepage / product discovery"><img src="./assets/desktop-light-home-section-00.png" alt="Current FakhriMart homepage"><div><small>01 / HOMEPAGE</small><b>Understand the store.</b><span>Open full resolution ↗</span></div></button><button class="capture-card" data-src="./assets/desktop-light-catalogue-section-00.png" data-title="Catalogue / search"><img src="./assets/desktop-light-catalogue-section-00.png" alt="Current FakhriMart catalogue" loading="lazy"><div><small>02 / CATALOGUE</small><b>Find the right material.</b><span>Open full resolution ↗</span></div></button><button class="capture-card" data-shot="compare" data-src="./assets/desktop-light-compare.png" data-title="Compare / decision support"><img src="./assets/desktop-light-compare.png" alt="Current FakhriMart compare page" loading="lazy"><div><small>03 / COMPARE</small><b>Support the decision.</b><span>Open full resolution ↗</span></div></button><button class="capture-card" data-src="./assets/desktop-light-enquiry-section-00.png" data-title="Enquiry / WhatsApp handoff"><img src="./assets/desktop-light-enquiry-section-00.png" alt="Current FakhriMart enquiry flow" loading="lazy"><div><small>04 / ENQUIRY</small><b>Carry intent forward.</b><span>Open full resolution ↗</span></div></button></div></div></section><dialog class="capture-dialog" id="captureDialog"><div class="capture-dialog-top"><b id="dialogCaptureTitle">FakhriMart capture</b><button type="button" id="captureDialogClose" aria-label="Close">×</button></div><div class="capture-dialog-body"><img id="dialogCapture" alt="Full-resolution FakhriMart capture"></div></dialog>`);
 
-  const veil=document.createElement('div');veil.className='page-veil';veil.innerHTML='<span>YKG</span>';document.body.appendChild(veil);requestAnimationFrame(()=>document.body.classList.add('ready'));
-  $$('a[href*="index.html"]').forEach(a=>a.addEventListener('click',e=>{if(reduce||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();document.body.classList.add('leaving');setTimeout(()=>location.href=a.href,360)}));
-
-  const nav=$('#expNav'); const navSync=()=>nav?.classList.toggle('scrolled',scrollY>20);addEventListener('scroll',navSync,{passive:true});navSync();
-  const stage=$('#deviceStage'),preview=$('#previewImage'),frame=$('#liveFrame'),status=$('#previewStatus');
-  $$('.device').forEach(btn=>btn.addEventListener('click',()=>{
-    $$('.device').forEach(x=>x.classList.toggle('active',x===btn));
-    const mode=btn.dataset.device; stage.dataset.device=mode;
-    if(mode==='live'){
-      status.textContent='LIVE DEPLOYMENT / EMBED MODE';
-      if(frame.src==='about:blank' || frame.getAttribute('src')==='about:blank') frame.src='https://fakhriyarns.vercel.app';
-    }else{
-      const d=DATA[mode];preview.src=d.src;preview.alt=d.alt;status.textContent=d.status;
-      if(frame) frame.src='about:blank';
-    }
-    if(window.gsap&&!reduce) gsap.fromTo('.device-shell',{scale:.985,autoAlpha:.78},{scale:1,autoAlpha:1,duration:.42,ease:'power3.out'});
-  }));
-
-  const idx=$('#storyIndex'),title=$('#storyTitle'),body=$('#storyBody'),proof=$('#storyProof'),outcome=$('#storyOutcome');
-  $$('.feature').forEach(btn=>btn.addEventListener('click',()=>{
-    const s=STORIES[btn.dataset.feature];if(!s)return;
-    $$('.feature').forEach(x=>x.classList.toggle('active',x===btn));
-    idx.textContent=s.index;title.textContent=s.title;body.textContent=s.body;proof.innerHTML=s.proof.map(x=>`<span>${x}</span>`).join('');outcome.textContent=s.outcome;
-    if(window.gsap&&!reduce) gsap.fromTo('.feature-story>*',{autoAlpha:0,y:10},{autoAlpha:1,y:0,duration:.4,stagger:.035,ease:'power2.out'});
-  }));
-
-  if(window.gsap&&window.ScrollTrigger&&!reduce){
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.from('.exp-hero-copy>*',{autoAlpha:0,y:28,duration:.85,stagger:.07,ease:'power3.out',delay:.18});
-    gsap.from('.hero-desktop',{autoAlpha:0,y:40,rotateY:-12,scale:.95,duration:1.1,ease:'power4.out',delay:.3});
-    gsap.from('.hero-phone',{autoAlpha:0,y:70,rotate:8,scale:.88,duration:.95,ease:'back.out(1.3)',delay:.62});
-    gsap.from('.capture-badge',{autoAlpha:0,scale:.9,duration:.55,ease:'power3.out',delay:.9});
-    $$('.lab-head,.lab-toolbar,.device-stage,.feature-story,.story-heading,.decision-line article,.release-copy,.release-image,.experience-final>*').forEach(el=>gsap.from(el,{autoAlpha:0,y:28,duration:.72,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}}));
-    gsap.to('.hero-proof-stack',{y:-28,ease:'none',scrollTrigger:{trigger:'.exp-hero',start:'top top',end:'bottom top',scrub:1}});
-  }
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;const progress=q('.exp-progress i');addEventListener('scroll',()=>{if(progress){const m=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${m?scrollY/m:0})`}},{passive:true});
+const cursor=q('.exp-cursor');if(cursor&&matchMedia('(pointer:fine)').matches&&!reduce){let x=-50,y=-50,cx=x,cy=y;addEventListener('pointermove',e=>{x=e.clientX;y=e.clientY});const loop=()=>{cx+=(x-cx)*.18;cy+=(y-cy)*.18;cursor.style.transform=`translate(${cx}px,${cy}px) translate(-50%,-50%)`;requestAnimationFrame(loop)};loop();qa('a,button,.capture-card').forEach(e=>{e.addEventListener('pointerenter',()=>cursor.classList.add('big'));e.addEventListener('pointerleave',()=>cursor.classList.remove('big'))})}
+const data={discover:['01 / DISCOVER','Help the customer find the right product before they need to ask.','The homepage turns a large material range into a visual journey with categories and product context.',['HOMEPAGE','CATALOGUE','PROJECT JOURNEYS'],'“I can actually find what I need.”','./assets/desktop-light-home-section-00.png','desktop'],search:['02 / SEARCH','Make product discovery resilient instead of fragile.','Search and catalogue structure reduce dead ends even when customers do not know the exact product name.',['SEARCH','FILTERS','CATEGORIES'],'“I’m getting closer, not lost.”','./assets/desktop-light-catalogue-section-00.png','desktop'],compare:['03 / COMPARE','Give the decision a workspace of its own.','Comparison lets customers evaluate materials before they start the conversation.',['COMPARE','SHORTLIST','DECISION SUPPORT'],'“I know what I want to ask about.”','./assets/desktop-light-compare.png','desktop'],enquire:['04 / ENQUIRE','Carry buying intent into the enquiry instead of resetting it.','The enquiry flow preserves context so WhatsApp continues the journey.',['ENQUIRY','PRODUCT CONTEXT','WHATSAPP'],'“They already know what I’m asking about.”','./assets/desktop-light-enquiry-section-00.png','desktop'],theme:['05 / ADAPT','Keep the experience strong when the screen changes.','Mobile, themes and accessibility are tested so the experience survives outside the perfect screenshot.',['MOBILE','THEMES','ACCESSIBILITY'],'“This feels intentional on my phone too.”','./assets/mobile-light-home-section-00.png','mobile']};
+const frame=q('#captureFrame'),live=q('#liveFrame'),stage=q('#deviceStage'),status=q('#previewStatus');function show(src,mode){if(!preview)return;frame?.classList.add('is-switching');setTimeout(()=>{preview.src=src;preview.style.display='block';if(live)live.style.display='none';stage?.setAttribute('data-device',mode);frame?.classList.remove('is-switching')},160)}function storySet(x){q('#storyIndex').textContent=x[0];q('#storyTitle').textContent=x[1];q('#storyBody').textContent=x[2];q('#storyProof').innerHTML=x[3].map(v=>`<span>${v}</span>`).join('');q('#storyOutcome').textContent=x[4];}
+qa('.feature').forEach(b=>b.addEventListener('click',()=>{qa('.feature').forEach(x=>x.classList.remove('active'));b.classList.add('active');const x=data[b.dataset.feature];storySet(x);show(x[5],x[6]);if(status)status.textContent=x[6]==='mobile'?'CURRENT MOBILE CAPTURE':'CURRENT FEATURE CAPTURE'}));qa('.device').forEach(b=>b.addEventListener('click',()=>{qa('.device').forEach(x=>x.classList.remove('active'));b.classList.add('active');const m=b.dataset.device;if(m==='desktop'){show('./assets/desktop-light-home-section-00.png','desktop');status.textContent='CURRENT DESKTOP CAPTURE'}else if(m==='mobile'){show('./assets/mobile-light-home-section-00.png','mobile');status.textContent='CURRENT MOBILE CAPTURE'}else if(m==='full'){show('./assets/desktop-light-home.png','full');status.textContent='FULL-PAGE LIVE CAPTURE'}else{preview.style.display='none';live.src='https://fakhriyarns.vercel.app';live.style.display='block';stage?.setAttribute('data-device','live');status.textContent='LIVE DEPLOYMENT / EMBED IF ALLOWED'}}));
+const dialog=q('#captureDialog'),di=q('#dialogCapture'),dt=q('#dialogCaptureTitle');qa('.capture-card').forEach(c=>c.addEventListener('click',()=>{di.src=c.dataset.src;dt.textContent=c.dataset.title;dialog.showModal()}));q('#captureDialogClose')?.addEventListener('click',()=>dialog.close());dialog?.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
+const reveals=qa('[data-exp-reveal]');if(reduce||!('IntersectionObserver'in window))reveals.forEach(e=>e.classList.add('visible'));else{const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target)}}),{threshold:.12});reveals.forEach(e=>io.observe(e))}
 })();
