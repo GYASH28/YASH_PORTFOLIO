@@ -1,7 +1,8 @@
 /* Runtime layout guarantees for the integrated client-work experience. */
 
-/* overflow:hidden creates a non-scrolling containing block and breaks sticky behavior. */
-.v9-client{overflow:visible!important}
+/* overflow:hidden would create a scrolling containing block and break sticky.
+   overflow:clip trims decorative glow safely without changing sticky's scroll container. */
+.v9-client{overflow:clip!important}
 .v9-lab-sticky{z-index:2}
 
 @media(min-width:781px){
