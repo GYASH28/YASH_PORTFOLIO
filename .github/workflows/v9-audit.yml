@@ -1,0 +1,46 @@
+name: V9 UI / screenshot integrity audit
+on:
+  push:
+    branches: [ykg-digital-v9]
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout V9
+        uses: actions/checkout@v4
+        with:
+          ref: ykg-digital-v9
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install QA tools
+        run: |
+          npm init -y
+          npm install playwright@1.55.0 html-validate@10.4.0
+          npx playwright install --with-deps chromium
+      - name: Validate semantic HTML
+        run: npx html-validate index.html
+      - name: Start static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/v9.log 2>&1 &
+          echo $! >/tmp/v9.pid
+          for i in {1..30}; do curl -fsS http://127.0.0.1:4173/index.html >/dev/null && exit 0; sleep 1; done
+          exit 1
+      - name: Run V9 Playwright audit
+        env:
+          BASE_URL: http://127.0.0.1:4173
+        run: node qa/v9-audit.mjs
+      - name: Upload V9 screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ykg-v9-audit
+          path: qa-v9
+          retention-days: 7
+      - name: Stop preview
+        if: always()
+        run: kill "$(cat /tmp/v9.pid)" || true
