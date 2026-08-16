@@ -1,0 +1,55 @@
+name: V8 accessibility / keyboard / performance audit
+
+on:
+  push:
+    branches: [ykg-digital-v8]
+    paths:
+      - 'index.html'
+      - 'experience.html'
+      - '*.css'
+      - '*.js'
+      - 'assets/**'
+      - 'qa/v8-quality-audit.mjs'
+      - '.github/workflows/v8-quality-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ykg-digital-v8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install browser QA dependencies
+        run: |
+          npm init -y
+          npm install playwright@1.55.0 @axe-core/playwright@latest
+          npx playwright install --with-deps chromium
+      - name: Start static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/v8-quality.log 2>&1 &
+          echo $! >/tmp/v8-quality.pid
+          for i in {1..30}; do curl -fsS http://127.0.0.1:4173/index.html >/dev/null && exit 0; sleep 1; done
+          cat /tmp/v8-quality.log
+          exit 1
+      - name: Run accessibility, keyboard and resource audit
+        env:
+          BASE_URL: http://127.0.0.1:4173
+        run: node qa/v8-quality-audit.mjs
+      - name: Upload quality report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ykg-v8-quality-audit
+          path: qa-quality
+          if-no-files-found: error
+          retention-days: 7
+      - if: always()
+        run: kill "$(cat /tmp/v8-quality.pid)" || true
