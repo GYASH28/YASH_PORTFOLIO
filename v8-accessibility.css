@@ -1,0 +1,9 @@
+/* QA-driven accessibility and interaction polish. */
+body.v8 footer>span{color:#999994!important}
+body.v8 .mobile-buy{background:#c94427!important;color:#fff!important}
+body.v8 .mobile-buy>span,body.v8 .mobile-buy>b{color:#fff!important;opacity:1!important}
+body.v8 .brand,body.v8 .nav-links a{display:inline-flex;align-items:center;min-height:44px;padding-block:10px;margin-block:-10px}
+body.v8 .work-links .text-link{display:inline-flex;align-items:center;min-height:44px;padding-block:9px;margin-block:-9px}
+body.v8 .browser-bar a{display:inline-flex;align-items:center;min-height:34px;padding-block:11px;margin-block:-11px}
+body.v8 .final footer{line-height:1.45}
+@media(max-width:720px){body.v8 .mobile-buy{min-height:58px}body.v8 .nav-links a{min-height:42px}}
