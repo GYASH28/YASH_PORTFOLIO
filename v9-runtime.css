@@ -1,0 +1,26 @@
+/* Runtime layout guarantees for the integrated client-work experience. */
+
+/* overflow:hidden creates a non-scrolling containing block and breaks sticky behavior. */
+.v9-client{overflow:visible!important}
+.v9-lab-sticky{z-index:2}
+
+@media(min-width:781px){
+  .v9-lab-sticky{top:86px;height:calc(100svh - 98px)}
+}
+
+@media(max-width:780px){
+  /* Keep the journey selector reachable while the user inspects the real screen. */
+  .v9-feature-rail{
+    position:sticky;
+    top:70px;
+    z-index:35;
+    margin-inline:-14px;
+    padding:9px 14px 10px!important;
+    background:rgba(7,10,9,.94);
+    border-top:1px solid rgba(255,255,255,.06);
+    border-bottom:1px solid rgba(255,255,255,.09);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+  }
+  .v9-feature-btn{scroll-margin-inline:14px}
+}
