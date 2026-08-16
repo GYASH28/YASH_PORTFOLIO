@@ -69,3 +69,5 @@
   .v9-hero-copy>* ,.v9-signal-wrap,.v9-signal:before,.v9-signal-core:after{animation:none!important}
   .v9-device-frame:after{display:none}
 }
+
+.v9-shot-card .v9-shot-meta{display:block;padding:14px}.v9-shot-card .v9-shot-meta>span{display:block;margin-top:8px;color:var(--v9-mint);font:500 7px var(--v9-mono)}

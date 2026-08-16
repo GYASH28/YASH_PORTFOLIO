@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./v9.css">
   <link rel="stylesheet" href="./v9-hero.css">
+  <link rel="stylesheet" href="./v9-refine.css" data-v9-refine>
 </head>
 <body class="v9">
   <div class="v9-progress" aria-hidden="true"><i></i></div>
@@ -44,7 +45,7 @@
             <a class="v9-primary magnetic" href="#plans"><span>See the plans</span><b>↓</b></a>
             <a class="v9-secondary" href="#work">Experience real work <b>↘</b></a>
           </div>
-          <div class="v9-hero-meta" aria-label="Starting prices">
+          <div class="v9-hero-meta" role="group" aria-label="Starting prices">
             <span>Managed from <b>₹2,499/mo</b></span><i></i><span>Own the build from <b>₹9,999</b></span>
           </div>
         </div>
@@ -120,7 +121,7 @@
 
         <div class="v9-lab">
           <div class="v9-lab-sticky">
-            <div class="v9-feature-rail" aria-label="Client-work experience stages">
+            <div class="v9-feature-rail" role="group" aria-label="Client-work experience stages">
               <p class="v9-kicker light">CUSTOMER JOURNEY</p>
               <button class="v9-feature-btn active" type="button" aria-pressed="true"><small>01</small><b>Discover</b><span>Where do I start?</span></button>
               <button class="v9-feature-btn" type="button" aria-pressed="false"><small>02</small><b>Find</b><span>How do I narrow it?</span></button>
@@ -134,7 +135,7 @@
                 <div class="v9-device-top"><i></i><i></i><i></i><b id="v9DeviceUrl">fakhriyarns.vercel.app / home</b><a href="https://fakhriyarns.vercel.app" target="_blank" rel="noopener">OPEN LIVE ↗</a></div>
                 <div class="v9-device-frame"><img id="v9Preview" src="./assets/desktop-light-home-section-00.png" alt="Current FakhriMart homepage capture" width="1440" height="960" decoding="async" fetchpriority="high"></div>
               </div>
-              <div class="v9-device-controls" aria-label="Preview device">
+              <div class="v9-device-controls" role="group" aria-label="Preview device">
                 <button class="active" type="button" data-mode="desktop">Desktop</button>
                 <button type="button" data-mode="mobile">Mobile</button>
                 <button type="button" data-mode="full">Full page</button>
@@ -157,10 +158,10 @@
         <div class="v9-capture-gallery" data-v9-reveal>
           <div class="v9-gallery-head"><div><p class="v9-kicker light">INSPECT THE CURRENT RELEASE</p><h3>Real screens. Full resolution.</h3></div><p>Open any capture at its original quality. These are generated from the current release, not an old portfolio mockup.</p></div>
           <div class="v9-gallery-grid">
-            <button class="v9-shot-card" type="button" data-src="./assets/desktop-light-home-section-00.png" data-title="FakhriMart — Homepage" data-alt="Current FakhriMart homepage"><img src="./assets/desktop-light-home-section-00.png" alt="FakhriMart homepage preview" loading="lazy" decoding="async"><div><small>01 / DISCOVER</small><b>Homepage</b><span>Inspect full resolution ↗</span></div></button>
-            <button class="v9-shot-card" type="button" data-src="./assets/desktop-light-catalogue-section-00.png" data-title="FakhriMart — Catalogue" data-alt="Current FakhriMart catalogue"><img src="./assets/desktop-light-catalogue-section-00.png" alt="FakhriMart catalogue preview" loading="lazy" decoding="async"><div><small>02 / FIND</small><b>Catalogue</b><span>Inspect full resolution ↗</span></div></button>
-            <button class="v9-shot-card" type="button" data-src="./assets/desktop-light-compare.png" data-title="FakhriMart — Compare" data-alt="Current FakhriMart compare experience"><img src="./assets/desktop-light-compare.png" alt="FakhriMart compare preview" loading="lazy" decoding="async"><div><small>03 / DECIDE</small><b>Compare</b><span>Inspect full resolution ↗</span></div></button>
-            <button class="v9-shot-card" type="button" data-src="./assets/desktop-light-enquiry-section-00.png" data-title="FakhriMart — Enquiry" data-alt="Current FakhriMart enquiry experience"><img src="./assets/desktop-light-enquiry-section-00.png" alt="FakhriMart enquiry preview" loading="lazy" decoding="async"><div><small>04 / ACT</small><b>Enquiry</b><span>Inspect full resolution ↗</span></div></button>
+            <button class="v9-shot-card" type="button" data-src="./assets/desktop-light-home-section-00.png" data-title="FakhriMart — Homepage" data-alt="Current FakhriMart homepage"><img src="./assets/desktop-light-home-section-00.png" alt="FakhriMart homepage preview" loading="lazy" decoding="async"><span class="v9-shot-meta"><small>01 / DISCOVER</small><b>Homepage</b><span>Inspect full resolution ↗</span></span></button>
+            <button class="v9-shot-card" type="button" data-src="./assets/desktop-light-catalogue-section-00.png" data-title="FakhriMart — Catalogue" data-alt="Current FakhriMart catalogue"><img src="./assets/desktop-light-catalogue-section-00.png" alt="FakhriMart catalogue preview" loading="lazy" decoding="async"><span class="v9-shot-meta"><small>02 / FIND</small><b>Catalogue</b><span>Inspect full resolution ↗</span></span></button>
+            <button class="v9-shot-card" type="button" data-src="./assets/desktop-light-compare.png" data-title="FakhriMart — Compare" data-alt="Current FakhriMart compare experience"><img src="./assets/desktop-light-compare.png" alt="FakhriMart compare preview" loading="lazy" decoding="async"><span class="v9-shot-meta"><small>03 / DECIDE</small><b>Compare</b><span>Inspect full resolution ↗</span></span></button>
+            <button class="v9-shot-card" type="button" data-src="./assets/desktop-light-enquiry-section-00.png" data-title="FakhriMart — Enquiry" data-alt="Current FakhriMart enquiry experience"><img src="./assets/desktop-light-enquiry-section-00.png" alt="FakhriMart enquiry preview" loading="lazy" decoding="async"><span class="v9-shot-meta"><small>04 / ACT</small><b>Enquiry</b><span>Inspect full resolution ↗</span></span></button>
           </div>
         </div>
       </div>
@@ -237,7 +238,7 @@
 
   <dialog class="v9-shot-dialog" id="v9ShotDialog">
     <div class="v9-shot-dialog-top"><button id="v9ShotPrev" type="button" aria-label="Previous screenshot">←</button><b id="v9ShotDialogTitle">FakhriMart capture</b><span id="v9ShotDialogCount">01 / 04</span><button id="v9ShotNext" type="button" aria-label="Next screenshot">→</button><button id="v9ShotClose" type="button" aria-label="Close screenshot viewer">×</button></div>
-    <div class="v9-shot-dialog-body"><img id="v9ShotDialogImg" alt=""></div>
+    <div class="v9-shot-dialog-body"><img id="v9ShotDialogImg" src="./assets/desktop-light-home-section-00.png" alt="FakhriMart full-resolution capture" loading="lazy" decoding="async"></div>
   </dialog>
 
   <script src="./v9-main.js" defer></script>
