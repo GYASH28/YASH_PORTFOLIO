@@ -1,0 +1,67 @@
+name: V8 Lighthouse + HTML validation
+
+on:
+  push:
+    branches: [ykg-digital-v8]
+    paths:
+      - 'index.html'
+      - 'experience.html'
+      - '*.css'
+      - '*.js'
+      - 'assets/**'
+      - '.github/workflows/v8-lighthouse-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ykg-digital-v8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install validation tools
+        run: npm install lighthouse@latest html-validate@latest
+      - name: Validate HTML
+        run: npx html-validate index.html experience.html
+      - name: Start static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/v8-lh.log 2>&1 &
+          echo $! >/tmp/v8-lh.pid
+          for i in {1..30}; do curl -fsS http://127.0.0.1:4173/index.html >/dev/null && exit 0; sleep 1; done
+          exit 1
+      - name: Run Lighthouse on homepage
+        run: |
+          mkdir -p lighthouse-artifacts
+          npx lighthouse http://127.0.0.1:4173/index.html --quiet --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=lighthouse-artifacts/home.json
+      - name: Run Lighthouse on Experience
+        run: npx lighthouse http://127.0.0.1:4173/experience.html --quiet --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=lighthouse-artifacts/experience.json
+      - name: Check scores
+        run: |
+          node <<'JS'
+          const fs=require('fs');
+          let bad=false;
+          for(const name of ['home','experience']){
+            const r=JSON.parse(fs.readFileSync(`lighthouse-artifacts/${name}.json`));
+            const s={}; for(const k of ['performance','accessibility','best-practices','seo']) s[k]=Math.round(r.categories[k].score*100);
+            console.log(name,s);
+            if(s.accessibility<90||s['best-practices']<90||s.seo<90||s.performance<55) bad=true;
+          }
+          if(bad) process.exit(1);
+          JS
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ykg-v8-lighthouse
+          path: lighthouse-artifacts
+          if-no-files-found: warn
+          retention-days: 7
+      - if: always()
+        run: kill "$(cat /tmp/v8-lh.pid)" || true
