@@ -1,0 +1,49 @@
+name: V13 rebuild 4K hero
+on:
+  push:
+    branches: [ykg-digital-v13-final]
+    paths: [.github/workflows/v13-hero-build.yml]
+permissions:
+  contents: write
+jobs:
+  rebuild:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ykg-digital-v13-final
+      - name: Verify chunks
+        run: |
+          set -euxo pipefail
+          cat > /tmp/checks <<'EOF'
+          433528baf3be5b5b0c117205314d92d09e31c306c2c81ad13311fbbf9a9b60a0  hero-chunks/01.txt
+          0c1160733f422f94a3569eb12279fc9da751310272c7c8544745839749ea2488  hero-chunks/02.txt
+          2f7243ed4942ef62514f176212d504344f50c007c7ebf14eb4d0be0c65595121  hero-chunks/03.txt
+          5cfbb31472eef9f9fa24a4619508568b36e83c8132983f29ed4d42dd207e8065  hero-chunks/04.txt
+          171e099bd2d8c647486d1a88d577140833f81d61f6a11795864a405889ad66d1  hero-chunks/05.txt
+          2c3d66e844d9f402a3d3ed4d9dfca5ecafbefd3b32e6c4ce90d9b4baf0090e4f  hero-chunks/06.txt
+          39424b24b26fd97ac3c54c4f2d48a65d370a5b4fd7c302f1a9f21b3db01fa399  hero-chunks/07.txt
+          e42127387d4a45a57bfb8fc6a140b43ca929ea887755e31f1e62be2d101a579a  hero-chunks/08.txt
+          8911290c592534585230f3743599aa570df0cfb7db124363589155aed131af14  hero-chunks/09.txt
+          a6ce99fd444921620f2bdbd5bed99f3636e734f6d44b42bbf09d59620f786cb5  hero-chunks/10.txt
+          8a931b9840208e92350a61edce437b40734fa2ac79e1624076eb7471088141be  hero-chunks/11.txt
+          EOF
+          sha256sum -c /tmp/checks
+      - name: Rebuild and validate image
+        run: |
+          cat hero-chunks/*.txt | base64 -d > assets/ykg-hero-v13-4k.webp
+          test "$(sha256sum assets/ykg-hero-v13-4k.webp | awk '{print $1}')" = "ddb29d3cb1b82a526f6d6a74b0ec8d0d9d86a314c93ec3dc422c3ca902edfc49"
+          file assets/ykg-hero-v13-4k.webp
+          python3 - <<'PY'
+          from PIL import Image
+          im=Image.open('assets/ykg-hero-v13-4k.webp')
+          assert im.size==(3840,2160), im.size
+          print('verified', im.size, im.format)
+          PY
+      - name: Commit rebuilt asset
+        run: |
+          git config user.name "YKG V13 Hero Builder"
+          git config user.email "actions@github.com"
+          git add assets/ykg-hero-v13-4k.webp
+          git commit -m "asset(v13): add verified 3840x2160 hero portrait"
+          git push origin HEAD:ykg-digital-v13-final
