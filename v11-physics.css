@@ -1,0 +1,18 @@
+/* V11 physics refinement: visible elastic surface deformation without compromising legibility. */
+@media (min-width:701px) and (prefers-reduced-motion:no-preference){
+  body.v11 .hero-stage{
+    filter:url(#v11ScreenBend) saturate(calc(1 - var(--v11-fold)*.10)) brightness(calc(1 - var(--v11-fold)*.10));
+  }
+  body.v11 .work-screen{filter:url(#v11WorkBend)}
+}
+.v11-bend-horizon{position:fixed;z-index:97;left:-8vw;right:-8vw;top:50%;height:18vh;pointer-events:none;transform:translateY(-50%) perspective(700px) rotateX(calc(var(--v11-bend)*28deg)) scaleX(calc(1 + var(--v11-bend)*.08));opacity:calc(var(--v11-bend)*.55);background:radial-gradient(ellipse at 50% 50%,rgba(127,247,229,.08),rgba(101,186,255,.025) 42%,transparent 70%);filter:blur(calc(16px + var(--v11-bend)*20px));mix-blend-mode:screen;will-change:transform,opacity}
+.v11-bend-horizon::before,.v11-bend-horizon::after{content:"";position:absolute;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,rgba(127,247,229,.32),rgba(101,186,255,.23),transparent);transform:scaleX(calc(.72 + var(--v11-bend)*.35))}
+.v11-bend-horizon::before{top:24%;transform-origin:center}.v11-bend-horizon::after{bottom:24%;transform-origin:center}
+body.v11 .v11-optical-frame{background:radial-gradient(ellipse at 50% 50%,transparent 58%,rgba(0,0,0,calc(.12 + var(--v11-bend)*.36)) 88%,rgba(0,0,0,calc(.2 + var(--v11-bend)*.48)) 100%)}
+body.v11 .v11-side-warp{box-shadow:inset calc(2vw + var(--v11-bend)*5vw) 0 calc(4vw + var(--v11-bend)*8vw) rgba(0,0,0,.7),inset calc(-2vw - var(--v11-bend)*5vw) 0 calc(4vw + var(--v11-bend)*8vw) rgba(0,0,0,.7),inset 0 calc(1vh + var(--v11-bend)*3vh) calc(5vh + var(--v11-bend)*8vh) rgba(0,0,0,.3),inset 0 calc(-1vh - var(--v11-bend)*3vh) calc(5vh + var(--v11-bend)*8vh) rgba(0,0,0,.3)}
+body.v11 .v11-scene-portal::before,body.v11 .v11-scene-portal::after{border-radius:0 0 50% 50%/0 0 22% 22%}
+body.v11 .v11-scene-portal::after{border-radius:50% 50% 0 0/22% 22% 0 0}
+body.v11 .work-screen{border-radius:22px;box-shadow:0 42px 110px rgba(0,0,0,.46),0 0 calc(18px + var(--v11-work-curve,0)*36px) rgba(101,186,255,.06)}
+body.v11 .screen-viewport{border-radius:0 0 18px 18px}
+@media(max-width:700px){.v11-bend-horizon{display:none}}
+@media(prefers-reduced-motion:reduce){.v11-bend-horizon{display:none!important}}
