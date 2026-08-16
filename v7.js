@@ -45,9 +45,34 @@
   const result=q('.test-result'); qa('.test-item').forEach(item=>item.addEventListener('click',e=>{const r=item.getBoundingClientRect();item.style.setProperty('--tap-x',`${e.clientX-r.left}px`);item.style.setProperty('--tap-y',`${e.clientY-r.top}px`);item.classList.remove('ripple');void item.offsetWidth;item.classList.add('ripple');if(result){result.classList.add('bump');setTimeout(()=>result.classList.remove('bump'),360);}}));
 
   const compare=q('.compare-theatre'); const range=q('#compareRange'); const percent=q('#comparePercent');
+  let compareUserOwned=false, compareRaf=0;
   const updateCompare=()=>{ if(!compare||!range)return; const v=+range.value; compare.style.setProperty('--split',`${v}%`); if(percent)percent.textContent=`${v}%`; qa('.after-callout',compare).forEach((c,i)=>{const threshold=[43,55,68][i]||50; c.style.opacity=v>threshold?'1':'.18'; c.style.transform=v>threshold?'translateX(0)':'translateX(12px)';}); };
-  if(range){range.addEventListener('input',updateCompare);range.addEventListener('pointerdown',()=>compare?.classList.add('is-dragging'));addEventListener('pointerup',()=>compare?.classList.remove('is-dragging'));updateCompare();}
-  if(compare && !reduce){ let autoStarted=false; const autoReveal=()=>{if(autoStarted)return;autoStarted=true;let start=null;const from=22,to=72,dur=1500;const tick=t=>{start??=t;const p=Math.min(1,(t-start)/dur);const eased=1-Math.pow(1-p,3);range.value=from+(to-from)*eased;updateCompare();if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)}; if(window.IntersectionObserver)new IntersectionObserver(es=>{if(es[0].isIntersecting)autoReveal()},{threshold:.45}).observe(compare); }
+  const takeCompareControl=()=>{compareUserOwned=true;if(compareRaf)cancelAnimationFrame(compareRaf);compare?.classList.add('user-owned');};
+  if(range){
+    range.addEventListener('input',()=>{takeCompareControl();updateCompare()});
+    range.addEventListener('pointerdown',()=>{takeCompareControl();compare?.classList.add('is-dragging')});
+    range.addEventListener('keydown',takeCompareControl);
+    addEventListener('pointerup',()=>compare?.classList.remove('is-dragging'));
+    updateCompare();
+  }
+  if(compare && range && !reduce){
+    let autoStarted=false;
+    const autoReveal=()=>{
+      if(autoStarted||compareUserOwned)return;
+      autoStarted=true;
+      let start=null; const from=22,to=72,dur=1250;
+      const tick=t=>{
+        if(compareUserOwned)return;
+        start??=t;
+        const p=Math.min(1,(t-start)/dur), eased=1-Math.pow(1-p,3);
+        range.value=String(from+(to-from)*eased);
+        updateCompare();
+        if(p<1)compareRaf=requestAnimationFrame(tick);
+      };
+      compareRaf=requestAnimationFrame(tick);
+    };
+    if(window.IntersectionObserver)new IntersectionObserver(entries=>{if(entries[0]?.isIntersecting)autoReveal()},{threshold:.45}).observe(compare);
+  }
 
   const revealEls=qa('[data-v7-reveal]'); if(revealEls.length){if(reduce||!('IntersectionObserver'in window)){revealEls.forEach(e=>e.classList.add('is-visible'))}else{const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('is-visible');io.unobserve(en.target)}}),{threshold:.13});revealEls.forEach(e=>io.observe(e));}}
   qa('.map-node').forEach(node=>node.addEventListener('click',()=>{qa('.map-node').forEach(n=>n.classList.remove('active'));node.classList.add('active');if(window.gsap&&!reduce)gsap.fromTo(node,{scale:.97},{scale:1,duration:.55,ease:'back.out(2)'});}));
