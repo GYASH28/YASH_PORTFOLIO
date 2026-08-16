@@ -1,0 +1,68 @@
+name: V8 UI / UX Playwright audit
+
+on:
+  push:
+    branches: [ykg-digital-v8]
+    paths:
+      - 'index.html'
+      - 'experience.html'
+      - '*.css'
+      - '*.js'
+      - 'assets/**'
+      - 'qa/v8-playwright-audit.mjs'
+      - '.github/workflows/v8-ui-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout V8
+        uses: actions/checkout@v4
+        with:
+          ref: ykg-digital-v8
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright Chromium
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ykg-v8-server.log 2>&1 &
+          echo $! > /tmp/ykg-v8-server.pid
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ykg-v8-server.log
+          exit 1
+
+      - name: Run multi-viewport UI / UX audit
+        env:
+          BASE_URL: http://127.0.0.1:4173
+        run: node qa/v8-playwright-audit.mjs
+
+      - name: Upload screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ykg-v8-ui-audit
+          path: qa-artifacts
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Stop preview
+        if: always()
+        run: |
+          if [ -f /tmp/ykg-v8-server.pid ]; then kill "$(cat /tmp/ykg-v8-server.pid)" || true; fi
