@@ -59,6 +59,31 @@
 /* sensible paint containment for the heavy lower page */
 .v9-diagnostic,.v9-transform,.v9-process,.v9-faq{content-visibility:auto;contain-intrinsic-size:900px}
 
+/* Crisp scroll entrances. Blur made the UI look broken while scrolling. */
+body.v9 [data-v9-reveal]{filter:none!important;opacity:0;transform:translateY(22px);transition:opacity .48s cubic-bezier(.16,1,.3,1),transform .58s cubic-bezier(.16,1,.3,1)!important}
+body.v9 [data-v9-reveal].v9-visible{opacity:1!important;transform:none!important;filter:none!important}
+
+/* Global inherit rules are intentionally weak; primary actions need explicit contrast. */
+body.v9 a.v9-primary{color:#07100e!important}
+body.v9 button.v9-nav-cta{color:#09100e!important}
+body.v9 button.v9-plan-main,
+body.v9 .v9-result button,
+body.v9 .v9-form button{color:#07100e!important}
+body.v9 .v9-price-mode button:not(.active){color:#525956!important}
+body.v9 .v9-price-mode button.active{color:#fff!important}
+
+/* Keep the pinned client-work controls fully composed inside normal desktop heights. */
+@media(min-width:781px){
+  .v9-lab-sticky{align-items:center;padding-block:12px}
+  .v9-feature-rail{max-height:calc(100svh - 120px);display:flex;flex-direction:column;justify-content:center}
+  .v9-device,.v9-story{align-self:center}
+}
+@media(min-width:781px) and (max-height:820px){
+  .v9-feature-btn{padding:11px 4px}.v9-feature-btn b{font-size:17px}.v9-feature-btn span{font-size:7px}
+  .v9-device[data-mode="desktop"] .v9-device-frame{height:57vh}.v9-device[data-mode="full"] .v9-device-frame{height:61vh}
+  .v9-story{padding:21px}.v9-story h3{margin:18px 0 11px;font-size:24px}.v9-story-proof{margin:16px 0}.v9-story>a{margin-top:15px}
+}
+
 @media(max-width:780px){
   .v9-device-shell:after{display:none}
   .v9-device-frame,.v9-device[data-mode="desktop"] .v9-device-frame,.v9-device[data-mode="full"] .v9-device-frame{height:58vh;max-height:620px}
