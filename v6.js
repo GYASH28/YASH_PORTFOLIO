@@ -1,63 +1,26 @@
 (() => {
   'use strict';
-  const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fine=matchMedia('(pointer:fine)').matches;
+  // V7 bootstrap intentionally runs from the existing v6.js script slot so V6 URLs remain valid.
+  const head = document.head;
+  if (!document.querySelector('link[href="./v7.css"]')) {
+    const link=document.createElement('link'); link.rel='stylesheet'; link.href='./v7.css'; head.appendChild(link);
+  }
+  const add=(html)=>document.body.insertAdjacentHTML('afterbegin',html);
+  if(!document.querySelector('.v7-progress')) add('<div class="v7-progress" aria-hidden="true"><i></i></div><div class="v7-cursor" aria-hidden="true"></div><div class="v7-page-wipe" aria-hidden="true"></div>');
+  const heroImg=document.querySelector('.hero-image'); if(heroImg){heroImg.src='./hero-art.svg';heroImg.alt='Original YKG Digital cinematic storefront illustration';}
+  const artNote=document.querySelector('.hero-art-note'); if(artNote) artNote.innerHTML='<span>ORIGINAL VECTOR / 01</span><i></i><b>Lossless at every screen size</b>';
+  document.querySelector('.plans-head')?.setAttribute('data-v7-reveal',''); document.querySelector('#planTheatre')?.setAttribute('data-v7-reveal',''); document.querySelector('.test-copy')?.setAttribute('data-v7-reveal',''); document.querySelector('#testList')?.setAttribute('data-v7-reveal',''); document.querySelector('.process-head')?.setAttribute('data-v7-reveal',''); document.querySelector('.process-list')?.setAttribute('data-v7-reveal','');
 
-  const veil=document.createElement('div');
-  veil.className='page-veil'; veil.setAttribute('aria-hidden','true');
-  veil.innerHTML='<span>YKG</span>';
-  document.body.appendChild(veil);
-  requestAnimationFrame(()=>document.body.classList.add('v6-ready'));
-  $$('a[href$="experience.html"],a[href$="index.html"]').forEach(a=>a.addEventListener('click',e=>{
-    if(reduce || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target==='_blank') return;
-    const url=new URL(a.href,location.href); if(url.origin!==location.origin)return;
-    e.preventDefault(); document.body.classList.add('page-leaving');
-    setTimeout(()=>location.href=url.href,360);
-  }));
-
-  const compare=$('#compare'),range=$('#compareRange'),after=$('#compareAfter'),handle=$('#compareHandle'),divider=$('#compareDivider'),percent=$('#comparePercent');
-  const syncCompare=()=>{
-    if(!range||!compare)return;
-    const v=+range.value;
-    compare.style.setProperty('--split',`${v}%`);
-    if(after) after.style.clipPath=`inset(0 0 0 ${v}%)`;
-    if(handle) handle.style.left=`${v}%`;
-    if(divider) divider.style.left=`${v}%`;
-    if(percent) percent.textContent=`${v}%`;
-    const reveal=Math.max(0,Math.min(1,(72-v)/48));
-    $$('.after-callout',compare).forEach((el,i)=>{
-      el.style.opacity=String(.22 + reveal*.78);
-      el.style.transform=`translateX(${(1-reveal)*(18+i*4)}px)`;
-    });
-  };
-  range?.addEventListener('input',syncCompare,{passive:true}); syncCompare();
-
-  if(fine && !reduce){
-    const stage=$('#workScreen'),desktop=$('#desktopDevice'),phone=$('#phoneDevice');
-    if(stage && desktop && phone && window.gsap){
-      const dx=gsap.quickTo(desktop,'rotateY',{duration:.55,ease:'power3'}),dy=gsap.quickTo(desktop,'rotateX',{duration:.55,ease:'power3'});
-      const px=gsap.quickTo(phone,'x',{duration:.5,ease:'power3'}),py=gsap.quickTo(phone,'y',{duration:.5,ease:'power3'});
-      stage.addEventListener('pointermove',e=>{
-        const r=stage.getBoundingClientRect(),nx=(e.clientX-r.left)/r.width-.5,ny=(e.clientY-r.top)/r.height-.5;
-        dx(nx*5);dy(ny*-3.4);px(nx*10);py(ny*7);
-      });
-      stage.addEventListener('pointerleave',()=>{dx(-2.5);dy(.8);px(0);py(0)});
-    }
+  const work=document.querySelector('#work');
+  if(work){
+    work.className='work work-v7';
+    work.innerHTML=`<div class="work-pin"><div class="work-copy" data-v7-reveal><p class="section-label light">REAL CLIENT WORK / FAKHRIMART</p><div class="work-steps"><article class="work-step active"><small>DISCOVER</small><h2>A catalogue people can actually explore.</h2><p>The current FakhriMart build turns a large product range into a visual, searchable storefront instead of another list that needs explaining over chat.</p></article><article class="work-step"><small>FIND</small><h2>Search and filters remove dead ends.</h2><p>Customers can move through categories and intent-driven discovery without losing context, making the site useful rather than decorative.</p></article><article class="work-step"><small>DECIDE</small><h2>Comparison supports the buying decision.</h2><p>Shortlisting and comparison bring decision support into the website before the customer reaches WhatsApp.</p></article><article class="work-step"><small>ACT</small><h2>Interest becomes a useful enquiry.</h2><p>The handoff preserves product context so the business receives a better conversation instead of a vague “price?” message.</p></article></div><div class="case-progress" role="tablist" aria-label="FakhriMart case study stages"><button class="active" type="button" role="tab" aria-selected="true"><small>01</small><b>Homepage</b></button><button type="button" role="tab" aria-selected="false"><small>02</small><b>Catalogue</b></button><button type="button" role="tab" aria-selected="false"><small>03</small><b>Compare</b></button><button type="button" role="tab" aria-selected="false"><small>04</small><b>Enquiry</b></button></div><div class="work-chips"><span>Search</span><span>Compare</span><span>Shortlist</span><span>WhatsApp enquiry</span><span>Responsive</span></div><div class="work-links"><a class="text-link" href="./experience.html">Open the full Experience Lab ↗</a><a class="text-link subtle-link" href="https://fakhriyarns.vercel.app" target="_blank" rel="noopener">Open live client site ↗</a></div></div><div class="case-stage" data-v7-reveal><div class="case-stage-label"><i></i><div><b>CURRENT LIVE RELEASE</b><span>LOSSLESS PNG / AUTO-REFRESHED BY CI</span></div></div><div class="case-browser"><div class="browser-bar"><i></i><i></i><i></i><span>fakhriyarns.vercel.app</span><a href="https://fakhriyarns.vercel.app" target="_blank" rel="noopener">OPEN LIVE ↗</a></div><div class="case-canvas"><img class="case-shot active" src="./assets/desktop-light-home-section-00.png" alt="Current FakhriMart homepage capture" width="2880" height="1920"><img class="case-shot" src="./assets/desktop-light-catalogue-section-00.png" alt="Current FakhriMart catalogue capture" width="2880" height="1920" loading="lazy"><img class="case-shot" data-case="compare" src="./assets/desktop-light-compare.png" alt="Current FakhriMart compare capture" width="2880" height="1920" loading="lazy"><img class="case-shot" src="./assets/desktop-light-enquiry-section-00.png" alt="Current FakhriMart enquiry capture" width="2880" height="1920" loading="lazy"></div></div><div class="case-phone"><img src="./assets/mobile-light-home-section-00.png" alt="Current FakhriMart mobile homepage" width="1170" height="2532" loading="lazy"></div><div class="case-hotspot h1 active">Search by intent</div><div class="case-hotspot h2">Compare choices</div><div class="case-hotspot h3">Enquire with context</div><div class="case-caption"><div><small id="caseCaptionMeta">HOME / PRODUCT DISCOVERY</small><b id="caseCaptionTitle">The storefront explains itself fast.</b></div><span>Scroll or choose a stage ↑</span></div></div></div><div class="work-scroll-space" aria-hidden="true"></div>`;
   }
 
-  if(window.gsap && window.ScrollTrigger && !reduce){
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.fromTo('.hero-image',{scale:1.075,filter:'saturate(.72) contrast(1.12) brightness(.62)'},{scale:1,filter:'saturate(.86) contrast(1.09) brightness(.82)',duration:1.6,ease:'power3.out',delay:.25});
-    gsap.from('.hero-value-line,.hero-art-note',{autoAlpha:0,y:12,duration:.7,delay:1.05,stagger:.08,ease:'power2.out'});
-    gsap.from('.desktop-device',{autoAlpha:0,y:38,rotateY:-10,scale:.96,duration:1.05,ease:'power4.out',scrollTrigger:{trigger:'.work-showcase',start:'top 83%',once:true}});
-    gsap.from('.phone-device',{autoAlpha:0,y:70,rotate:7,scale:.88,duration:.9,ease:'back.out(1.35)',scrollTrigger:{trigger:'.work-showcase',start:'top 80%',once:true}});
-    gsap.from('.work-release,.work-experience-pill',{autoAlpha:0,scale:.9,duration:.55,stagger:.12,ease:'power3.out',scrollTrigger:{trigger:'.work-showcase',start:'top 72%',once:true}});
-    gsap.from('.compare-theatre',{autoAlpha:0,y:42,scale:.975,duration:1,ease:'power4.out',scrollTrigger:{trigger:'.compare-theatre',start:'top 85%',once:true}});
-    gsap.from('.transform-principles article',{autoAlpha:0,y:22,duration:.62,stagger:.08,ease:'power3.out',scrollTrigger:{trigger:'.transform-principles',start:'top 88%',once:true}});
-    ScrollTrigger.create({trigger:'.compare-theatre',start:'top 65%',end:'bottom 35%',onEnter:()=>{
-      if(!range)return; const state={v:+range.value};
-      gsap.to(state,{v:38,duration:1.15,ease:'power2.inOut',onUpdate:()=>{range.value=state.v;syncCompare()},onComplete:()=>gsap.to(state,{v:52,duration:.8,ease:'power2.inOut',onUpdate:()=>{range.value=state.v;syncCompare()}})});
-    },once:true});
+  const transform=document.querySelector('#transform');
+  if(transform){
+    transform.className='transform transform-v6';
+    transform.innerHTML=`<div class="section-shell"><div class="transform-head transform-head-v6" data-v7-reveal><div><p class="section-label">INTERACTIVE / BEFORE → AFTER</p><h2>Don’t decorate the old problem.<br><em>Change the decision.</em></h2></div><p class="transform-lede">Drag across the redesign. The website itself is live DOM—not a low-resolution mockup—so every edge stays sharp.</p></div><div class="compare-theatre" id="compare" data-v7-reveal><div class="compare-atmosphere"></div><div class="compare-side compare-before"><div class="live-site before-site"><div class="live-chrome"><span></span><span></span><span></span><b>old-business-site.com</b></div><div class="old-nav"><strong>BUSINESS NAME</strong><p>Home &nbsp; About &nbsp; Services &nbsp; Contact</p></div><div class="old-hero"><div class="old-photo"><i></i><i></i><i></i></div><div><small>WELCOME TO OUR WEBSITE</small><h3>Quality services for every customer.</h3><p>We are a leading business providing many services to our valued customers.</p><button>Learn more</button></div></div><div class="old-grid"><article><b>Our services</b><span>Service 01<br>Service 02<br>Service 03</span></article><article><b>Why choose us?</b><span>Experienced<br>Reliable<br>Affordable</span></article><article><b>Latest news</b><span>Company update<br>New service<br>Read more</span></article></div></div><div class="compare-state"><small>BEFORE</small><b>Information without direction.</b></div><div class="before-noise"></div></div><div class="compare-side compare-after" id="compareAfter"><div class="live-site after-site"><div class="live-chrome dark"><span></span><span></span><span></span><b>yourbusiness.com</b><button>Start ↗</button></div><div class="new-nav"><strong>YOUR BUSINESS</strong><p>Services &nbsp; Proof &nbsp; Pricing</p><button>Get started ↗</button></div><div class="new-hero"><small>THE OUTCOME / BEFORE THE CALL</small><h3>Know what it does.<br><em>Know why to choose it.</em></h3><p>A clear offer, visible proof and one obvious next move.</p><div class="new-actions"><button>Get started ↗</button><span>See proof ↓</span></div></div><div class="new-proof"><article><small>01</small><b>Clear offer</b><span>Value before details.</span></article><article><small>02</small><b>Proof</b><span>Trust before pressure.</span></article><article><small>03</small><b>Action</b><span>One next move.</span></article></div><div class="new-price"><span>Managed website</span><b>₹3,999<small>/mo</small></b><button>Choose Grow ↗</button></div><div class="new-phone"><div></div><small>YOUR BUSINESS</small><b>Clear.<br>Fast.<br><em>Ready.</em></b><button>Start ↗</button></div></div><div class="compare-state after-state"><small>AFTER</small><b>A clear reason to choose.</b></div><div class="after-callout callout-offer"><i></i><span><b>01</b> Clear offer</span></div><div class="after-callout callout-trust"><i></i><span><b>02</b> Trust</span></div><div class="after-callout callout-action"><i></i><span><b>03</b> Action</span></div></div><input class="compare-range" id="compareRange" type="range" min="8" max="92" value="52" aria-label="Drag to compare website before and after"><div class="compare-divider"><span></span></div><div class="compare-handle compare-handle-v6"><small>DRAG</small><b>↔</b></div><div class="compare-progress"><span id="comparePercent">52%</span><i></i></div></div><div class="transform-principles" data-v7-reveal><article><span>01</span><h3>Offer</h3><p>Say what you do and why it matters before asking for attention.</p></article><article><span>02</span><h3>Proof</h3><p>Show enough evidence to reduce uncertainty without burying the customer.</p></article><article><span>03</span><h3>Action</h3><p>When intent peaks, make the next move painfully obvious.</p></article></div><div class="transform-blueprint" data-v7-reveal><div class="transform-blueprint-copy"><small>THE DECISION MAP</small><h3>Every scroll should answer a buying question.</h3><p>Move through orientation, proof, fit and action. Nothing exists just to fill a section.</p></div><div class="decision-map"><button class="map-node active"><small>01</small><b>What is this?</b><span>Position the offer.</span></button><i></i><button class="map-node"><small>02</small><b>Can I trust it?</b><span>Show real proof.</span></button><i></i><button class="map-node"><small>03</small><b>Is it for me?</b><span>Make fit clear.</span></button><i></i><button class="map-node"><small>04</small><b>What now?</b><span>Make action obvious.</span></button></div></div></div>`;
   }
+  const script=document.createElement('script'); script.src='./v7.js'; script.defer=true; document.body.appendChild(script);
 })();
