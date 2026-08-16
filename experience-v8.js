@@ -1,0 +1,15 @@
+(() => {
+  'use strict';
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, fine=matchMedia('(pointer:fine)').matches;
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const nav=$('#expNav'); addEventListener('scroll',()=>nav?.classList.toggle('scrolled',scrollY>24),{passive:true});
+  const hero=$('.exp-hero'),stack=$('.hero-proof-stack');
+  if(hero&&stack&&fine&&!reduce){hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;stack.style.transform=`perspective(1400px) rotateY(${x*3}deg) rotateX(${y*-2}deg) translate3d(${x*-9}px,${y*-8}px,0)`});hero.addEventListener('pointerleave',()=>stack.style.transform='')}
+
+  const grid=$('.lab-grid'), frame=$('#captureFrame'), preview=$('#previewImage');
+  if(grid&&frame&&preview){const wrap=document.createElement('div');wrap.className='lab-scrubber';wrap.innerHTML='<span>SCRUB PAGE</span><input id="captureScrub" type="range" min="0" max="100" value="0" aria-label="Scroll through screenshot"><b id="captureScrubValue">00%</b>'; grid.appendChild(wrap);const input=$('#captureScrub'),val=$('#captureScrubValue');const apply=()=>{const v=+input.value;val.textContent=String(v).padStart(2,'0')+'%';const overflow=Math.max(0,preview.scrollHeight-frame.clientHeight);preview.style.transform=`translateY(${-overflow*v/100}px)`};input.addEventListener('input',()=>{frame.classList.add('is-scrubbing');apply()});input.addEventListener('change',()=>frame.classList.remove('is-scrubbing'));new MutationObserver(()=>{input.value=0;preview.style.transform='';val.textContent='00%'}).observe(preview,{attributes:true,attributeFilter:['src']});addEventListener('resize',apply,{passive:true});}
+
+  if(fine&&!reduce){$$('.capture-card').forEach(card=>{card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`translateY(-10px) rotateY(${x*2.2}deg) rotateX(${y*-1.7}deg)`});card.addEventListener('pointerleave',()=>card.style.transform='')})}
+
+  const stage=$('#deviceStage'); if(stage&&!reduce){const scan=document.createElement('i');scan.className='exp-v8-scan';scan.setAttribute('aria-hidden','true');stage.appendChild(scan);const style=document.createElement('style');style.textContent='.exp-v8-scan{position:absolute;z-index:10;left:8%;right:8%;top:8%;height:1px;background:linear-gradient(90deg,transparent,#8df2dd,transparent);box-shadow:0 0 20px rgba(141,242,221,.45);opacity:0;pointer-events:none}.exp-v8-scan.run{animation:expV8Scan .8s cubic-bezier(.16,1,.3,1)}@keyframes expV8Scan{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(54vh)}}';document.head.appendChild(style);$$('.feature,.device').forEach(b=>b.addEventListener('click',()=>{scan.classList.remove('run');void scan.offsetWidth;scan.classList.add('run')}))}
+})();
