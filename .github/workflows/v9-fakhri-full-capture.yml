@@ -1,0 +1,87 @@
+name: V9 full-page FakhriMart proof capture
+
+on:
+  push:
+    branches: [ykg-digital-v9]
+    paths:
+      - '.github/workflows/v9-fakhri-full-capture.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ykg-v9-full-proof-capture
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout V9
+        uses: actions/checkout@v4
+        with:
+          ref: ykg-digital-v9
+          fetch-depth: 0
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright Chromium
+        run: |
+          mkdir -p /tmp/ykg-v9-capture
+          cd /tmp/ykg-v9-capture
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Capture current live FakhriMart routes as lossless full-page PNGs
+        run: |
+          mkdir -p assets
+          cat > /tmp/ykg-v9-capture/capture.mjs <<'JS'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({ headless: true });
+          const base = 'https://fakhriyarns.vercel.app';
+
+          async function capture(route, file, viewport, dpr = 2) {
+            const context = await browser.newContext({ viewport, deviceScaleFactor: dpr, colorScheme: 'light' });
+            const page = await context.newPage();
+            await page.goto(base + route, { waitUntil: 'networkidle', timeout: 90000 });
+            await page.waitForTimeout(2500);
+            const skip = page.getByRole('button', { name: /skip/i });
+            if (await skip.count()) await skip.first().click({ timeout: 1200 }).catch(() => {});
+            await page.waitForTimeout(700);
+            await page.evaluate(async () => {
+              const distance = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+              for (let y = 0; y < distance; y += Math.max(500, innerHeight * .8)) {
+                scrollTo(0, y);
+                await new Promise(r => setTimeout(r, 80));
+              }
+              scrollTo(0, 0);
+            });
+            await page.waitForTimeout(500);
+            await page.screenshot({ path: file, fullPage: true, animations: 'disabled', type: 'png' });
+            await context.close();
+          }
+
+          await capture('/', 'assets/v9-fakhri-home-full.png', { width: 1440, height: 960 }, 2);
+          await capture('/products', 'assets/v9-fakhri-products-full.png', { width: 1440, height: 960 }, 2);
+          await capture('/compare', 'assets/v9-fakhri-compare-full.png', { width: 1440, height: 960 }, 2);
+          await capture('/enquiry', 'assets/v9-fakhri-enquiry-full.png', { width: 1440, height: 960 }, 2);
+          await capture('/', 'assets/v9-fakhri-mobile-home-full.png', { width: 390, height: 844 }, 2);
+          await browser.close();
+          JS
+          node /tmp/ykg-v9-capture/capture.mjs
+          ls -lh assets/v9-fakhri-*-full.png
+      - name: Commit full-page proof assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git pull --rebase origin ykg-digital-v9
+          git add assets/v9-fakhri-*-full.png
+          if git diff --cached --quiet; then
+            echo 'Full-page captures are already current.'
+            exit 0
+          fi
+          git commit -m 'chore(v9): add lossless full-page FakhriMart proof'
+          git push origin HEAD:ykg-digital-v9
