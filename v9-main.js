@@ -130,11 +130,11 @@
 
   /* Integrated real-client experience */
   const CLIENT_STATES = [
-    { key:'discover', index:'01 / DISCOVER', title:'A large catalogue stops feeling large.', body:'The homepage gives customers an obvious place to begin, so a dense product range feels explorable instead of overwhelming.', proof:['HOMEPAGE','CATEGORIES','PRODUCT CONTEXT'], outcome:'“I know where to start.”', src:'./assets/desktop-light-home-section-00.png', mode:'desktop', url:'fakhriyarns.vercel.app / home' },
-    { key:'find', index:'02 / FIND', title:'Search and filters remove the dead ends.', body:'Customers can narrow the range without knowing every exact product name first. The website helps them move forward before they need WhatsApp.', proof:['CATALOGUE','SEARCH','FILTERING'], outcome:'“I’m getting closer.”', src:'./assets/desktop-light-catalogue-section-00.png', mode:'desktop', url:'fakhriyarns.vercel.app / products' },
-    { key:'compare', index:'03 / DECIDE', title:'Comparison gives the decision a workspace.', body:'Instead of remembering several product pages, customers can evaluate options together and enter the conversation with a clearer preference.', proof:['COMPARE','SHORTLIST','DECISION SUPPORT'], outcome:'“I know what I want to ask about.”', src:'./assets/desktop-light-compare.png', mode:'full', url:'fakhriyarns.vercel.app / compare' },
-    { key:'enquire', index:'04 / ACT', title:'The enquiry carries the intent forward.', body:'Product interest becomes a useful enquiry with context instead of resetting the customer to a vague “price?” message.', proof:['ENQUIRY','PRODUCT CONTEXT','WHATSAPP'], outcome:'“They already know what I mean.”', src:'./assets/desktop-light-enquiry-section-00.png', mode:'desktop', url:'fakhriyarns.vercel.app / enquiry' },
-    { key:'adapt', index:'05 / ADAPT', title:'The experience survives the screen change.', body:'Mobile is treated as a first-class experience, so hierarchy and actions still feel intentional away from the perfect desktop screenshot.', proof:['MOBILE','RESPONSIVE','ACCESSIBLE'], outcome:'“This still feels premium on my phone.”', src:'./assets/mobile-light-home-section-00.png', mode:'mobile', url:'fakhriyarns.vercel.app / mobile' }
+    { key:'discover', index:'01 / DISCOVER', title:'A large catalogue stops feeling large.', body:'The homepage gives customers an obvious place to begin, so a dense product range feels explorable instead of overwhelming.', proof:['HOMEPAGE','CATEGORIES','PRODUCT CONTEXT'], outcome:'“I know where to start.”', src:'./assets/v9-fakhri-home-full.png', mode:'desktop', url:'fakhriyarns.vercel.app / home' },
+    { key:'find', index:'02 / FIND', title:'Search and filters remove the dead ends.', body:'Customers can narrow the range without knowing every exact product name first. The website helps them move forward before they need WhatsApp.', proof:['CATALOGUE','SEARCH','FILTERING'], outcome:'“I’m getting closer.”', src:'./assets/v9-fakhri-products-full.png', mode:'desktop', url:'fakhriyarns.vercel.app / products' },
+    { key:'compare', index:'03 / DECIDE', title:'Comparison gives the decision a workspace.', body:'Instead of remembering several product pages, customers can evaluate options together and enter the conversation with a clearer preference.', proof:['COMPARE','SHORTLIST','DECISION SUPPORT'], outcome:'“I know what I want to ask about.”', src:'./assets/v9-fakhri-compare-full.png', mode:'full', url:'fakhriyarns.vercel.app / compare' },
+    { key:'enquire', index:'04 / ACT', title:'The enquiry carries the intent forward.', body:'Product interest becomes a useful enquiry with context instead of resetting the customer to a vague “price?” message.', proof:['ENQUIRY','PRODUCT CONTEXT','WHATSAPP'], outcome:'“They already know what I mean.”', src:'./assets/v9-fakhri-enquiry-full.png', mode:'desktop', url:'fakhriyarns.vercel.app / enquiry' },
+    { key:'adapt', index:'05 / ADAPT', title:'The experience survives the screen change.', body:'Mobile is treated as a first-class experience, so hierarchy and actions still feel intentional away from the perfect desktop screenshot.', proof:['MOBILE','RESPONSIVE','ACCESSIBLE'], outcome:'“This still feels premium on my phone.”', src:'./assets/v9-fakhri-mobile-home-full.png', mode:'mobile', url:'fakhriyarns.vercel.app / mobile' }
   ];
   let clientIndex = 0;
   let deviceOverride = null;
@@ -208,10 +208,10 @@
     const current = CLIENT_STATES[clientIndex];
     if (mode === 'mobile') {
       if (deviceUrl) deviceUrl.textContent = 'fakhriyarns.vercel.app / mobile';
-      swapMedia('./assets/mobile-light-home-section-00.png', 'mobile', 'Current FakhriMart mobile capture');
+      swapMedia('./assets/v9-fakhri-mobile-home-full.png', 'mobile', 'Current FakhriMart mobile capture');
     } else if (mode === 'full') {
       if (deviceUrl) deviceUrl.textContent = 'fakhriyarns.vercel.app / full page';
-      swapMedia('./assets/desktop-light-home.png', 'full', 'Current FakhriMart full-page capture');
+      swapMedia('./assets/v9-fakhri-home-full.png', 'full', 'Current FakhriMart full-page capture');
     } else {
       if (deviceUrl) deviceUrl.textContent = current.url;
       swapMedia(current.src, current.mode === 'mobile' ? 'desktop' : 'desktop', `Current FakhriMart ${current.key} capture`);
