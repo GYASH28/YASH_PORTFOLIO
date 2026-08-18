@@ -1,0 +1,98 @@
+name: Build Vercel Import Bundle
+
+on:
+  push:
+    branches: [agency-v3]
+    paths-ignore:
+      - 'vercel-import.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agency-v3
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Reconstruct verified release
+        run: node build.js
+
+      - name: Build self-contained HTML
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+
+          const dist = path.join(process.cwd(), 'dist');
+          let html = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
+          let css = fs.readFileSync(path.join(dist, 'styles.css'), 'utf8');
+          const js = fs.readFileSync(path.join(dist, 'app.js'), 'utf8');
+
+          const mime = {
+            '.webp': 'image/webp',
+            '.png': 'image/png',
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.svg': 'image/svg+xml'
+          };
+
+          for (const name of ['hero-background.webp','yash-cutout.webp','about-yash.webp']) {
+            const p = path.join(dist, 'assets', name);
+            const data = fs.readFileSync(p).toString('base64');
+            const uri = `data:${mime[path.extname(name)]};base64,${data}`;
+            html = html.split(`/assets/${name}`).join(uri);
+            css = css.split(`/assets/${name}`).join(uri);
+          }
+
+          // Inline Google Fonts CSS and binaries so the import is fully self-contained.
+          const fontLink = html.match(/<link[^>]+href="([^"]*fonts\.googleapis\.com[^"]*)"[^>]*>/i);
+          if (fontLink) {
+            const cssUrl = fontLink[1].replace(/&amp;/g, '&');
+            try {
+              const res = await fetch(cssUrl, {headers:{'user-agent':'Mozilla/5.0'}});
+              let fontCss = await res.text();
+              const urls = [...fontCss.matchAll(/url\((https:\/\/[^)]+)\)/g)].map(m => m[1]);
+              for (const url of [...new Set(urls)]) {
+                const fr = await fetch(url);
+                const buf = Buffer.from(await fr.arrayBuffer());
+                const type = url.includes('.woff2') ? 'font/woff2' : 'font/woff';
+                fontCss = fontCss.split(url).join(`data:${type};base64,${buf.toString('base64')}`);
+              }
+              html = html.replace(fontLink[0], `<style>${fontCss}</style>`);
+            } catch (err) {
+              console.warn('Font inlining failed; removing remote font link:', err.message);
+              html = html.replace(fontLink[0], '');
+            }
+          }
+
+          html = html.replace(/<link[^>]+rel="preconnect"[^>]*fonts\.googleapis\.com[^>]*>/gi, '');
+          html = html.replace(/<link[^>]+rel="preconnect"[^>]*fonts\.gstatic\.com[^>]*>/gi, '');
+          html = html.replace(/<link[^>]+href="\/styles\.css"[^>]*>/i, `<style>${css}</style>`);
+          html = html.replace(/<script[^>]+src="\/app\.js"[^>]*><\/script>/i, `<script>${js}</script>`);
+          html = html.replace(/<link[^>]+rel="preload"[^>]*>/gi, '');
+
+          fs.writeFileSync('vercel-import.html', html);
+          console.log('vercel-import.html bytes=', Buffer.byteLength(html));
+          NODE
+
+      - name: Commit generated bundle
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vercel-import.html
+          if git diff --cached --quiet; then
+            echo "Bundle unchanged"
+          else
+            git commit -m "build: publish self-contained agency release"
+            git push origin agency-v3
+          fi
