@@ -1,0 +1,65 @@
+name: Publish Agency Import Bundle
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout agency branch
+        uses: actions/checkout@v4
+        with:
+          ref: agency-v3
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Reconstruct agency release
+        run: node build.js
+
+      - name: Build self-contained import HTML
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const dist = path.join(process.cwd(), 'dist');
+          let html = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
+          let css = fs.readFileSync(path.join(dist, 'styles.css'), 'utf8');
+          const js = fs.readFileSync(path.join(dist, 'app.js'), 'utf8');
+
+          const files = ['hero-background.webp','yash-cutout.webp','about-yash.webp'];
+          for (const name of files) {
+            const data = fs.readFileSync(path.join(dist, 'assets', name)).toString('base64');
+            const uri = `data:image/webp;base64,${data}`;
+            html = html.split(`/assets/${name}`).join(uri);
+            css = css.split(`/assets/${name}`).join(uri);
+          }
+
+          html = html.replace(/<link[^>]+href="\/styles\.css"[^>]*>/i, `<style>${css}</style>`);
+          html = html.replace(/<script[^>]+src="\/app\.js"[^>]*><\/script>/i, `<script>${js}</script>`);
+          html = html.replace(/<link[^>]+rel="preload"[^>]*>/gi, '');
+
+          fs.writeFileSync('vercel-import.html', html);
+          console.log('bundle bytes', Buffer.byteLength(html));
+          NODE
+
+      - name: Commit generated bundle to agency-v3
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vercel-import.html
+          if git diff --cached --quiet; then
+            echo "Bundle already current"
+          else
+            git commit -m "build: publish exact agency import bundle"
+            git push origin HEAD:agency-v3
+          fi
