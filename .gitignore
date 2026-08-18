@@ -6,7 +6,15 @@ dist/
 /tmp/
 /renders/
 /videos/
+.env
+.env.*
+!.env.example
 *.log
 .DS_Store
-
-.env*
+Thumbs.db
+coverage/
+playwright-report/
+test-results/
+.vite/
+.cache/
+.tmp/
