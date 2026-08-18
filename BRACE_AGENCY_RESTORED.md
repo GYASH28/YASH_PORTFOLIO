@@ -1,9 +1,7 @@
-# Brace Agency / YKG Digital — Restored Build
+# Brace Agency / YKG Digital — Deployment Transport Branch
 
-This branch preserves the polished agency sales-site restoration recovered from the August 2026 “Business Ideas for You” work.
+This branch is used only as a deployment transport for the standalone YKG Digital agency site. The personal portfolio `main` branch is not modified by agency releases.
 
-Production target: https://brace-agency.vercel.app/
+Current release target: Hero V3 production build, August 18, 2026.
 
-Core direction: cinematic dark editorial design, Plans as the second destination, interactive before/after, live FakhriMart commercial proof, membership system, Experience page, and case study without invented performance claims.
-
-The complete deploy-ready source is maintained in the restored build artifact.
+The release has passed local static, interaction-contract, asset, performance, runtime-performance, responsive browser, reduced-motion, and stress QA before promotion.
